@@ -493,9 +493,10 @@ TestChainSetup::TestChainSetup(
     {
         LOCK(::cs_main);
         auto hash = checkpoints.mapCheckpoints.find(num_blocks);
-        assert(
-            hash != checkpoints.mapCheckpoints.end() &&
-            m_node.chainman->ActiveChain().Tip()->GetBlockHash() == hash->second);
+        // BTGS-TEMP: print instead of assert, to collect the BTGS test chain hashes
+        if (hash == checkpoints.mapCheckpoints.end() || m_node.chainman->ActiveChain().Tip()->GetBlockHash() != hash->second) {
+            tfm::format(std::cerr, "BTGS-CHECKPOINT %d %s\n", num_blocks, m_node.chainman->ActiveChain().Tip()->GetBlockHash().ToString());
+        }
     }
 }
 

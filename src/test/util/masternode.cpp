@@ -18,6 +18,7 @@
 #include <util/check.h>
 #include <util/std23.h>
 #include <validation.h>
+#include <masternode/payments.h>
 
 namespace {
 
@@ -58,6 +59,7 @@ SimpleUTXOMap BuildSimpleUtxoMap(const std::vector<CTransactionRef>& txs)
     for (auto [i, tx] : std23::views::enumerate(txs)) {
         for (auto [j, output] : std23::views::enumerate(tx->vout)) {
             if (output.scriptPubKey.IsUnspendable()) continue;
+            if (output.scriptPubKey == GetDevFundScript()) continue; // BTGS: the test does not own the dev fund key
             utxos.try_emplace(COutPoint(tx->GetHash(), j), Coin(output, static_cast<int>(i) + 1, /*fCoinBaseIn=*/false));
         }
     }

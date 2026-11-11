@@ -6,6 +6,7 @@
 
 #include <chainparams.h>
 
+#include <evo/dmn_types.h>
 #include <llmq/params.h>
 #include <util/std23.h>
 
@@ -18,6 +19,17 @@
 
 #include <cassert>
 #include <ranges>
+
+dmn_types::mntype_struct GetMnType(MnType type)
+{
+    // BTGS: mainnet and testnet use the real collateral; regtest/devnet keep Dash's test amounts
+    const bool real_amounts = Params().NetworkIDString() == CBaseChainParams::MAIN || Params().NetworkIDString() == CBaseChainParams::TESTNET;
+    switch (type) {
+        case MnType::Regular: return real_amounts ? dmn_types::BtgsRegular : dmn_types::Regular;
+        case MnType::Evo: return real_amounts ? dmn_types::BtgsEvo : dmn_types::Evo;
+        default: return dmn_types::Invalid;
+    }
+}
 
 static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesisOutputScript, uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
 {
@@ -577,9 +589,9 @@ public:
         m_assumed_chain_state_size = 0;
 
         UpdateDevnetSubsidyAndDiffParametersFromArgs(args);
-        genesis = CreateGenesisBlock(1794355202, 0, 0x207fffff, 1, 50 * COIN);
+        genesis = CreateGenesisBlock(1417713337, 1, 0x207fffff, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x360b07ccc529628dbff08244a45160884895ca9767a443e7541aff4c17a07ab5"));
+        assert(consensus.hashGenesisBlock == uint256S("0x3d00bad1b24a84cfc9d589ef14778170a053faa6941ea90da03908518a9a48b2"));
         assert(genesis.hashMerkleRoot == uint256S("0xa9cc8412899952b4170bf096205e4d02e931bcf20731333e6fb8b8884f2e7745"));
 
         devnetGenesis = FindDevNetGenesisBlock(genesis, 50 * COIN);
@@ -827,9 +839,9 @@ public:
         UpdateDIP3ParametersFromArgs(args);
         UpdateBudgetParametersFromArgs(args);
 
-        genesis = CreateGenesisBlock(1794355202, 0, 0x207fffff, 1, 50 * COIN);
+        genesis = CreateGenesisBlock(1417713337, 1, 0x207fffff, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x360b07ccc529628dbff08244a45160884895ca9767a443e7541aff4c17a07ab5"));
+        assert(consensus.hashGenesisBlock == uint256S("0x3d00bad1b24a84cfc9d589ef14778170a053faa6941ea90da03908518a9a48b2"));
         assert(genesis.hashMerkleRoot == uint256S("0xa9cc8412899952b4170bf096205e4d02e931bcf20731333e6fb8b8884f2e7745"));
 
         vFixedSeeds.clear(); //!< Regtest mode doesn't have any fixed seeds.
@@ -855,7 +867,7 @@ public:
 
         checkpointData = {
             {
-                {0, uint256S("0x360b07ccc529628dbff08244a45160884895ca9767a443e7541aff4c17a07ab5")},
+                {0, uint256S("0x3d00bad1b24a84cfc9d589ef14778170a053faa6941ea90da03908518a9a48b2")},
             }
         };
 

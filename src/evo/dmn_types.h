@@ -31,12 +31,12 @@ struct mntype_struct
 
 constexpr auto Regular = mntype_struct{
     .voting_weight = 1,
-    .collat_amount = 20000 * COIN, // BTGS: smartnode collateral
+    .collat_amount = 1000 * COIN, // regtest/devnet (Dash test amount); mainnet/testnet: see GetMnType
     .description = "Regular",
 };
 constexpr auto Evo = mntype_struct{
     .voting_weight = 4,
-    .collat_amount = 80000 * COIN, // BTGS: EvoNode (not used, Dash Platform only)
+    .collat_amount = 4000 * COIN, // regtest/devnet (Dash test amount); mainnet/testnet: see GetMnType
     .description = "Evo",
 };
 constexpr auto Invalid = mntype_struct{
@@ -45,22 +45,30 @@ constexpr auto Invalid = mntype_struct{
     .description = "Invalid",
 };
 
-[[nodiscard]] static constexpr bool IsCollateralAmount(CAmount amount)
-{
-    return amount == Regular.collat_amount ||
-        amount == Evo.collat_amount;
-}
+// BTGS: real collateral on mainnet and testnet
+constexpr auto BtgsRegular = mntype_struct{
+    .voting_weight = 1,
+    .collat_amount = 20000 * COIN, // BTGS: smartnode collateral
+    .description = "Regular",
+};
+constexpr auto BtgsEvo = mntype_struct{
+    .voting_weight = 4,
+    .collat_amount = 80000 * COIN, // BTGS: EvoNode (not used, Dash Platform only; decide later)
+    .description = "Evo",
+};
 
 } // namespace dmn_types
 
-[[nodiscard]] constexpr dmn_types::mntype_struct GetMnType(MnType type)
+/** BTGS: collateral depends on the network (mainnet/testnet: BTGS amounts, regtest/devnet: Dash test amounts). Defined in chainparams.cpp */
+[[nodiscard]] dmn_types::mntype_struct GetMnType(MnType type);
+
+namespace dmn_types {
+[[nodiscard]] inline bool IsCollateralAmount(CAmount amount)
 {
-    switch (type) {
-        case MnType::Regular: return dmn_types::Regular;
-        case MnType::Evo: return dmn_types::Evo;
-        default: return dmn_types::Invalid;
-    }
+    return amount == GetMnType(MnType::Regular).collat_amount ||
+        amount == GetMnType(MnType::Evo).collat_amount;
 }
+} // namespace dmn_types
 
 [[nodiscard]] constexpr bool IsValidMnType(MnType type) { return type < MnType::COUNT; }
 
