@@ -78,25 +78,25 @@ class AddressIndexTest(BitcoinTestFramework):
         # Check p2pkh and p2sh address indexes
         self.log.info("Testing p2pkh and p2sh address index...")
 
-        txid0 = self.nodes[0].sendtoaddress("yMNJePdcKvXtWWQnFYHNeJ5u8TF2v1dfK4", 10)
+        txid0 = self.nodes[0].sendtoaddress("t7yTqyks6aWVssbew5xELfYfwttmbk8bpJ", 10)
         self.generate(self.nodes[0], 1, sync_fun=self.no_op)
 
         txidb0 = self.nodes[0].sendtoaddress("93bVhahvUKmQu8gu9g3QnPPa2cxFK98pMB", 10)
         self.generate(self.nodes[0], 1, sync_fun=self.no_op)
 
-        txid1 = self.nodes[0].sendtoaddress("yMNJePdcKvXtWWQnFYHNeJ5u8TF2v1dfK4", 15)
+        txid1 = self.nodes[0].sendtoaddress("t7yTqyks6aWVssbew5xELfYfwttmbk8bpJ", 15)
         self.generate(self.nodes[0], 1, sync_fun=self.no_op)
 
         txidb1 = self.nodes[0].sendtoaddress("93bVhahvUKmQu8gu9g3QnPPa2cxFK98pMB", 15)
         self.generate(self.nodes[0], 1, sync_fun=self.no_op)
 
-        txid2 = self.nodes[0].sendtoaddress("yMNJePdcKvXtWWQnFYHNeJ5u8TF2v1dfK4", 20)
+        txid2 = self.nodes[0].sendtoaddress("t7yTqyks6aWVssbew5xELfYfwttmbk8bpJ", 20)
         self.generate(self.nodes[0], 1, sync_fun=self.no_op)
 
         txidb2 = self.nodes[0].sendtoaddress("93bVhahvUKmQu8gu9g3QnPPa2cxFK98pMB", 20)
         self.generate(self.nodes[0], 1)
 
-        txids = self.nodes[1].getaddresstxids("yMNJePdcKvXtWWQnFYHNeJ5u8TF2v1dfK4")
+        txids = self.nodes[1].getaddresstxids("t7yTqyks6aWVssbew5xELfYfwttmbk8bpJ")
         assert_equal(len(txids), 3)
         assert_equal(txids[0], txid0)
         assert_equal(txids[1], txid1)
@@ -120,7 +120,7 @@ class AddressIndexTest(BitcoinTestFramework):
         assert_equal(height_txids[1], txidb1)
 
         # Check that multiple addresses works
-        multitxids = self.nodes[1].getaddresstxids({"addresses": ["93bVhahvUKmQu8gu9g3QnPPa2cxFK98pMB", "yMNJePdcKvXtWWQnFYHNeJ5u8TF2v1dfK4"]})
+        multitxids = self.nodes[1].getaddresstxids({"addresses": ["93bVhahvUKmQu8gu9g3QnPPa2cxFK98pMB", "t7yTqyks6aWVssbew5xELfYfwttmbk8bpJ"]})
         assert_equal(len(multitxids), 6)
         assert_equal(multitxids[0], txid0)
         assert_equal(multitxids[1], txidb0)
@@ -160,7 +160,7 @@ class AddressIndexTest(BitcoinTestFramework):
         # Check that balances are correct after spending
         self.log.info("Testing balances after spending...")
         privkey2 = "cU4zhap7nPJAWeMFu4j6jLrfPmqakDAzy8zn8Fhb3oEevdm4e5Lc"
-        address2 = "yeMpGzMj3rhtnz48XsfpB8itPHhHtgxLc3"
+        address2 = "tQxyUaUypWgWAMF1DRLfsWBfCjM2gNx8GE"
         addressHash2 = bytes.fromhex("C5E4FB9171C22409809A3E8047A29C83886E325D")
         scriptPubKey2 = keyhash_to_p2pkh_script(addressHash2)
         self.nodes[0].importprivkey(privkey2)
@@ -252,7 +252,7 @@ class AddressIndexTest(BitcoinTestFramework):
         self.log.info("Testing mempool indexing...")
 
         privKey3 = "cRyrMvvqi1dmpiCmjmmATqjAwo6Wu7QTjKu1ABMYW5aFG4VXW99K"
-        address3 = "yWB15aAdpeKuSaQHFVJpBDPbNSLZJSnDLA"
+        address3 = "tGnAHAHtbJJWowb9w2yfsarNBszJ1wBso6"
         addressHash3 = bytes.fromhex("6C186B3A308A77C779A9BB71C3B5A7EC28232A13")
         scriptPubKey3 = keyhash_to_p2pkh_script(addressHash3)
         # address4 = "2N8oFVB2vThAKury4vnLquW2zVjsYjjAkYQ"
@@ -317,7 +317,7 @@ class AddressIndexTest(BitcoinTestFramework):
 
         # sending and receiving to the same address
         privkey1 = "cMvZn1pVWntTEcsK36ZteGQXRAcZ8CoTbMXF1QasxBLdnTwyVQCc"
-        address1 = "yM9Eed1bxjy7tYxD3yZDHxjcVT48WdRoB1"
+        address1 = "t7kPrD8rjPwjFv95jXE4zLCPJthsC3E92Y"
         address1hash = bytes.fromhex("0909C84A817651502E020AAD0FBCAE5F656E7D8A")
         address1script = keyhash_to_p2pkh_script(address1hash)
 

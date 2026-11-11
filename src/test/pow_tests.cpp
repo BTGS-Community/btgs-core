@@ -44,18 +44,24 @@ BOOST_AUTO_TEST_CASE(get_next_work)
 
     CBlockHeader blockHeader;
     blockHeader.nTime = 1408732505; // Block #123457
-    BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, chainParams->GetConsensus()), 0x1b1441deU); // Block #123457 has 0x1b1441de
+    // BTGS: 200 s blocks -> DGW target 24*200 s (Dash 150 s gave 0x1b1441de)
+    BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, chainParams->GetConsensus()), 0x1b0f3167U);
 
     // test special rules for slow blocks on devnet/testnet
     const auto chainParamsDev = CreateChainParams(*m_node.args, CBaseChainParams::DEVNET);
 
     // make sure normal rules apply
     blockHeader.nTime = 1408732505; // Block #123457
-    BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, chainParamsDev->GetConsensus()), 0x1b1441deU); // Block #123457 has 0x1b1441de
+    BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, chainParamsDev->GetConsensus()), 0x1b0f3167U); // BTGS
 
+    // BTGS: the slow-block rule starts after 4 x 200 s = 800 s (Dash: 600 s)
+    blockHeader.nTime = 1408733090; // 10m+1sec: still normal DGW
+    BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, chainParamsDev->GetConsensus()), 0x1b0f3167U);
+    blockHeader.nTime = 1408733289; // exactly 800 s: still normal DGW
+    BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, chainParamsDev->GetConsensus()), 0x1b0f3167U);
     // 10x higher target
-    blockHeader.nTime = 1408733090; // Block #123457 (10m+1sec)
-    BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, chainParamsDev->GetConsensus()), 0x1c00c8f8U); // Block #123457 has 0x1c00c8f8
+    blockHeader.nTime = 1408733290; // 801 s
+    BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, chainParamsDev->GetConsensus()), 0x1c00c8f8U);
     blockHeader.nTime = 1408733689; // Block #123457 (20m)
     BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, chainParamsDev->GetConsensus()), 0x1c00c8f8U); // Block #123457 has 0x1c00c8f8
     // lowest diff possible
@@ -63,6 +69,13 @@ BOOST_AUTO_TEST_CASE(get_next_work)
     BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, chainParamsDev->GetConsensus()), 0x207fffffU); // Block #123457 has 0x207fffff
     blockHeader.nTime = 1408743289; // Block #123457 (3h)
     BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, chainParamsDev->GetConsensus()), 0x207fffffU); // Block #123457 has 0x207fffff
+
+    // BTGS: DGW runs from block 1; with fewer than 25 blocks it returns the pow limit (new chain start)
+    blockIndexLast->nHeight = 23;
+    blockHeader.nTime = 1408732505;
+    BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, chainParams->GetConsensus()), 0x1e0fffffU);
+    blockIndexLast->nHeight = 24;
+    BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, chainParams->GetConsensus()), 0x1b0f3167U);
 }
 
 /* Test the constraint on the upper bound for next work */

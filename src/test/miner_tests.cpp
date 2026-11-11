@@ -37,6 +37,8 @@ using node::CBlockTemplate;
 
 namespace miner_tests {
 struct MinerTestingSetup : public TestingSetup {
+    // BTGS: regtest (500 reward, 375 to the miner after the 25% dev fund, smartnodes not active yet)
+    MinerTestingSetup() : TestingSetup{CBaseChainParams::REGTEST, {"-testactivationheight=bip34@5000", "-testactivationheight=csv@5000", "-testactivationheight=dip0001@5000", "-vbparams=v24:-2:0", "-vbparams=evo_shares:-2:0"}} {}
     void TestPackageSelection(const CScript& scriptPubKey, const std::vector<CTransactionRef>& txFirst) EXCLUSIVE_LOCKS_REQUIRED(::cs_main);
     void TestBasicMining(const CScript& scriptPubKey, const std::vector<CTransactionRef>& txFirst, int baseheight) EXCLUSIVE_LOCKS_REQUIRED(::cs_main);
     void TestPrioritisedMining(const CScript& scriptPubKey, const std::vector<CTransactionRef>& txFirst) EXCLUSIVE_LOCKS_REQUIRED(::cs_main);
@@ -240,7 +242,7 @@ void MinerTestingSetup::TestBasicMining(const CScript& scriptPubKey, const std::
     entry.nFee = 11;
     entry.nHeight = 11;
 
-    const CAmount BLOCKSUBSIDY = 500*COIN;
+    const CAmount BLOCKSUBSIDY = 500*COIN; // BTGS regtest: 625 - 20% dev fund = 500
     const CAmount LOWFEE = CENT;
     const CAmount HIGHFEE = COIN;
     const CAmount HIGHERFEE = 4 * COIN;

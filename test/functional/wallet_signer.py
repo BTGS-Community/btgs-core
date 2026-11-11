@@ -101,7 +101,7 @@ class WalletSignerTest(BitcoinTestFramework):
         assert_equal(hww.getwalletinfo()["keypoolsize"], 10)
 
         address3 = hww.getnewaddress()
-        assert_equal(address3, "yg8pCsowDbY7PbJMthTi4xkkmhNfcNNdHV")
+        assert_equal(address3, "tSjyQTwBzFWikxVEaF8ZmLDXb92QKJxg7K")
         address_info = hww.getaddressinfo(address3)
         assert_equal(address_info['solvable'], True)
         assert_equal(address_info['ismine'], True)

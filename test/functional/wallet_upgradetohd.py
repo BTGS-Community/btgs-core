@@ -234,9 +234,9 @@ class WalletUpgradeToHDTest(BitcoinTestFramework):
         self.log.info("Test upgradetohd with user defined mnemonic")
         custom_mnemonic = "similar behave slot swim scissors throw planet view ghost laugh drift calm"
         # this address belongs to custom mnemonic with no passphrase
-        custom_address_1 = "yLpq97zZUsFQ2rdMqhcPKkYT36MoPK4Hob"
+        custom_address_1 = "t7RzLi7pFXE1QDpEXFHF281DrY1Y6ncAvD"
         # this address belongs to custom mnemonic with passphrase "custom-passphrase"
-        custom_address_2 = "yYBPeZQcqgQHu9dxA5pKBWtYbK2hwfFHxf"
+        custom_address_2 = "tJnYr9XscLNuGWppqdVAstMKQkgSjbrXnY"
         node.sendtoaddress(custom_address_1, 11)
         node.sendtoaddress(custom_address_2, 12)
         self.generate(node, 1)

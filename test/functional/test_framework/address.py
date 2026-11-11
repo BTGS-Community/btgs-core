@@ -14,8 +14,8 @@ import unittest
 from .script import hash160, hash256, CScript
 
 # Note unlike in bitcoin, this address isn't bech32 since we don't (at this time) support bech32.
-ADDRESS_BCRT1_UNSPENDABLE = 'yVg3NBUHNEhgDceqwVUjsZHreC5PBHnUo9'
-ADDRESS_BCRT1_UNSPENDABLE_DESCRIPTOR = 'addr(yVg3NBUHNEhgDceqwVUjsZHreC5PBHnUo9)#e5kt0jtk'
+ADDRESS_BCRT1_UNSPENDABLE = 'tGHCZmbY8tgHayqid39bZvkdTdj7ub44mw'
+ADDRESS_BCRT1_UNSPENDABLE_DESCRIPTOR = 'addr(tGHCZmbY8tgHayqid39bZvkdTdj7ub44mw)#e5kt0jtk'
 ADDRESS_BCRT1_P2SH_OP_TRUE = '8zJctvfrzGZ5s1zQ3kagwyW1DsPYSQ4V2P'
 
 
@@ -68,12 +68,12 @@ def base58_to_byte(s):
 
 def keyhash_to_p2pkh(hash, main=False):
     assert len(hash) == 20
-    version = 76 if main else 140
+    version = 25 if main else 127  # BTGS: B / t
     return byte_to_base58(hash, version)
 
 def scripthash_to_p2sh(hash, main=False):
     assert len(hash) == 20
-    version = 16 if main else 19
+    version = 50 if main else 19  # BTGS: M / 8-9
     return byte_to_base58(hash, version)
 
 def key_to_p2pkh(key, main=False):

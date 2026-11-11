@@ -274,10 +274,10 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
         """Update self.options with the paths of all binaries from environment variables or their default values"""
 
         binaries = {
-            "dashd": ("bitcoind", "DASHD"),
-            "dash-cli": ("bitcoincli", "DASHCLI"),
-            "dash-util": ("bitcoinutil", "DASHUTIL"),
-            "dash-wallet": ("bitcoinwallet", "DASHWALLET"),
+            "btgsd": ("bitcoind", "BTGSD"),
+            "btgs-cli": ("bitcoincli", "BTGSCLI"),
+            "btgs-util": ("bitcoinutil", "BTGSUTIL"),
+            "btgs-wallet": ("bitcoinwallet", "BTGSWALLET"),
         }
         for binary, [attribute_name, env_variable_name] in binaries.items():
             default_filename = os.path.join(
@@ -555,9 +555,9 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
         if versions is None:
             versions = [None] * num_nodes
         if binary is None:
-            binary = [get_bin_from_version(v, 'dashd', self.options.bitcoind) for v in versions]
+            binary = [get_bin_from_version(v, 'btgsd', self.options.bitcoind) for v in versions]
         if binary_cli is None:
-            binary_cli = [get_bin_from_version(v, 'dash-cli', self.options.bitcoincli) for v in versions]
+            binary_cli = [get_bin_from_version(v, 'btgs-cli', self.options.bitcoincli) for v in versions]
         assert_equal(len(extra_confs), num_nodes)
         assert_equal(len(extra_args), num_nodes)
         assert_equal(len(versions), num_nodes)
@@ -646,7 +646,7 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
             if entry not in ['chainstate', 'blocks', 'indexes', 'evodb']:
                 os.remove(os.path.join(new_data_dir, self.chain, entry))
 
-        write_config(os.path.join(new_data_dir, "dash.conf"),
+        write_config(os.path.join(new_data_dir, "btgscore.conf"),
                      n=mnidx, chain=self.chain, disable_autoconnect=self.disable_autoconnect)
         self.append_dip3_config(new_data_dir)
 

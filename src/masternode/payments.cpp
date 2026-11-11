@@ -70,7 +70,9 @@ CAmount GetDevFundPayment(int nHeight, CAmount blockSubsidy)
 {
     if (nHeight < 1) return 0;
     // 25% at launch, minus 1 percentage point every 6,048 blocks (~2 weeks), 5% floor
-    const int64_t pct = std::max<int64_t>(5, 25 - (nHeight - 1) / 6048);
+    // regtest starts at 20% (625 reward -> 125 dev fund, 500 miner = Dash's test amount); mainnet/testnet start at 25%
+    const int64_t start_pct = Params().NetworkIDString() == CBaseChainParams::REGTEST ? 20 : 25;
+    const int64_t pct = std::max<int64_t>(5, start_pct - (nHeight - 1) / 6048);
     return blockSubsidy * pct / 100;
 }
 

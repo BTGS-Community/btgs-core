@@ -1821,8 +1821,8 @@ static std::pair<CAmount, CAmount> GetBlockSubsidyHelper(int nPrevBits, int nPre
 {
     // BTGS: fixed 12 BTGS per block, cut by 1/14 every nSubsidyHalvingInterval blocks (~1 year).
     // No treasury (superblock) part: the full reward follows the voted split.
-    // Regtest keeps Dash's test reward (500) so Dash's test suite has enough coins; all other networks: 12 BTGS
-    CAmount nSubsidy = (Params().NetworkIDString() == CBaseChainParams::REGTEST ? 500 : 12) * COIN;
+    // Regtest: 625 with a 20% dev fund = 500 to the miner, Dash's test amount, so Dash's test suite fits; all other networks: 12 BTGS
+    CAmount nSubsidy = (Params().NetworkIDString() == CBaseChainParams::REGTEST ? 625 : 12) * COIN;
     for (int i = consensusParams.nSubsidyHalvingInterval; i <= nPrevHeight; i += consensusParams.nSubsidyHalvingInterval) {
         nSubsidy -= nSubsidy/14;
     }

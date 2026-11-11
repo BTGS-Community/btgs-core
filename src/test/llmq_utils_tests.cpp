@@ -114,12 +114,12 @@ BOOST_AUTO_TEST_CASE(platform_recovered_sigs_persistence_and_expiry)
 
 BOOST_AUTO_TEST_CASE(trivially_passes) { BOOST_CHECK(true); }
 
-static CSigSesAnn MakeSigSesAnn(uint32_t session_id, uint32_t nonce, Consensus::LLMQType llmq_type = Consensus::LLMQType::LLMQ_50_60)
+static CSigSesAnn MakeSigSesAnn(uint32_t session_id, uint32_t nonce, Consensus::LLMQType llmq_type = Consensus::LLMQType::LLMQ_BTGS_15_67)
 {
     return CSigSesAnn{session_id, llmq_type, GetTestQuorumHash(1), GetTestQuorumHash(2), GetTestQuorumHash(nonce)};
 }
 
-static CSigShare MakeSigShare(uint32_t nonce, Consensus::LLMQType llmq_type = Consensus::LLMQType::LLMQ_50_60)
+static CSigShare MakeSigShare(uint32_t nonce, Consensus::LLMQType llmq_type = Consensus::LLMQType::LLMQ_BTGS_15_67)
 {
     CSigShare sig_share{llmq_type, GetTestQuorumHash(1), GetTestQuorumHash(2), GetTestQuorumHash(nonce), 1, CBLSLazySignature{}};
     sig_share.UpdateKey();
@@ -138,20 +138,20 @@ BOOST_AUTO_TEST_CASE(sig_ses_ann_respects_session_limit_but_allows_refresh)
     BOOST_CHECK(node_state.CanCreateSessionFromAnn(ann1, max_sessions));
     node_state.GetOrCreateSessionFromAnn(ann1);
     BOOST_CHECK_EQUAL(node_state.GetSessionCount(), 1U);
-    BOOST_CHECK_EQUAL(node_state.GetAnnouncementSessionCount(Consensus::LLMQType::LLMQ_50_60), 1U);
+    BOOST_CHECK_EQUAL(node_state.GetAnnouncementSessionCount(Consensus::LLMQType::LLMQ_BTGS_15_67), 1U);
 
     BOOST_CHECK(node_state.CanCreateSessionFromAnn(ann2, max_sessions));
     node_state.GetOrCreateSessionFromAnn(ann2);
     BOOST_CHECK_EQUAL(node_state.GetSessionCount(), max_sessions);
-    BOOST_CHECK_EQUAL(node_state.GetAnnouncementSessionCount(Consensus::LLMQType::LLMQ_50_60), max_sessions);
+    BOOST_CHECK_EQUAL(node_state.GetAnnouncementSessionCount(Consensus::LLMQType::LLMQ_BTGS_15_67), max_sessions);
 
     BOOST_CHECK(!node_state.CanCreateSessionFromAnn(ann3, max_sessions));
 
-    const CSigSesAnn ann1_refresh{4, Consensus::LLMQType::LLMQ_50_60, ann1.getQuorumHash(), ann1.getId(), ann1.getMsgHash()};
+    const CSigSesAnn ann1_refresh{4, Consensus::LLMQType::LLMQ_BTGS_15_67, ann1.getQuorumHash(), ann1.getId(), ann1.getMsgHash()};
     BOOST_CHECK(node_state.CanCreateSessionFromAnn(ann1_refresh, max_sessions));
     node_state.GetOrCreateSessionFromAnn(ann1_refresh);
     BOOST_CHECK_EQUAL(node_state.GetSessionCount(), max_sessions);
-    BOOST_CHECK_EQUAL(node_state.GetAnnouncementSessionCount(Consensus::LLMQType::LLMQ_50_60), max_sessions);
+    BOOST_CHECK_EQUAL(node_state.GetAnnouncementSessionCount(Consensus::LLMQType::LLMQ_BTGS_15_67), max_sessions);
 }
 
 BOOST_AUTO_TEST_CASE(sig_ses_ann_limit_ignores_send_only_sessions)
@@ -163,13 +163,13 @@ BOOST_AUTO_TEST_CASE(sig_ses_ann_limit_ignores_send_only_sessions)
     const CSigSesAnn ann{MakeSigSesAnn(1, 2)};
 
     node_state.GetOrCreateSessionFromShare(sig_share);
-    BOOST_CHECK_EQUAL(node_state.GetSessionCount(Consensus::LLMQType::LLMQ_50_60), 1U);
-    BOOST_CHECK_EQUAL(node_state.GetAnnouncementSessionCount(Consensus::LLMQType::LLMQ_50_60), 0U);
+    BOOST_CHECK_EQUAL(node_state.GetSessionCount(Consensus::LLMQType::LLMQ_BTGS_15_67), 1U);
+    BOOST_CHECK_EQUAL(node_state.GetAnnouncementSessionCount(Consensus::LLMQType::LLMQ_BTGS_15_67), 0U);
 
     BOOST_CHECK(node_state.CanCreateSessionFromAnn(ann, max_sessions));
     node_state.GetOrCreateSessionFromAnn(ann);
-    BOOST_CHECK_EQUAL(node_state.GetSessionCount(Consensus::LLMQType::LLMQ_50_60), 2U);
-    BOOST_CHECK_EQUAL(node_state.GetAnnouncementSessionCount(Consensus::LLMQType::LLMQ_50_60), 1U);
+    BOOST_CHECK_EQUAL(node_state.GetSessionCount(Consensus::LLMQType::LLMQ_BTGS_15_67), 2U);
+    BOOST_CHECK_EQUAL(node_state.GetAnnouncementSessionCount(Consensus::LLMQType::LLMQ_BTGS_15_67), 1U);
 }
 
 BOOST_AUTO_TEST_CASE(sig_ses_ann_limit_is_per_llmq_type)
@@ -179,18 +179,18 @@ BOOST_AUTO_TEST_CASE(sig_ses_ann_limit_is_per_llmq_type)
     constexpr size_t max_sessions{1};
     const CSigSesAnn ann1{MakeSigSesAnn(1, 1)};
     const CSigSesAnn ann2{MakeSigSesAnn(2, 2)};
-    const CSigSesAnn other_type_ann{MakeSigSesAnn(3, 3, Consensus::LLMQType::LLMQ_400_60)};
+    const CSigSesAnn other_type_ann{MakeSigSesAnn(3, 3, Consensus::LLMQType::LLMQ_BTGS_12_67)};
 
     BOOST_CHECK(node_state.CanCreateSessionFromAnn(ann1, max_sessions));
     node_state.GetOrCreateSessionFromAnn(ann1);
     BOOST_CHECK_EQUAL(node_state.GetSessionCount(), 1U);
-    BOOST_CHECK_EQUAL(node_state.GetSessionCount(Consensus::LLMQType::LLMQ_50_60), 1U);
+    BOOST_CHECK_EQUAL(node_state.GetSessionCount(Consensus::LLMQType::LLMQ_BTGS_15_67), 1U);
 
     BOOST_CHECK(!node_state.CanCreateSessionFromAnn(ann2, max_sessions));
     BOOST_CHECK(node_state.CanCreateSessionFromAnn(other_type_ann, max_sessions));
     node_state.GetOrCreateSessionFromAnn(other_type_ann);
     BOOST_CHECK_EQUAL(node_state.GetSessionCount(), 2U);
-    BOOST_CHECK_EQUAL(node_state.GetSessionCount(Consensus::LLMQType::LLMQ_400_60), 1U);
+    BOOST_CHECK_EQUAL(node_state.GetSessionCount(Consensus::LLMQType::LLMQ_BTGS_12_67), 1U);
 }
 
 BOOST_AUTO_TEST_CASE(sig_share_map_size_tracks_mutations)
@@ -228,7 +228,7 @@ BOOST_AUTO_TEST_CASE(sig_share_map_bucket_erase_updates_size)
     const auto sign_hash = MakeSigShare(1).GetSignHash();
 
     for (uint16_t member = 0; member < 5; ++member) {
-        CSigShare s{Consensus::LLMQType::LLMQ_50_60, GetTestQuorumHash(1), GetTestQuorumHash(2), GetTestQuorumHash(1),
+        CSigShare s{Consensus::LLMQType::LLMQ_BTGS_15_67, GetTestQuorumHash(1), GetTestQuorumHash(2), GetTestQuorumHash(1),
                     member, CBLSLazySignature{}};
         s.UpdateKey();
         BOOST_CHECK_EQUAL(s.GetSignHash(), sign_hash);

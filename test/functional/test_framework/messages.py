@@ -30,7 +30,6 @@ import unittest
 from test_framework.crypto.siphash import siphash256
 from test_framework.util import assert_equal
 
-import dash_hash # type: ignore[import]
 
 MAX_LOCATOR_SZ = 101
 MAX_BASE_BLOCK_HASHES = 4096
@@ -39,7 +38,7 @@ MAX_BLOOM_FILTER_SIZE = 36000
 MAX_BLOOM_HASH_FUNCS = 50
 
 COIN = 100000000  # 1 btc in satoshis
-MAX_MONEY = 21000000 * COIN
+MAX_MONEY = 30000000 * COIN  # BTGS
 
 BIP125_SEQUENCE_NUMBER = 0xfffffffd  # Sequence number that is BIP 125 opt-in and BIP 68-opt-out -- not used in DASH
 SEQUENCE_FINAL = 0xffffffff  # Sequence number that disables nLockTime if set for every input of a tx
@@ -76,9 +75,9 @@ MAX_OP_RETURN_RELAY = 83
 DEFAULT_MEMPOOL_EXPIRY_HOURS = 336  # hours
 
 MAGIC_BYTES = {
-    "mainnet": b"\xbf\x0c\x6b\xbd",   # mainnet
-    "testnet3": b"\xce\xe2\xca\xff",  # testnet3
-    "regtest": b"\xfc\xc1\xb7\xdc",   # regtest
+    "mainnet": b"\xce\x99\xa8\xd1",   # mainnet (BTGS)
+    "testnet3": b"\xad\x9f\x8b\xe1",  # testnet3 (BTGS)
+    "regtest": b"\x87\xba\xde\xf7",   # regtest (BTGS)
     "devnet": b"\xe2\xca\xff\xce",    # devnet
 }
 
@@ -94,7 +93,8 @@ def hash256(s):
     return sha256(sha256(s))
 
 def dashhash(s):
-    return dash_hash.getPoWHash(s)
+    # BTGS: proof of work and block hash are SHA-256d
+    return hash256(s)
 
 def ser_compact_size(l):
     r = b""
@@ -589,7 +589,7 @@ class CTransaction:
     def is_valid(self):
         self.calc_sha256()
         for tout in self.vout:
-            if tout.nValue < 0 or tout.nValue > 21000000 * COIN:
+            if tout.nValue < 0 or tout.nValue > MAX_MONEY:
                 return False
         return True
 

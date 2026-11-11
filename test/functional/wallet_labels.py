@@ -96,7 +96,7 @@ class WalletLabelsTest(BitcoinTestFramework):
             linked_addresses.add(address_group[0][0])
 
         # send 500 from each address to a third address not in this wallet
-        common_address = "yd5KMREs3GLMe6mTJYr3YrH1juwNwrFCfB"
+        common_address = "tPgUZ1N7ovJy1TxKz6WuFDjnZMb7kG4uo6"
         node.sendmany(
             amounts={common_address: 1000},
             minconf=1,
@@ -194,8 +194,8 @@ class WalletLabelsTest(BitcoinTestFramework):
         node.createwallet(wallet_name='watch_only', disable_private_keys=True)
         wallet_watch_only = node.get_wallet_rpc('watch_only')
         VALID = {
-            '✔️_a1': 'yMNJePdcKvXtWWQnFYHNeJ5u8TF2v1dfK4',
-            '✔️_a2': 'yeMpGzMj3rhtnz48XsfpB8itPHhHtgxLc3',
+            '✔️_a1': 't7yTqyks6aWVssbew5xELfYfwttmbk8bpJ',
+            '✔️_a2': 'tQxyUaUypWgWAMF1DRLfsWBfCjM2gNx8GE',
             '✔️_a3': '93bVhahvUKmQu8gu9g3QnPPa2cxFK98pMB',
         }
         INVALID = {

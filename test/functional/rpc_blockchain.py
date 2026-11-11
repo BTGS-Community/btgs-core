@@ -364,11 +364,11 @@ class BlockchainTest(BitcoinTestFramework):
         node = self.nodes[0]
         res = node.gettxoutsetinfo()
 
-        assert_equal(res['total_amount'], Decimal('98214.28571450'))
+        assert_equal(res['total_amount'], Decimal('122767.85714300'))  # BTGS: 625 reward incl. dev fund
         assert_equal(res['transactions'], HEIGHT)
         assert_equal(res['height'], HEIGHT)
-        assert_equal(res['txouts'], HEIGHT)
-        assert_equal(res['bogosize'], 14600),
+        assert_equal(res['txouts'], 2 * HEIGHT)  # BTGS: miner + dev fund output
+        assert_equal(res['bogosize'], 14600 + HEIGHT * 75),  # BTGS: + dev fund outputs (50 + 25-byte script)
         size = res['disk_size']
         assert size > 6400
         assert size < 64000

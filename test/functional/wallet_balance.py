@@ -120,9 +120,9 @@ class WalletTest(BitcoinTestFramework):
 
         self.log.info("Test listaddressbalances")
         address_balances = {}
-        address_balances['yYdShjQSptFKitYLksFEUSwHe4hnbar5rf'] = Decimal('500.00000000')
+        address_balances['tKEbuKXhbYDw6FjDSQv6ApQ4TWMXHng3kX'] = Decimal('500.00000000')
         if not self.options.descriptors:
-            address_balances['yVg3NBUHNEhgDceqwVUjsZHreC5PBHnUo9'] = Decimal('500.00000000')
+            address_balances['tGHCZmbY8tgHayqid39bZvkdTdj7ub44mw'] = Decimal('500.00000000')
         assert_equal(address_balances, self.nodes[0].listaddressbalances())
         assert_equal(address_balances, self.nodes[0].listaddressbalances(500))
         assert_equal({}, self.nodes[0].listaddressbalances(501))

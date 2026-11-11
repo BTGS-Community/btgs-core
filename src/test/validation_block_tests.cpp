@@ -17,6 +17,7 @@
 #include <test/util/setup_common.h>
 #include <util/time.h>
 #include <validation.h>
+#include <masternode/payments.h>
 #include <validationinterface.h>
 
 #include <thread>
@@ -82,6 +83,15 @@ std::shared_ptr<CBlock> MinerTestingSetup::Block(const uint256& prev_hash)
     txCoinbase.vout[1].scriptPubKey = P2SH_OP_TRUE;
     txCoinbase.vout[1].nValue = txCoinbase.vout[0].nValue;
     txCoinbase.vout[0].nValue = 0;
+    {
+        // BTGS: the template was made for the current tip; this block may sit at another height (reorg branch),
+        // so use the reward and dev fund of its real height
+        const int height = WITH_LOCK(::cs_main, return m_node.chainman->m_blockman.LookupBlockIndex(prev_hash)->nHeight + 1);
+        const CAmount subsidy = GetBlockSubsidyInner(0, height - 1, Params().GetConsensus(), true);
+        const CAmount dev = GetDevFundPayment(height, subsidy);
+        txCoinbase.vout[1].nValue = subsidy - dev;
+        if (dev > 0) txCoinbase.vout.emplace_back(dev, GetDevFundScript());
+    }
     // Always pad with OP_0 at the end to avoid bad-cb-length error
     txCoinbase.vin[0].scriptSig = CScript{} << WITH_LOCK(::cs_main, return m_node.chainman->m_blockman.LookupBlockIndex(prev_hash)->nHeight + 1) << OP_0;
     pblock->vtx[0] = MakeTransactionRef(std::move(txCoinbase));

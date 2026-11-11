@@ -30,10 +30,35 @@ from .script import (
 )
 from .script_util import (
     key_to_p2pk_script,
+    keyhash_to_p2pkh_script,
 )
 from .util import assert_equal
 
 MAX_BLOCK_SIGOPS = 40000
+
+# BTGS: regtest reward rules (see GetBlockSubsidyHelper / GetDevFundPayment in C++)
+BTGS_REGTEST_SUBSIDY_INTERVAL = 150
+# regtest dev fund address tVkDMN8j3kdq5JHAa2twBjBoXt7KFXfL3x
+BTGS_REGTEST_DEVFUND_SCRIPT = keyhash_to_p2pkh_script(bytes.fromhex("fa53c9728c3189b12b267be5811b54033525b08d"))
+BTGS_REGTEST_DEVFUND_ADDRESS = "tVkDMN8j3kdq5JHAa2twBjBoXt7KFXfL3x"
+
+def get_block_subsidy(height):
+    """BTGS regtest block reward in satoshis: 625 (20% dev fund -> 500 miner, Dash's test amount; mainnet is 12), cut by 1/14 every 150 blocks"""
+    subsidy = 625 * COIN
+    i = BTGS_REGTEST_SUBSIDY_INTERVAL
+    while i <= height - 1:
+        subsidy -= subsidy // 14
+        i += BTGS_REGTEST_SUBSIDY_INTERVAL
+    return subsidy
+
+def get_dev_fund_payment(height, subsidy=None):
+    """BTGS dev fund in satoshis: 25% at launch, -1 point every 6,048 blocks, 5% floor"""
+    if height < 1:
+        return 0
+    if subsidy is None:
+        subsidy = get_block_subsidy(height)
+    pct = max(5, 20 - (height - 1) // 6048)  # regtest starts at 20% (mainnet/testnet 25%)
+    return subsidy * pct // 100
 
 # Genesis block time (regtest)
 TIME_GENESIS_BLOCK = 1417713337
@@ -127,8 +152,12 @@ def create_block_with_mnpayments(mninfo, node, vtx=None, mn_payee=None, mn_amoun
         mn_amount = mn_amount_total - mn_operator_amount
     miner_amount = coinbasevalue - mn_amount - mn_operator_amount
 
+    dev_fund = get_dev_fund_payment(height)
+    miner_amount -= dev_fund
     miner_address = node.get_deterministic_priv_key().address
     outputs = {miner_address: str(Decimal(miner_amount) / COIN)}
+    if dev_fund > 0:
+        outputs[BTGS_REGTEST_DEVFUND_ADDRESS] = str(Decimal(dev_fund) / COIN)
     if mn_amount > 0:
         outputs[mn_payee] = str(Decimal(mn_amount) / COIN)
     if mn_operator_amount > 0:
@@ -172,7 +201,7 @@ def script_BIP34_coinbase_height(height):
     return CScript([CScriptNum(height)])
 
 
-def create_coinbase(height, pubkey=None, *, script_pubkey=None, dip4_activated=False, v20_activated=False, nValue=500):
+def create_coinbase(height, pubkey=None, *, script_pubkey=None, dip4_activated=False, v20_activated=False, nValue=None):
     """Create a coinbase transaction, assuming no miner fees.
 
     If pubkey is passed in, the coinbase output will be a P2PK output;
@@ -180,10 +209,11 @@ def create_coinbase(height, pubkey=None, *, script_pubkey=None, dip4_activated=F
     coinbase = CTransaction()
     coinbase.vin.append(CTxIn(COutPoint(0, 0xffffffff), script_BIP34_coinbase_height(height), SEQUENCE_FINAL))
     coinbaseoutput = CTxOut()
-    coinbaseoutput.nValue = nValue * COIN
-    if nValue == 500:
-        halvings = int(height / 150)  # regtest
-        coinbaseoutput.nValue >>= halvings
+    dev_fund = get_dev_fund_payment(height)
+    if nValue is None:
+        coinbaseoutput.nValue = get_block_subsidy(height) - dev_fund  # BTGS: reward minus dev fund
+    else:
+        coinbaseoutput.nValue = int(nValue * COIN)
     if (pubkey is not None):
         coinbaseoutput.scriptPubKey = key_to_p2pk_script(pubkey)
     elif script_pubkey is not None:
@@ -191,6 +221,8 @@ def create_coinbase(height, pubkey=None, *, script_pubkey=None, dip4_activated=F
     else:
         coinbaseoutput.scriptPubKey = CScript([OP_TRUE])
     coinbase.vout = [coinbaseoutput]
+    if dev_fund > 0:
+        coinbase.vout.append(CTxOut(dev_fund, BTGS_REGTEST_DEVFUND_SCRIPT))  # BTGS: dev fund
     if dip4_activated:
         coinbase.nVersion = 3
         coinbase.nType = 5
@@ -239,79 +271,10 @@ def filter_tip_keys(chaintips):
         filtered_tips.append({k: tip[k] for k in check_keys})
     return filtered_tips
 
-# Identical to GetMasternodePayment in C++ code
-# TODO: remove it or make **proper** tests for various height
+# Identical to GetMasternodePayment in C++ code (BTGS)
 def get_masternode_payment(nHeight, blockValue, fV20Active):
-    ret = int(blockValue / 5)
-
-    nMNPIBlock = 350
-    nMNPIPeriod = 10
-    nReallocActivationHeight = 1
-
-    if nHeight > nMNPIBlock:
-        ret += int(blockValue / 20)
-    if nHeight > nMNPIBlock+(nMNPIPeriod* 1):
-        ret += int(blockValue / 20)
-    if nHeight > nMNPIBlock+(nMNPIPeriod* 2):
-        ret += int(blockValue / 20)
-    if nHeight > nMNPIBlock+(nMNPIPeriod* 3):
-        ret += int(blockValue / 40)
-    if nHeight > nMNPIBlock+(nMNPIPeriod* 4):
-        ret += int(blockValue / 40)
-    if nHeight > nMNPIBlock+(nMNPIPeriod* 5):
-        ret += int(blockValue / 40)
-    if nHeight > nMNPIBlock+(nMNPIPeriod* 6):
-        ret += int(blockValue / 40)
-    if nHeight > nMNPIBlock+(nMNPIPeriod* 7):
-        ret += int(blockValue / 40)
-    if nHeight > nMNPIBlock+(nMNPIPeriod* 9):
-        ret += int(blockValue / 40)
-
-    if nHeight < nReallocActivationHeight:
-        # Block Reward Realocation is not activated yet, nothing to do
-        return ret
-
-    nSuperblockCycle = 20
-    # Actual realocation starts in the cycle next to one activation happens in
-    nReallocStart = nReallocActivationHeight - nReallocActivationHeight % nSuperblockCycle + nSuperblockCycle
-
-    if nHeight < nReallocStart:
-        # Activated but we have to wait for the next cycle to start realocation, nothing to do
-        return ret
-
-    if fV20Active:
-        # Once MNRewardReallocated activates, block reward is 80% of block subsidy (+ tx fees) since treasury is 20%
-        # Since the MN reward needs to be equal to 60% of the block subsidy (according to the proposal), MN reward is set to 75% of the block reward.
-        # Previous reallocation periods are dropped.
-        return blockValue * 3 // 4
-
-    # Periods used to reallocate the masternode reward from 50% to 60%
-    vecPeriods = [
-        513, # Period 1:  51.3%
-        526, # Period 2:  52.6%
-        533, # Period 3:  53.3%
-        540, # Period 4:  54%
-        546, # Period 5:  54.6%
-        552, # Period 6:  55.2%
-        557, # Period 7:  55.7%
-        562, # Period 8:  56.2%
-        567, # Period 9:  56.7%
-        572, # Period 10: 57.2%
-        577, # Period 11: 57.7%
-        582, # Period 12: 58.2%
-        585, # Period 13: 58.5%
-        588, # Period 14: 58.8%
-        591, # Period 15: 59.1%
-        594, # Period 16: 59.4%
-        597, # Period 17: 59.7%
-        599, # Period 18: 59.9%
-        600  # Period 19: 60%
-    ]
-
-    nReallocCycle = nSuperblockCycle * 3
-    nCurrentPeriod = min(int((nHeight - nReallocStart) / nReallocCycle), len(vecPeriods) - 1)
-
-    return int(blockValue * vecPeriods[nCurrentPeriod] / 1000)
+    """blockValue = block reward + fees; smartnodes get 70% of what is left after the dev fund"""
+    return (blockValue - get_dev_fund_payment(nHeight)) * 7 // 10
 
 class TestFrameworkBlockTools(unittest.TestCase):
     def test_create_coinbase(self):

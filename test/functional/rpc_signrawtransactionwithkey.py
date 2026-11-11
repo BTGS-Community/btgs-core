@@ -37,7 +37,7 @@ class SignRawTransactionWithKeyTest(BitcoinTestFramework):
              'scriptPubKey': '76a914669b857c03a5ed269d5d85a1ffac9ed5d663072788ac'},
         ]
 
-        outputs = {'ycwedq2f3sz2Yf9JqZsBCQPxp18WU3Hp4J': 0.1}
+        outputs = {'tPYoqR9upXxdv2LBX7Y2tmrjdSnFF2MsGL': 0.1}
 
         rawTx = self.nodes[0].createrawtransaction(inputs, outputs)
         rawTxSigned = self.nodes[0].signrawtransactionwithkey(rawTx, privKeys, inputs)

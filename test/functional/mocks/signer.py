@@ -45,7 +45,7 @@ def displayaddress(args):
     if args.desc not in expected_desc:
         return sys.stdout.write(json.dumps({"error": "Unexpected descriptor", "desc": args.desc}))
 
-    return sys.stdout.write(json.dumps({"address": "yg8pCsowDbY7PbJMthTi4xkkmhNfcNNdHV"}))
+    return sys.stdout.write(json.dumps({"address": "tSjyQTwBzFWikxVEaF8ZmLDXb92QKJxg7K"}))
 
 def signtx(args):
     if args.fingerprint != "00000001":

@@ -228,7 +228,7 @@ void FuncDIP3Activation(TestChainSetup& setup)
     auto utxos = BuildSimpleUtxoMap(setup.m_coinbase_txns);
     CKey ownerKey;
     CBLSSecretKey operatorKey;
-    CTxDestination payoutDest = DecodeDestination("yRq1Ky1AfFmf597rnotj7QRxsDUKePVWNF");
+    CTxDestination payoutDest = DecodeDestination("tCSAXZ8RRukGSWJjUMZaomtjgf84Tfeuye");
     auto tx = CreateProRegTx(chainman, utxos, 1, GetScriptForDestination(payoutDest), setup.coinbaseKey, ownerKey, operatorKey);
     std::vector<CMutableTransaction> txns = {tx};
 

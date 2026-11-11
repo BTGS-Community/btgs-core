@@ -474,17 +474,17 @@ TestChainSetup::TestChainSetup(
     CCheckpointData checkpoints{
         {
             /*TestChainDATSetup=*/
-            {   98, uint256S("0x150e127929d578d8129b77a6cb7e2e343a1379aa3feaaa9cce59e0a645756a81") },
+            {   98, uint256S("0x52e74219715871eb9bfb92da245bd8b26753dbc090198feadbbf2fa1bb77680c") },
             /*TestChain100Setup=*/
-            {  100, uint256S("0x6ffb83129c19ebdf1ae3771be6a67fe34b35f4c956326b9ba152fac1649f65ae") },
+            {  100, uint256S("0x3bd6c09384dc39515dafa85194fe1fe24aa14b152cfc283dd18792ffe09f09a0") },
             /*TestChainV19BeforeActivationSetup=*/
-            {  103, uint256S("0x13adad9565d0ca558f5675c50e3828f4354d26b64de044ebc88686056f30faab") },
+            {  103, uint256S("0x2cb9e10433d97b5c8fd9072e557cb8cc5ecb4b3b594867f5652563a1535aca68") },
             /*TestChainDIP3BeforeActivationSetup=*/
-            {  107, uint256S("0x40233e79ab24bc7c3e5686ac2b63915e15e1b1deecc3d0919f7ec32a9433fdfb") },
+            {  107, uint256S("0x54e5c7ee04bad3f794257874b85ba23773ed0e68d830460aa883c781b1e222c1") },
             /*TestChainDIP3BeforeActivationSetup=*/
             {  430, uint256S("0x0bcefaa33fec56cd84d05d0e76cd6a78badcc20f627d91903646de6a07930a14") },
             /*TestChainV24SignalBeforeV19Setup=*/
-            {  494, uint256S("0x160b1ba2e583f9a99bd78ce2ba57da623ceab7ce7153bfad1df31089186602ac") },
+            {  494, uint256S("0x351065ab24fceae50fdfe4102bfb2b629880f8088436e616284ca061a4f1fea0") },
             /*TestChainBRRBeforeActivationSetup=*/
             {  497, uint256S("0x0857a9b5db51835b1c828f019f4c664b5fe6c28ac44a6d868436930f832d31e5") },
         }
@@ -493,10 +493,9 @@ TestChainSetup::TestChainSetup(
     {
         LOCK(::cs_main);
         auto hash = checkpoints.mapCheckpoints.find(num_blocks);
-        // BTGS-TEMP: print instead of assert, to collect the BTGS test chain hashes
-        if (hash == checkpoints.mapCheckpoints.end() || m_node.chainman->ActiveChain().Tip()->GetBlockHash() != hash->second) {
-            tfm::format(std::cerr, "BTGS-CHECKPOINT %d %s\n", num_blocks, m_node.chainman->ActiveChain().Tip()->GetBlockHash().ToString());
-        }
+        assert(
+            hash != checkpoints.mapCheckpoints.end() &&
+            m_node.chainman->ActiveChain().Tip()->GetBlockHash() == hash->second);
     }
 }
 

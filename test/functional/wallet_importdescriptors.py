@@ -189,7 +189,7 @@ class ImportDescriptorsTest(BitcoinTestFramework):
         # # Test ranged descriptors
         xpriv = "tprv8ZgxMBicQKsPeuVhWwi6wuMQGfPKi9Li5GtX35jVNknACgqe3CY4g5xgkfDDJcmtF7o1QnxWDRYw4H5P26PXq7sbcUkEqeR4fg3Kxp2tigg"
         xpub = "tpubDAXcJ7s7ZwicqjprRaEWdPoHKrCS215qxGYxpusRLLmJuT69ZSicuGdSfyvyKpvUNYBW1s2U3NSrT6vrCYB9e6nZUEvrqnwXPF8ArTCRXMY"
-        addresses = ["yUxX4qnzWntXhEGrYB92v7ez4EZBnUjB1y", "yRhTPsPd2qYgYbFFCqY2nuPHJQBjTnMQxg"] # hdkeypath=m/0'/0'/0' and 1'
+        addresses = ["tFZgGRvFHSs94bTjDiotcV7ksgCvbGZ7eA", "tCJcbTWsoVXHuxS7tPCtVGr47qqU9izZDB"] # hdkeypath=m/0'/0'/0' and 1'
         desc = "sh(pkh(" + xpub + "/0/0/*" + "))"
 
         self.log.info("Ranged descriptors cannot have labels")
@@ -294,11 +294,11 @@ class ImportDescriptorsTest(BitcoinTestFramework):
         self.log.info('Key ranges should be imported in order')
         xpub = "tpubDAXcJ7s7ZwicqjprRaEWdPoHKrCS215qxGYxpusRLLmJuT69ZSicuGdSfyvyKpvUNYBW1s2U3NSrT6vrCYB9e6nZUEvrqnwXPF8ArTCRXMY"
         addresses = [
-            'yUxX4qnzWntXhEGrYB92v7ez4EZBnUjB1y', # m/0'/0'/0
-            'yRhTPsPd2qYgYbFFCqY2nuPHJQBjTnMQxg', # m/0'/0'/1
-            'yUyn3UV9rBdWfw6yJJ6eAoKuzDJ8RVLP1o', # m/0'/0'/2
-            'yi8GEkfLBgK85wGmBFsMFdSbEvPPNCSnVx', # m/0'/0'/3
-            'yYB4whdY8APWoCez6ryNdMBrrDjwzFbqMi', # m/0'/0'/4
+            'tFZgGRvFHSs94bTjDiotcV7ksgCvbGZ7eA', # m/0'/0'/0
+            'tCJcbTWsoVXHuxS7tPCtVGr47qqU9izZDB', # m/0'/0'/1
+            'tFawF4cQcqc83JHqyqmVsAngoewsD1KYFd', # m/0'/0'/2
+            'tUjRSLnaxLHjTJTdroYCwzuN4N386yR8SZ', # m/0'/0'/3
+            'tJnE9HkntpN8AZqrnQeEKiedffPgqmFdqc', # m/0'/0'/4
         ]
 
         self.test_importdesc({'desc': descsum_create('pkh([12345678/0h/0h]' + xpub + '/*)'),
@@ -352,7 +352,7 @@ class ImportDescriptorsTest(BitcoinTestFramework):
                               },
                              success=True)
         address = w1.getrawchangeaddress()
-        assert_equal(address, "yUxX4qnzWntXhEGrYB92v7ez4EZBnUjB1y")
+        assert_equal(address, "tFZgGRvFHSs94bTjDiotcV7ksgCvbGZ7eA")
 
         self.log.info('Check can deactivate active descriptor')
         self.test_importdesc({'desc': descsum_create('pkh([12345678]' + xpub + '/*)'),
@@ -371,7 +371,7 @@ class ImportDescriptorsTest(BitcoinTestFramework):
 
         # # Test importing a descriptor containing a WIF private key
         wif_priv = "cTT3BvHnd51YJf8fkdr2XvZTQRRUZruWhRvRyQY1raVFg5Lvam2A"
-        address = "ySWABbcNKyHUgBb1ffhpuETuis9jsdR3aq"
+        address = "tD7KPBjd6dG63YmtMDNgbbvgYJoUb1pTLq"
         desc = "pkh(" + wif_priv + ")"
         self.log.info("Should import a descriptor with a WIF private key as spendable")
         self.test_importdesc({"desc": descsum_create(desc),

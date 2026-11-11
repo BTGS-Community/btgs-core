@@ -182,10 +182,10 @@ BOOST_AUTO_TEST_CASE(rpc_rawsign)
       "\"vout\":1,\"scriptPubKey\":\"a914b10c9df5f7edf436c697f02f1efdba4cf399615187\","
       "\"redeemScript\":\"512103debedc17b3df2badbcdd86d5feb4562b86fe182e5998abd8bcd4f122c6155b1b21027e940bb73ab8732bfdf7f9216ecefca5b94d6df834e77e108f68e66f126044c052ae\"}]";
     r = CallRPC(std::string("createrawtransaction ")+prevout+" "+
-      "{\"7iYoULd4BAqRsRt1UbD5qqna88JvKRU3SL\":11}");
+      "{\"MQ3Jx2krKJbDgAcxJrXvL73KXH4zVf8mWg\":11}");
     std::string notsigned = r.get_str();
-    std::string privkey1 = "\"XEwTRsCX3CiWSQf8YmKMTeb84KyTbibkUv9mDTZHQ5MwuKG2ZzES\"";
-    std::string privkey2 = "\"XDmZ7LjGd94Q81eUBjb2h6uV5Y14s7fmeXWEGYabfBJP8RVpprBu\"";
+    std::string privkey1 = "\"PhNJGdpe7MzVk1yxLuBormmHNAjC2NmgBPP7gHtTMfveYS9D3VRV\"";
+    std::string privkey2 = "\"PgCPx7MPhJLPRcyHysTV6E5ePNkoHmqhLzjajNumcms5mYJySduV\"";
     r = CallRPC(std::string("signrawtransactionwithkey ")+notsigned+" [] "+prevout);
     BOOST_CHECK(r.get_obj().find_value("complete").get_bool() == false);
     r = CallRPC(std::string("signrawtransactionwithkey ")+notsigned+" ["+privkey1+","+privkey2+"] "+prevout);
@@ -388,22 +388,22 @@ BOOST_AUTO_TEST_CASE(rpc_convert_values_generatetoaddress)
 {
     UniValue result;
 
-    BOOST_CHECK_NO_THROW(result = RPCConvertValues("generatetoaddress", {"101", "yhq7ifNCtTKEpY4Yu5XPCcztQco6Fh6JsZ"}));
+    BOOST_CHECK_NO_THROW(result = RPCConvertValues("generatetoaddress", {"101", "tUSGvFVTf7HrBuFRadCEtzTfE4SpzTss8H"}));
     BOOST_CHECK_EQUAL(result[0].getInt<int>(), 101);
-    BOOST_CHECK_EQUAL(result[1].get_str(), "yhq7ifNCtTKEpY4Yu5XPCcztQco6Fh6JsZ");
+    BOOST_CHECK_EQUAL(result[1].get_str(), "tUSGvFVTf7HrBuFRadCEtzTfE4SpzTss8H");
 
-    BOOST_CHECK_NO_THROW(result = RPCConvertValues("generatetoaddress", {"101", "yTretFTpoi3oQ3maZk5QadGaDWPiKnmDBc"}));
+    BOOST_CHECK_NO_THROW(result = RPCConvertValues("generatetoaddress", {"101", "tETp5qb5aN2QmQxTFHkGGzjM2x3T2ryw6v"}));
     BOOST_CHECK_EQUAL(result[0].getInt<int>(), 101);
-    BOOST_CHECK_EQUAL(result[1].get_str(), "yTretFTpoi3oQ3maZk5QadGaDWPiKnmDBc");
+    BOOST_CHECK_EQUAL(result[1].get_str(), "tETp5qb5aN2QmQxTFHkGGzjM2x3T2ryw6v");
 
-    BOOST_CHECK_NO_THROW(result = RPCConvertValues("generatetoaddress", {"1", "yNbNZyCiTYSFtDwEXt7jChV7tZVYX862ua", "9"}));
+    BOOST_CHECK_NO_THROW(result = RPCConvertValues("generatetoaddress", {"1", "t9CXmZKyECQsFb87DRnau4wti19HHE4Zgv", "9"}));
     BOOST_CHECK_EQUAL(result[0].getInt<int>(), 1);
-    BOOST_CHECK_EQUAL(result[1].get_str(), "yNbNZyCiTYSFtDwEXt7jChV7tZVYX862ua");
+    BOOST_CHECK_EQUAL(result[1].get_str(), "t9CXmZKyECQsFb87DRnau4wti19HHE4Zgv");
     BOOST_CHECK_EQUAL(result[2].getInt<int>(), 9);
 
-    BOOST_CHECK_NO_THROW(result = RPCConvertValues("generatetoaddress", {"1", "yTG8jLL3MvteKXgbEcHyaN7JvTPCejQpSh", "9"}));
+    BOOST_CHECK_NO_THROW(result = RPCConvertValues("generatetoaddress", {"1", "tDsHvvTJ8asFgtsTv9xqGja5ju2wQcc5ki", "9"}));
     BOOST_CHECK_EQUAL(result[0].getInt<int>(), 1);
-    BOOST_CHECK_EQUAL(result[1].get_str(), "yTG8jLL3MvteKXgbEcHyaN7JvTPCejQpSh");
+    BOOST_CHECK_EQUAL(result[1].get_str(), "tDsHvvTJ8asFgtsTv9xqGja5ju2wQcc5ki");
     BOOST_CHECK_EQUAL(result[2].getInt<int>(), 9);
 }
 #endif // ENABLE_MINER
@@ -578,7 +578,7 @@ BOOST_AUTO_TEST_CASE(rpc_convert_composite_commands)
         "6fe28c0ab6f1b372c1a6a246ae63f74f931e8365e15a089c68d6190000000000",
         "1",
         "[\"1.1.1.1:19999\",\"1.0.0.1:19999\"]",
-        "yhq7ifNCtTKEpY4Yu5XPCcztQco6Fh6JsZ"
+        "tUSGvFVTf7HrBuFRadCEtzTfE4SpzTss8H"
     }));
 
     BOOST_CHECK_EQUAL(result[0].get_str(), "register_prepare");
@@ -588,7 +588,7 @@ BOOST_AUTO_TEST_CASE(rpc_convert_composite_commands)
     BOOST_CHECK_EQUAL(result[3].size(), 2);
     BOOST_CHECK_EQUAL(result[3][0].get_str(), "1.1.1.1:19999");
     BOOST_CHECK_EQUAL(result[3][1].get_str(), "1.0.0.1:19999");
-    BOOST_CHECK_EQUAL(result[4].get_str(), "yhq7ifNCtTKEpY4Yu5XPCcztQco6Fh6JsZ");
+    BOOST_CHECK_EQUAL(result[4].get_str(), "tUSGvFVTf7HrBuFRadCEtzTfE4SpzTss8H");
 
     // Validate that array syntax is not interpreted as string literal (named parameter)
     BOOST_CHECK_NO_THROW(result = RPCConvertNamedValues("protx", {
@@ -596,7 +596,7 @@ BOOST_AUTO_TEST_CASE(rpc_convert_composite_commands)
         "6fe28c0ab6f1b372c1a6a246ae63f74f931e8365e15a089c68d6190000000000",
         "1",
         "coreP2PAddrs=[\"1.1.1.1:19999\",\"1.0.0.1:19999\"]",
-        "ownerAddress=yhq7ifNCtTKEpY4Yu5XPCcztQco6Fh6JsZ"
+        "ownerAddress=tUSGvFVTf7HrBuFRadCEtzTfE4SpzTss8H"
     }));
 
     BOOST_CHECK(result.exists("coreP2PAddrs"));
@@ -604,7 +604,7 @@ BOOST_AUTO_TEST_CASE(rpc_convert_composite_commands)
     BOOST_CHECK_EQUAL(result["coreP2PAddrs"].size(), 2);
     BOOST_CHECK_EQUAL(result["coreP2PAddrs"][0].get_str(), "1.1.1.1:19999");
     BOOST_CHECK_EQUAL(result["coreP2PAddrs"][1].get_str(), "1.0.0.1:19999");
-    BOOST_CHECK_EQUAL(result["ownerAddress"].get_str(), "yhq7ifNCtTKEpY4Yu5XPCcztQco6Fh6JsZ");
+    BOOST_CHECK_EQUAL(result["ownerAddress"].get_str(), "tUSGvFVTf7HrBuFRadCEtzTfE4SpzTss8H");
 
     // Validate that array syntax is parsed for all recognized fields
     BOOST_CHECK_NO_THROW(result = RPCConvertValues("protx", {
@@ -612,15 +612,15 @@ BOOST_AUTO_TEST_CASE(rpc_convert_composite_commands)
         "6fe28c0ab6f1b372c1a6a246ae63f74f931e8365e15a089c68d6190000000000",
         "1",
         "[\"1.1.1.1:19999\"]",
-        "yhq7ifNCtTKEpY4Yu5XPCcztQco6Fh6JsZ",
+        "tUSGvFVTf7HrBuFRadCEtzTfE4SpzTss8H",
         "93746e8731c57f87f79b3620a7982924e2931717d49540a85864bd543de11c43fb868fd63e501a1db37e19ed59ae6db4",
-        "yTretFTpoi3oQ3maZk5QadGaDWPiKnmDBc",
+        "tETp5qb5aN2QmQxTFHkGGzjM2x3T2ryw6v",
         "0",
-        "yNbNZyCiTYSFtDwEXt7jChV7tZVYX862ua",
+        "t9CXmZKyECQsFb87DRnau4wti19HHE4Zgv",
         "f2dbd9b0a1f541a7c44d34a58674d0262f5feca5",
         "[\"1.1.1.1:22000\"]",
         "[\"1.1.1.1:22001\"]",
-        "yTG8jLL3MvteKXgbEcHyaN7JvTPCejQpSh"
+        "tDsHvvTJ8asFgtsTv9xqGja5ju2wQcc5ki"
     }));
 
     BOOST_CHECK(result[3].isArray());
@@ -636,7 +636,7 @@ BOOST_AUTO_TEST_CASE(rpc_convert_composite_commands)
         "6fe28c0ab6f1b372c1a6a246ae63f74f931e8365e15a089c68d6190000000000",
         "1",
         "\'[\"1.1.1.1:19999\",\"1.0.0.1:19999\"]\'",
-        "yhq7ifNCtTKEpY4Yu5XPCcztQco6Fh6JsZ"
+        "tUSGvFVTf7HrBuFRadCEtzTfE4SpzTss8H"
     }));
     BOOST_CHECK(result[3].isArray());
     BOOST_CHECK_EQUAL(result[3].size(), 2);
@@ -648,7 +648,7 @@ BOOST_AUTO_TEST_CASE(rpc_convert_composite_commands)
         "6fe28c0ab6f1b372c1a6a246ae63f74f931e8365e15a089c68d6190000000000",
         "1",
         "\"[\"1.1.1.1:19999\",\"1.0.0.1:19999\"]\"",
-        "yhq7ifNCtTKEpY4Yu5XPCcztQco6Fh6JsZ"
+        "tUSGvFVTf7HrBuFRadCEtzTfE4SpzTss8H"
     }));
     BOOST_CHECK(result[3].isArray());
     BOOST_CHECK_EQUAL(result[3].size(), 2);
@@ -661,7 +661,7 @@ BOOST_AUTO_TEST_CASE(rpc_convert_composite_commands)
         "6fe28c0ab6f1b372c1a6a246ae63f74f931e8365e15a089c68d6190000000000",
         "1",
         "1.1.1.1:19999",
-        "yhq7ifNCtTKEpY4Yu5XPCcztQco6Fh6JsZ"
+        "tUSGvFVTf7HrBuFRadCEtzTfE4SpzTss8H"
     }));
 
     BOOST_CHECK(!result[3].isArray());
@@ -673,7 +673,7 @@ BOOST_AUTO_TEST_CASE(rpc_convert_composite_commands)
         "6fe28c0ab6f1b372c1a6a246ae63f74f931e8365e15a089c68d6190000000000",
         "1",
         "[]",
-        "yhq7ifNCtTKEpY4Yu5XPCcztQco6Fh6JsZ"
+        "tUSGvFVTf7HrBuFRadCEtzTfE4SpzTss8H"
     }));
     BOOST_CHECK(result[3].isArray());
     BOOST_CHECK(result[3].empty());
@@ -684,7 +684,7 @@ BOOST_AUTO_TEST_CASE(rpc_convert_composite_commands)
         "6fe28c0ab6f1b372c1a6a246ae63f74f931e8365e15a089c68d6190000000000",
         "1",
         "[",
-        "yhq7ifNCtTKEpY4Yu5XPCcztQco6Fh6JsZ"
+        "tUSGvFVTf7HrBuFRadCEtzTfE4SpzTss8H"
     }));
     BOOST_CHECK(!result[3].isArray());
     BOOST_CHECK_EQUAL(result[3].get_str(), "[");

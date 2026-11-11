@@ -42,13 +42,13 @@ void Test(NodeContext& node)
                       true);
     BOOST_CHECK_EQUAL(node.chainman->IsQuorumTypeEnabled(consensus_params.llmqTypePlatform, tip,
                                                          /*optDIP0024IsActive=*/false, /*optHaveDIP0024Quorums=*/false),
-                      Params().IsTestChain());
+                      Params().IsTestChain() || consensus_params.llmqTypePlatform == consensus_params.llmqTypeChainLocks); // BTGS
     BOOST_CHECK_EQUAL(node.chainman->IsQuorumTypeEnabled(consensus_params.llmqTypePlatform, tip,
                                                          /*optDIP0024IsActive=*/true, /*optHaveDIP0024Quorums=*/false),
-                      Params().IsTestChain());
+                      Params().IsTestChain() || consensus_params.llmqTypePlatform == consensus_params.llmqTypeChainLocks); // BTGS
     BOOST_CHECK_EQUAL(node.chainman->IsQuorumTypeEnabled(consensus_params.llmqTypePlatform, tip,
                                                          /*optDIP0024IsActive=*/true, /*optHaveDIP0024Quorums=*/true),
-                      Params().IsTestChain());
+                      Params().IsTestChain() || consensus_params.llmqTypePlatform == consensus_params.llmqTypeChainLocks); // BTGS
     BOOST_CHECK_EQUAL(node.chainman->IsQuorumTypeEnabled(consensus_params.llmqTypeMnhf, tip,
                                                          /*optDIP0024IsActive=*/false, /*optHaveDIP0024Quorums=*/false),
                       true);

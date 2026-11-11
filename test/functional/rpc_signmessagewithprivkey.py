@@ -36,7 +36,7 @@ class SignMessagesWithPrivTest(BitcoinTestFramework):
 
         self.log.info('test that verifying with P2PKH address succeeds')
         addresses = self.addresses_from_privkey(priv_key)
-        assert_equal(addresses[0], 'yeMpGzMj3rhtnz48XsfpB8itPHhHtgxLc3')
+        assert_equal(addresses[0], 'tQxyUaUypWgWAMF1DRLfsWBfCjM2gNx8GE')
         assert self.nodes[0].verifymessage(addresses[0], signature, message)
 
         self.log.info('test that verifying with non-P2PKH addresses throws error')
@@ -57,7 +57,7 @@ class SignMessagesWithPrivTest(BitcoinTestFramework):
         assert_raises_rpc_error(-5, "Invalid address", self.nodes[0].verifymessage, "invalid_addr", signature, message)
         # malformed signature provided
 
-        assert_raises_rpc_error(-3, "Malformed base64 encoding", self.nodes[0].verifymessage, 'yeMpGzMj3rhtnz48XsfpB8itPHhHtgxLc3', "invalid_sig", message)
+        assert_raises_rpc_error(-3, "Malformed base64 encoding", self.nodes[0].verifymessage, 'tQxyUaUypWgWAMF1DRLfsWBfCjM2gNx8GE', "invalid_sig", message)
 
 
 if __name__ == '__main__':

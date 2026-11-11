@@ -105,7 +105,7 @@ class SpentIndexTest(BitcoinTestFramework):
         assert_equal(txVerbose2["vin"][0]["valueSat"] - tx_fee_sat, amount)
 
         # Check that verbose raw transaction includes address values and input values
-        address2 = "yeMpGzMj3rhtnz48XsfpB8itPHhHtgxLc3"
+        address2 = "tQxyUaUypWgWAMF1DRLfsWBfCjM2gNx8GE"
         addressHash2 = bytes.fromhex("C5E4FB9171C22409809A3E8047A29C83886E325D")
         scriptPubKey2 = keyhash_to_p2pkh_script(addressHash2)
         tx2 = CTransaction()

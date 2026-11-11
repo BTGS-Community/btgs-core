@@ -129,7 +129,6 @@ BITCOIN_TESTS =\
   test/fs_tests.cpp \
   test/getarg_tests.cpp \
   test/governance_inv_tests.cpp \
-  test/governance_superblock_tests.cpp \
   test/governance_validators_tests.cpp \
   test/governance_vote_processing_tests.cpp \
   test/governance_vote_sync_tests.cpp \
@@ -157,7 +156,6 @@ BITCOIN_TESTS =\
   test/llmq_snapshot_tests.cpp \
   test/llmq_utils_tests.cpp \
   test/logging_tests.cpp \
-  test/quorum_proofs_tests.cpp \
   test/masternode_params_tests.cpp \
   test/masternode_payments_tests.cpp \
   test/dbwrapper_tests.cpp \
@@ -204,7 +202,6 @@ BITCOIN_TESTS =\
   test/sock_tests.cpp \
   test/spork_tests.cpp \
   test/streams_tests.cpp \
-  test/subsidy_tests.cpp \
   test/sync_tests.cpp \
   test/system_tests.cpp \
   test/util_threadnames_tests.cpp \

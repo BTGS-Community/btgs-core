@@ -275,7 +275,7 @@ struct SnapshotTestSetup : TestChain100Setup {
             }
 
             BOOST_CHECK_EQUAL(total_coins, initial_total_coins);
-            BOOST_CHECK_EQUAL(initial_size, initial_total_coins);
+            BOOST_CHECK_EQUAL(initial_size, initial_total_coins * 2); // BTGS: miner + dev fund coin per block
         }
 
         Chainstate& validation_chainstate = chainman.ActiveChainstate();
@@ -289,7 +289,7 @@ struct SnapshotTestSetup : TestChain100Setup {
         // be found.
         constexpr int snapshot_height = 110;
         mineBlocks(10);
-        initial_size += 10;
+        initial_size += 20; // BTGS: 2 outputs per block
         initial_total_coins += 10;
 
         // Should not load malleated snapshots
@@ -387,6 +387,8 @@ struct SnapshotTestSetup : TestChain100Setup {
                     COutPoint op{txn->GetHash(), 0};
                     BOOST_CHECK(coinscache.HaveCoin(op));
                     total_coins++;
+                    // BTGS: the dev fund output is a coin too (the cache size counts it)
+                    if (txn->vout.size() > 1) BOOST_CHECK(coinscache.HaveCoin(COutPoint{txn->GetHash(), 1}));
                 }
 
                 BOOST_CHECK_EQUAL(initial_size , coinscache.GetCacheSize());
