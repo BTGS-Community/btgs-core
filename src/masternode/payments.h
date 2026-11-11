@@ -6,6 +6,7 @@
 #define BITCOIN_MASTERNODE_PAYMENTS_H
 
 #include <consensus/amount.h>
+#include <script/script.h>
 
 #include <string>
 #include <vector>
@@ -70,6 +71,10 @@ enum class SuperBlockCheckType {
 };
 
 CAmount GetMasternodePayment(int nHeight, CAmount blockValue, const Consensus::Params& consensus_params, MnRewardEra era);
+/** BTGS: dev fund share of the block reward at this height (25% at launch, -1 point every 6,048 blocks, 5% floor) */
+CAmount GetDevFundPayment(int nHeight, CAmount blockSubsidy);
+/** BTGS: dev fund output script (from chain params) */
+CScript GetDevFundScript();
 
 class CMNPaymentsProcessor
 {

@@ -9,6 +9,7 @@
 #include <masternode/sync.h>
 
 #include <chain.h>
+#include <chainparams.h>
 #include <consensus/amount.h>
 #include <deploymentstatus.h>
 #include <key_io.h>
@@ -53,7 +54,7 @@ int FindUnmatchedMasternodePayment(const std::vector<CTxOut>& expected,
 
 CAmount PlatformShare(const CAmount reward)
 {
-    const CAmount platformReward = reward * 375 / 1000;
+    const CAmount platformReward = 0; // BTGS: no Dash Platform, no reallocation
     bool ok = MoneyRange(platformReward);
     assert(ok);
     return platformReward;
@@ -61,71 +62,23 @@ CAmount PlatformShare(const CAmount reward)
 
 CAmount GetMasternodePayment(int nHeight, CAmount blockValue, const Consensus::Params& consensus_params, MnRewardEra era)
 {
-    CAmount ret = blockValue/5; // start at 20%
+    // BTGS: blockValue is the reward after the dev fund (plus fees); smartnodes get 70%, miners keep 30%
+    return blockValue * 7 / 10;
+}
 
-    const int nMNPIBlock = consensus_params.nMasternodePaymentsIncreaseBlock;
-    const int nMNPIPeriod = consensus_params.nMasternodePaymentsIncreasePeriod;
-    const int nReallocActivationHeight = consensus_params.BRRHeight;
+CAmount GetDevFundPayment(int nHeight, CAmount blockSubsidy)
+{
+    if (nHeight < 1) return 0;
+    // 25% at launch, minus 1 percentage point every 6,048 blocks (~2 weeks), 5% floor
+    const int64_t pct = std::max<int64_t>(5, 25 - (nHeight - 1) / 6048);
+    return blockSubsidy * pct / 100;
+}
 
-                                                                      // mainnet:
-    if(nHeight > nMNPIBlock)                  ret += blockValue / 20; // 158000 - 25.0% - 2014-10-24
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 1)) ret += blockValue / 20; // 175280 - 30.0% - 2014-11-25
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 2)) ret += blockValue / 20; // 192560 - 35.0% - 2014-12-26
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 3)) ret += blockValue / 40; // 209840 - 37.5% - 2015-01-26
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 4)) ret += blockValue / 40; // 227120 - 40.0% - 2015-02-27
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 5)) ret += blockValue / 40; // 244400 - 42.5% - 2015-03-30
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 6)) ret += blockValue / 40; // 261680 - 45.0% - 2015-05-01
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 7)) ret += blockValue / 40; // 278960 - 47.5% - 2015-06-01
-    if(nHeight > nMNPIBlock+(nMNPIPeriod* 9)) ret += blockValue / 40; // 313520 - 50.0% - 2015-08-03
-
-    if (nHeight < nReallocActivationHeight) {
-        // Block Reward Realocation is not activated yet, nothing to do
-        return ret;
-    }
-
-    int nSuperblockCycle = consensus_params.nSuperblockCycle;
-    // Actual realocation starts in the cycle next to one activation happens in
-    int nReallocStart = nReallocActivationHeight - nReallocActivationHeight % nSuperblockCycle + nSuperblockCycle;
-
-    if (nHeight < nReallocStart) {
-        // Activated but we have to wait for the next cycle to start realocation, nothing to do
-        return ret;
-    }
-
-    if (era != MnRewardEra::Classic) {
-        // Once MNRewardReallocated activates, block reward is 80% of block subsidy (+ tx fees) since treasury is 20%
-        // Since the MN reward needs to be equal to 60% of the block subsidy (according to the proposal), MN reward is set to 75% of the block reward.
-        // Previous reallocation periods are dropped.
-        return blockValue * 3 / 4;
-    }
-
-    // Periods used to reallocate the masternode reward from 50% to 60%
-    static std::vector<int> vecPeriods{
-        513, // Period 1:  51.3%
-        526, // Period 2:  52.6%
-        533, // Period 3:  53.3%
-        540, // Period 4:  54%
-        546, // Period 5:  54.6%
-        552, // Period 6:  55.2%
-        557, // Period 7:  55.7%
-        562, // Period 8:  56.2%
-        567, // Period 9:  56.7%
-        572, // Period 10: 57.2%
-        577, // Period 11: 57.7%
-        582, // Period 12: 58.2%
-        585, // Period 13: 58.5%
-        588, // Period 14: 58.8%
-        591, // Period 15: 59.1%
-        594, // Period 16: 59.4%
-        597, // Period 17: 59.7%
-        599, // Period 18: 59.9%
-        600  // Period 19: 60%
-    };
-
-    int nReallocCycle = nSuperblockCycle * 3;
-    int nCurrentPeriod = std::min<int>((nHeight - nReallocStart) / nReallocCycle, vecPeriods.size() - 1);
-
-    return static_cast<CAmount>(blockValue * vecPeriods[nCurrentPeriod] / 1000);
+CScript GetDevFundScript()
+{
+    const CTxDestination dest = DecodeDestination(Params().DevFundAddress());
+    assert(IsValidDestination(dest));
+    return GetScriptForDestination(dest);
 }
 
 [[nodiscard]] bool CMNPaymentsProcessor::GetBlockTxOuts(const CBlockIndex* pindexPrev, const CAmount blockSubsidy, const CAmount feeReward,
@@ -135,20 +88,15 @@ CAmount GetMasternodePayment(int nHeight, CAmount blockValue, const Consensus::P
 
     const int nBlockHeight = pindexPrev  == nullptr ? 0 : pindexPrev->nHeight + 1;
 
-    CAmount masternodeReward = GetMasternodePayment(nBlockHeight, blockSubsidy + feeReward, m_consensus_params, era);
-
-    // Credit Pool doesn't exist before V20. If any part of reward will re-allocated to credit pool before v20
-    // activation these fund will be just permanently lost. Applicable for devnets, regtest, testnet
-    if (era == MnRewardEra::EvoReward) {
-        CAmount masternodeSubsidyReward = GetMasternodePayment(nBlockHeight, blockSubsidy, m_consensus_params, era);
-        const CAmount platformReward = PlatformShare(masternodeSubsidyReward);
-        masternodeReward -= platformReward;
-
-        assert(MoneyRange(masternodeReward));
-
-        LogPrint(BCLog::MNPAYMENTS, "CMNPaymentsProcessor::%s -- MN reward %lld reallocated to credit pool\n", __func__, platformReward);
-        voutMasternodePaymentsRet.emplace_back(platformReward, CScript() << OP_RETURN);
+    // BTGS: the dev fund is paid first, in every block
+    const CAmount devFundReward = GetDevFundPayment(nBlockHeight, blockSubsidy);
+    if (devFundReward > 0) {
+        voutMasternodePaymentsRet.emplace_back(devFundReward, GetDevFundScript());
     }
+
+    // BTGS: smartnodes get 70% of the rest (block reward after dev fund, plus fees); no platform share
+    CAmount masternodeReward = GetMasternodePayment(nBlockHeight, blockSubsidy - devFundReward + feeReward, m_consensus_params, era);
+    assert(MoneyRange(masternodeReward));
     const auto mnList = m_dmnman.GetListForBlock(pindexPrev);
     if (mnList.GetCounts().total() == 0) {
         LogPrint(BCLog::MNPAYMENTS, "CMNPaymentsProcessor::%s -- no masternode registered to receive a payment\n", __func__);
@@ -228,6 +176,17 @@ CAmount GetMasternodePayment(int nHeight, CAmount blockValue, const Consensus::P
                                                             const CAmount feeReward, MnRewardEra era, bool strict_multiplicity)
 {
     const int nBlockHeight = pindexPrev  == nullptr ? 0 : pindexPrev->nHeight + 1;
+
+    // BTGS: every block must pay the dev fund, also before smartnode payments are enforced
+    const CAmount devFundReward = GetDevFundPayment(nBlockHeight, blockSubsidy);
+    if (devFundReward > 0) {
+        const CTxOut devFundOut(devFundReward, GetDevFundScript());
+        if (!std::ranges::any_of(txNew.vout, [&devFundOut](const auto& txout) { return txout == devFundOut; })) {
+            LogPrintf("CMNPaymentsProcessor::%s -- ERROR! Missing dev fund payment of %lld at height %d\n", __func__, devFundReward, nBlockHeight);
+            return false;
+        }
+    }
+
     if (!DeploymentDIP0003Enforced(nBlockHeight, m_consensus_params)) {
         // can't verify historical blocks here
         return true;
