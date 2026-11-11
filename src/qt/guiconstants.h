@@ -44,12 +44,12 @@ static const int TOOLTIP_WRAP_THRESHOLD = 80;
 /* Duration of one full status-bar icon animation cycle in milliseconds. */
 static constexpr int STATUSBAR_ICON_CYCLE_MS{3600};
 
-#define QAPP_ORG_NAME "Dash"
-#define QAPP_ORG_DOMAIN "dash.org"
-#define QAPP_APP_NAME_DEFAULT "Dash-Qt"
-#define QAPP_APP_NAME_TESTNET "Dash-Qt-testnet"
-#define QAPP_APP_NAME_DEVNET "Dash-Qt-%s"
-#define QAPP_APP_NAME_REGTEST "Dash-Qt-regtest"
+#define QAPP_ORG_NAME "BTGS"
+#define QAPP_ORG_DOMAIN "bitcoingoldbtgs.com"
+#define QAPP_APP_NAME_DEFAULT "BTGS-Qt"
+#define QAPP_APP_NAME_TESTNET "BTGS-Qt-testnet"
+#define QAPP_APP_NAME_DEVNET "BTGS-Qt-%s"
+#define QAPP_APP_NAME_REGTEST "BTGS-Qt-regtest"
 
 /* One gigabyte (GB) in bytes */
 static constexpr uint64_t GB_BYTES{1000000000};

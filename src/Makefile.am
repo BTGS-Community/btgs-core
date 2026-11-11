@@ -138,33 +138,33 @@ EXTRA_LIBRARIES += \
   $(LIBBITCOIN_ZMQ)
 
 if BUILD_BITCOIND
-  bin_PROGRAMS += dashd
+  bin_PROGRAMS += btgsd
 endif
 
 if BUILD_BITCOIN_NODE
-  bin_PROGRAMS += dash-node
+  bin_PROGRAMS += btgs-node
 endif
 
 if BUILD_BITCOIN_CLI
-  bin_PROGRAMS += dash-cli
+  bin_PROGRAMS += btgs-cli
 endif
 
 if BUILD_BITCOIN_TX
-  bin_PROGRAMS += dash-tx
+  bin_PROGRAMS += btgs-tx
 endif
 
 if ENABLE_WALLET
 if BUILD_BITCOIN_WALLET
-  bin_PROGRAMS += dash-wallet
+  bin_PROGRAMS += btgs-wallet
 endif
 endif
 
 if BUILD_BITCOIN_UTIL
-  bin_PROGRAMS += dash-util
+  bin_PROGRAMS += btgs-util
 endif
 
 if BUILD_BITCOIN_CHAINSTATE
-  bin_PROGRAMS += dash-chainstate
+  bin_PROGRAMS += btgs-chainstate
 endif
 
 .PHONY: FORCE check-symbols check-security check-stdlib-paths
@@ -1096,14 +1096,14 @@ libbitcoin_cli_a_SOURCES = \
 nodist_libbitcoin_util_a_SOURCES = $(srcdir)/obj/build.h
 #
 
-# dashd & dash-node binaries #
+# btgsd & btgs-node binaries #
 bitcoin_daemon_sources = bitcoind.cpp
 bitcoin_bin_cppflags = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 bitcoin_bin_cxxflags = $(AM_CXXFLAGS) $(PIE_FLAGS)
 bitcoin_bin_ldflags = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
 
 if TARGET_WINDOWS
-bitcoin_daemon_sources += dashd-res.rc
+bitcoin_daemon_sources += btgsd-res.rc
 endif
 
 bitcoin_bin_ldadd = \
@@ -1121,48 +1121,48 @@ bitcoin_bin_ldadd = \
 
 bitcoin_bin_ldadd += $(BACKTRACE_LIBS) $(BDB_LIBS) $(MINIUPNPC_LIBS) $(NATPMP_LIBS) $(SQLITE_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS) $(GMP_LIBS)
 
-dashd_SOURCES = $(bitcoin_daemon_sources) init/bitcoind.cpp
-dashd_CPPFLAGS = $(bitcoin_bin_cppflags)
-dashd_CXXFLAGS = $(bitcoin_bin_cxxflags)
-dashd_LDFLAGS = $(bitcoin_bin_ldflags)
-dashd_LDADD = $(LIBBITCOIN_NODE) $(bitcoin_bin_ldadd)
+btgsd_SOURCES = $(bitcoin_daemon_sources) init/bitcoind.cpp
+btgsd_CPPFLAGS = $(bitcoin_bin_cppflags)
+btgsd_CXXFLAGS = $(bitcoin_bin_cxxflags)
+btgsd_LDFLAGS = $(bitcoin_bin_ldflags)
+btgsd_LDADD = $(LIBBITCOIN_NODE) $(bitcoin_bin_ldadd)
 
-dash_node_SOURCES = $(bitcoin_daemon_sources) init/bitcoin-node.cpp
-dash_node_CPPFLAGS = $(bitcoin_bin_cppflags)
-dash_node_CXXFLAGS = $(bitcoin_bin_cxxflags)
-dash_node_LDFLAGS = $(bitcoin_bin_ldflags)
-dash_node_LDADD = $(LIBBITCOIN_NODE) $(bitcoin_bin_ldadd) $(LIBBITCOIN_IPC) $(LIBMULTIPROCESS_LIBS)
+btgs_node_SOURCES = $(bitcoin_daemon_sources) init/bitcoin-node.cpp
+btgs_node_CPPFLAGS = $(bitcoin_bin_cppflags)
+btgs_node_CXXFLAGS = $(bitcoin_bin_cxxflags)
+btgs_node_LDFLAGS = $(bitcoin_bin_ldflags)
+btgs_node_LDADD = $(LIBBITCOIN_NODE) $(bitcoin_bin_ldadd) $(LIBBITCOIN_IPC) $(LIBMULTIPROCESS_LIBS)
 
-# dash-cli binary #
-dash_cli_SOURCES = bitcoin-cli.cpp
-dash_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
-dash_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-dash_cli_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
+# btgs-cli binary #
+btgs_cli_SOURCES = bitcoin-cli.cpp
+btgs_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
+btgs_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+btgs_cli_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
 
 if TARGET_WINDOWS
-dash_cli_SOURCES += dash-cli-res.rc
+btgs_cli_SOURCES += btgs-cli-res.rc
 endif
 
-dash_cli_LDADD = \
+btgs_cli_LDADD = \
   $(LIBBITCOIN_CLI) \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO)
-dash_cli_LDADD += $(BACKTRACE_LIBS) $(EVENT_LIBS) $(GMP_LIBS)
+btgs_cli_LDADD += $(BACKTRACE_LIBS) $(EVENT_LIBS) $(GMP_LIBS)
 #
 
-# dash-tx binary #
-dash_tx_SOURCES = bitcoin-tx.cpp
-dash_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
-dash_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-dash_tx_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
+# btgs-tx binary #
+btgs_tx_SOURCES = bitcoin-tx.cpp
+btgs_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+btgs_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+btgs_tx_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
 
 if TARGET_WINDOWS
-dash_tx_SOURCES += dash-tx-res.rc
+btgs_tx_SOURCES += btgs-tx-res.rc
 endif
 
-dash_tx_LDADD = \
+btgs_tx_LDADD = \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UTIL) \
@@ -1171,16 +1171,16 @@ dash_tx_LDADD = \
   $(LIBDASHBLS) \
   $(LIBSECP256K1)
 
-dash_tx_LDADD += $(BACKTRACE_LIBS) $(GMP_LIBS)
+btgs_tx_LDADD += $(BACKTRACE_LIBS) $(GMP_LIBS)
 #
 
-# dash-wallet binary #
-dash_wallet_SOURCES = bitcoin-wallet.cpp
-dash_wallet_SOURCES += init/bitcoin-wallet.cpp
-dash_wallet_CPPFLAGS = $(bitcoin_bin_cppflags)
-dash_wallet_CXXFLAGS = $(bitcoin_bin_cxxflags)
-dash_wallet_LDFLAGS = $(bitcoin_bin_ldflags)
-dash_wallet_LDADD = \
+# btgs-wallet binary #
+btgs_wallet_SOURCES = bitcoin-wallet.cpp
+btgs_wallet_SOURCES += init/bitcoin-wallet.cpp
+btgs_wallet_CPPFLAGS = $(bitcoin_bin_cppflags)
+btgs_wallet_CXXFLAGS = $(bitcoin_bin_cxxflags)
+btgs_wallet_LDFLAGS = $(bitcoin_bin_ldflags)
+btgs_wallet_LDADD = \
   $(LIBBITCOIN_WALLET_TOOL) \
   $(LIBBITCOIN_WALLET) \
   $(LIBBITCOIN_COMMON) \
@@ -1197,21 +1197,21 @@ dash_wallet_LDADD = \
   $(GMP_LIBS)
 
 if TARGET_WINDOWS
-dash_wallet_SOURCES += dash-wallet-res.rc
+btgs_wallet_SOURCES += btgs-wallet-res.rc
 endif
 #
 
-# dash-util binary #
-dash_util_SOURCES = bitcoin-util.cpp
-dash_util_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
-dash_util_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-dash_util_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
+# btgs-util binary #
+btgs_util_SOURCES = bitcoin-util.cpp
+btgs_util_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+btgs_util_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+btgs_util_LDFLAGS = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
 
 if TARGET_WINDOWS
-dash_util_SOURCES += bitcoin-util-res.rc
+btgs_util_SOURCES += bitcoin-util-res.rc
 endif
 
-dash_util_LDADD = \
+btgs_util_LDADD = \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UTIL) \
   $(LIBUNIVALUE) \
@@ -1220,18 +1220,18 @@ dash_util_LDADD = \
   $(LIBSECP256K1) \
   $(BACKTRACE_LIBS)
 
-dash_util_LDADD += $(BOOST_LIBS)
+btgs_util_LDADD += $(BOOST_LIBS)
 
-# dash-chainstate binary #
-dash_chainstate_SOURCES = bitcoin-chainstate.cpp
-dash_chainstate_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(BOOST_CPPFLAGS)
-dash_chainstate_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+# btgs-chainstate binary #
+btgs_chainstate_SOURCES = bitcoin-chainstate.cpp
+btgs_chainstate_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(BOOST_CPPFLAGS)
+btgs_chainstate_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 
 # $(LIBTOOL_APP_LDFLAGS) deliberately omitted here so that we can test linking
-# dash-chainstate against libdashkernel as a shared or static library by
+# btgs-chainstate against libdashkernel as a shared or static library by
 # setting --{en,dis}able-shared.
-dash_chainstate_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(PTHREAD_FLAGS)
-dash_chainstate_LDADD = $(LIBBITCOINKERNEL)
+btgs_chainstate_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(PTHREAD_FLAGS)
+btgs_chainstate_LDADD = $(LIBBITCOINKERNEL)
 #
 
 # dashkernel library #

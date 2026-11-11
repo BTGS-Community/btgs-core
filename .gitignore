@@ -181,3 +181,20 @@ compile_commands.json
 # Linux perf profiling artifacts
 perf.data
 perf.data.old
+
+# BTGS program names
+src/btgsd
+src/btgs-cli
+src/btgs-gui
+src/btgs-node
+src/btgs-tx
+src/btgs-util
+src/btgs-chainstate
+src/btgs-wallet
+src/test/test_btgs
+src/qt/test/test_btgs-qt
+src/bench/bench_btgs
+btgs-qt
+btgs-qt_test
+src/qt/btgs-qt.bash
+test_btgs.coverage/

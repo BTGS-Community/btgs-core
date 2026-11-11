@@ -20,7 +20,7 @@
  * for both dashd and dash-qt, to make it harder for attackers to
  * target servers or GUI users specifically.
  */
-const std::string CLIENT_NAME("Dash Core");
+const std::string CLIENT_NAME("BTGS Core");
 
 
 #ifdef HAVE_BUILD_INFO

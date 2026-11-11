@@ -3,10 +3,10 @@
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-bin_PROGRAMS += qt/dash-qt
+bin_PROGRAMS += qt/btgs-qt
 
 if BUILD_BITCOIN_GUI
-  bin_PROGRAMS += dash-gui
+  bin_PROGRAMS += btgs-gui
 endif
 
 EXTRA_LIBRARIES += qt/libbitcoinqt.a
@@ -445,7 +445,7 @@ QT_RES_FONTS = \
 
 QT_RES_ANIMATION = $(wildcard $(srcdir)/qt/res/animation/spinner-*.png)
 
-BITCOIN_QT_RC = qt/res/dash-qt-res.rc
+BITCOIN_QT_RC = qt/res/btgs-qt-res.rc
 
 BITCOIN_QT_INCLUDES = -DQT_NO_KEYWORDS -DQT_USE_QSTRINGBUILDER
 
@@ -469,9 +469,9 @@ QT_FORMS_H=$(join $(dir $(QT_FORMS_UI)),$(addprefix ui_, $(notdir $(QT_FORMS_UI:
 # Most files will depend on the forms and moc files as includes. Generate them
 # before anything else.
 $(QT_MOC): $(QT_FORMS_H)
-$(qt_libbitcoinqt_a_OBJECTS) $(qt_dash_qt_OBJECTS) $(dash_gui_OBJECTS): | $(QT_MOC)
+$(qt_libbitcoinqt_a_OBJECTS) $(qt_btgs_qt_OBJECTS) $(btgs_gui_OBJECTS): | $(QT_MOC)
 
-# dash-qt binary and dash-gui binaries #
+# btgs-qt binary and btgs-gui binaries #
 bitcoin_qt_cppflags = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(BITCOIN_QT_INCLUDES) \
   $(QT_INCLUDES) $(QR_CFLAGS)
 bitcoin_qt_cxxflags = $(AM_CXXFLAGS) $(QT_PIE_FLAGS)
@@ -493,19 +493,19 @@ bitcoin_qt_ldadd += $(LIBBITCOIN_CLI) $(LIBBITCOIN_COMMON) $(LIBBITCOIN_UTIL) $(
 bitcoin_qt_ldflags = $(LDFLAGS_WRAP_EXCEPTIONS) $(RELDFLAGS) $(AM_LDFLAGS) $(QT_LDFLAGS) $(LIBTOOL_APP_LDFLAGS) $(PTHREAD_FLAGS)
 bitcoin_qt_libtoolflags = $(AM_LIBTOOLFLAGS) --tag CXX
 
-qt_dash_qt_CPPFLAGS = $(bitcoin_qt_cppflags)
-qt_dash_qt_CXXFLAGS = $(bitcoin_qt_cxxflags)
-qt_dash_qt_SOURCES = $(bitcoin_qt_sources) init/bitcoin-qt.cpp
-qt_dash_qt_LDADD = $(bitcoin_qt_ldadd)
-qt_dash_qt_LDFLAGS = $(bitcoin_qt_ldflags)
-qt_dash_qt_LIBTOOLFLAGS = $(bitcoin_qt_libtoolflags)
+qt_btgs_qt_CPPFLAGS = $(bitcoin_qt_cppflags)
+qt_btgs_qt_CXXFLAGS = $(bitcoin_qt_cxxflags)
+qt_btgs_qt_SOURCES = $(bitcoin_qt_sources) init/bitcoin-qt.cpp
+qt_btgs_qt_LDADD = $(bitcoin_qt_ldadd)
+qt_btgs_qt_LDFLAGS = $(bitcoin_qt_ldflags)
+qt_btgs_qt_LIBTOOLFLAGS = $(bitcoin_qt_libtoolflags)
 
-dash_gui_CPPFLAGS = $(bitcoin_qt_cppflags)
-dash_gui_CXXFLAGS = $(bitcoin_qt_cxxflags)
-dash_gui_SOURCES = $(bitcoin_qt_sources) init/bitcoin-gui.cpp
-dash_gui_LDADD = $(bitcoin_qt_ldadd) $(LIBBITCOIN_IPC) $(LIBBITCOIN_UTIL) $(LIBMULTIPROCESS_LIBS)
-dash_gui_LDFLAGS = $(bitcoin_qt_ldflags)
-dash_gui_LIBTOOLFLAGS = $(bitcoin_qt_libtoolflags)
+btgs_gui_CPPFLAGS = $(bitcoin_qt_cppflags)
+btgs_gui_CXXFLAGS = $(bitcoin_qt_cxxflags)
+btgs_gui_SOURCES = $(bitcoin_qt_sources) init/bitcoin-gui.cpp
+btgs_gui_LDADD = $(bitcoin_qt_ldadd) $(LIBBITCOIN_IPC) $(LIBBITCOIN_UTIL) $(LIBMULTIPROCESS_LIBS)
+btgs_gui_LDFLAGS = $(bitcoin_qt_ldflags)
+btgs_gui_LIBTOOLFLAGS = $(bitcoin_qt_libtoolflags)
 
 #locale/foo.ts -> locale/foo.qm
 QT_QM=$(QT_TS:.ts=.qm)
@@ -540,10 +540,10 @@ CLEAN_QT = $(nodist_qt_libbitcoinqt_a_SOURCES) $(QT_QM) $(QT_FORMS_H) qt/*.gcda 
 
 CLEANFILES += $(CLEAN_QT)
 
-dash_qt_clean: FORCE
-	rm -f $(CLEAN_QT) $(qt_libbitcoinqt_a_OBJECTS) $(qt_dash_qt_OBJECTS) qt/dash-qt$(EXEEXT) $(LIBBITCOINQT)
+btgs_qt_clean: FORCE
+	rm -f $(CLEAN_QT) $(qt_libbitcoinqt_a_OBJECTS) $(qt_btgs_qt_OBJECTS) qt/btgs-qt$(EXEEXT) $(LIBBITCOINQT)
 
-dash_qt : qt/dash-qt$(EXEEXT)
+btgs_qt : qt/btgs-qt$(EXEEXT)
 
 ui_%.h: %.ui
 	@test -f $(UIC) || (echo "uic $(UIC) not found, but is required for generating ui headers"; exit 1)
