@@ -165,44 +165,44 @@ public:
         consensus.nMasternodePaymentsIncreasePeriod = 576*30; // 17280 - actual historical value
         consensus.nInstantSendConfirmationsRequired = 6;
         consensus.nInstantSendKeepLock = 24;
-        consensus.nBudgetPaymentsStartBlock = 328008; // actual historical value
-        consensus.nBudgetPaymentsCycleBlocks = 16616; // ~(60*24*30)/2.6, actual number of blocks per month is 200700 / 12 = 16725
+        consensus.nBudgetPaymentsStartBlock = 1000000000; // BTGS
+        consensus.nBudgetPaymentsCycleBlocks = 12960; // BTGS
         consensus.nBudgetPaymentsWindowBlocks = 100;
-        consensus.nSuperblockStartBlock = 614820; // The block at which 12.1 goes live (end of final 12.0 budget cycle)
-        consensus.nSuperblockStartHash = uint256S("0000000000020cb27c7ef164d21003d5d20cdca2f54dd9a9ca6d45f4d47f8aa3");
-        consensus.nSuperblockCycle = 16616; // ~(60*24*30)/2.6, actual number of blocks per month is 200700 / 12 = 16725
-        consensus.nSuperblockMaturityWindow = 1662; // ~(60*24*3)/2.6, ~3 days before actual Superblock is emitted
+        consensus.nSuperblockStartBlock = 1000000000; // BTGS
+        consensus.nSuperblockStartHash = uint256(); // BTGS
+        consensus.nSuperblockCycle = 12960; // BTGS
+        consensus.nSuperblockMaturityWindow = 1296; // BTGS
         consensus.nGovernanceMinQuorum = 10;
         consensus.nGovernanceFilterElements = 20000;
         consensus.nMasternodeMinimumConfirmations = 15;
-        consensus.BIP34Height = 951;
-        consensus.BIP34Hash = uint256S("0x000001f35e70f7c5705f64c6c5cc3dea9449e74d5b5c7cf74dad1bcca14a8012");
-        consensus.BIP65Height = 619382; // 00000000000076d8fcea02ec0963de4abfd01e771fec0863f960c2c64fe6f357
-        consensus.BIP66Height = 245817; // 00000000000b1fa2dfa312863570e13fae9ca7b5566cb27e55422620b469aefa
-        consensus.BIP147Height = 939456; // 00000000000000117befca4fab5622514772f608852e5edd8df9c55464b6fe37
-        consensus.CSVHeight = 622944; // 00000000000002e3d3a6224cfce80bae367fd3283d1e5a8ba50e5e60b2d2905d
-        consensus.DIP0001Height = 782208; // 000000000000000cbc9cb551e8ee1ac7aa223585cbdfb755d3683bafd93679e4
-        consensus.DIP0003Height = 1028160;
-        consensus.DIP0003EnforcementHeight = 1047200;
-        consensus.DIP0003EnforcementHash = uint256S("000000000000002d1734087b4c5afc3133e4e1c3e1a89218f62bcd9bb3d17f81");
-        consensus.DIP0008Height = 1088640; // 00000000000000112e41e4b3afda8b233b8cc07c532d2eac5de097b68358c43e
-        consensus.BRRHeight = 1374912; // 000000000000000c5a124f3eccfbe6e17876dca79cec9e63dfa70d269113c926
-        consensus.DIP0020Height = 1516032; // 000000000000000f64ed3bd9af1078177ac026f6aa2677aa4d8beeae43be56cc
-        consensus.DIP0024Height = 1737792; // 0000000000000001342be9c0b75ad40c276beaad91616423c4d9cb101b3db438
-        consensus.DIP0024QuorumsHeight = 1738698; // 000000000000001aa25181e4c466e593992c98f9eb21c69ee757b8bb0af50244
-        consensus.V19Height = 1899072; // 0000000000000015e32e73052d663626327004c81c5c22cb8b42c361015c0eae
-        consensus.V20Height = 1987776; // 000000000000001bf41cff06b76780050682ca29e61a91c391893d4745579777
-        consensus.MN_RRHeight = 2128896; // 0000000000000009a9696da93d3807eb14eb00a4ff449206d689156a21b27f26
-        consensus.WithdrawalsHeight = 2201472; // 00000000000000210518749e17c00b035a2a4982c906236c28c41ea2231bf7ef
+        consensus.BIP34Height = 1; // BTGS
+        consensus.BIP34Hash = uint256(); // BTGS
+        consensus.BIP65Height = 1; // BTGS
+        consensus.BIP66Height = 1; // BTGS
+        consensus.BIP147Height = 1; // BTGS
+        consensus.CSVHeight = 1; // BTGS
+        consensus.DIP0001Height = 2; // BTGS
+        consensus.DIP0003Height = 2; // BTGS
+        consensus.DIP0003EnforcementHeight = 2; // BTGS
+        consensus.DIP0003EnforcementHash = uint256(); // BTGS
+        consensus.DIP0008Height = 2; // BTGS
+        consensus.BRRHeight = 2; // BTGS
+        consensus.DIP0020Height = 2; // BTGS
+        consensus.DIP0024Height = 2; // BTGS
+        consensus.DIP0024QuorumsHeight = 2; // BTGS
+        consensus.V19Height = 2; // BTGS
+        consensus.V20Height = 2; // BTGS
+        consensus.MN_RRHeight = 2; // BTGS
+        consensus.WithdrawalsHeight = 2; // BTGS
         consensus.IPv4OptionalHeight = std::numeric_limits<int>::max(); // Not scheduled
-        consensus.MinBIP9WarningHeight = 2201472 + 2016; // withdrawals activation height + miner confirmation window
+        consensus.MinBIP9WarningHeight = 0; // BTGS
         consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 20
         consensus.nPowTargetTimespan = 24 * 60 * 60; // Dash: 1 day
         consensus.nPowTargetSpacing = 200; // BTGS: 200 seconds
         consensus.fPowAllowMinDifficultyBlocks = false;
         consensus.fPowNoRetargeting = false;
-        consensus.nPowKGWHeight = 15200;
-        consensus.nPowDGWHeight = 34140;
+        consensus.nPowKGWHeight = 1; // BTGS
+        consensus.nPowDGWHeight = 1; // BTGS
         consensus.nRuleChangeActivationThreshold = 1815; // 90% of 2016
         consensus.nMinerConfirmationWindow = 2016; // nPowTargetTimespan / nPowTargetSpacing
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
@@ -211,7 +211,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].min_activation_height = 0; // No activation delay
 
         consensus.vDeployments[Consensus::DEPLOYMENT_V24].bit = 13;
-        consensus.vDeployments[Consensus::DEPLOYMENT_V24].nStartTime = 1794182400;     // Monday, November 9, 2026 0:00:00
+        consensus.vDeployments[Consensus::DEPLOYMENT_V24].nStartTime = Consensus::BIP9Deployment::ALWAYS_ACTIVE; // BTGS: active from the start
         consensus.vDeployments[Consensus::DEPLOYMENT_V24].nTimeout = 1857340800;       // Thursday, November 9, 2028 0:00:00
         consensus.vDeployments[Consensus::DEPLOYMENT_V24].nWindowSize = 4032;
         consensus.vDeployments[Consensus::DEPLOYMENT_V24].nThresholdStart = 3226;     // 80% of 4032
@@ -220,7 +220,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_V24].useEHF = true;
 
         consensus.vDeployments[Consensus::DEPLOYMENT_EVO_SHARES].bit = 14;
-        consensus.vDeployments[Consensus::DEPLOYMENT_EVO_SHARES].nStartTime = 1794182400;     // Monday, November 9, 2026 0:00:00
+        consensus.vDeployments[Consensus::DEPLOYMENT_EVO_SHARES].nStartTime = Consensus::BIP9Deployment::ALWAYS_ACTIVE; // BTGS: active from the start
         consensus.vDeployments[Consensus::DEPLOYMENT_EVO_SHARES].nTimeout = 1857340800;       // Thursday, November 9, 2028 0:00:00
         consensus.vDeployments[Consensus::DEPLOYMENT_EVO_SHARES].nWindowSize = 4032;
         consensus.vDeployments[Consensus::DEPLOYMENT_EVO_SHARES].nThresholdStart = 3226;     // 80% of 4032
@@ -280,15 +280,13 @@ public:
         vFixedSeeds.clear(); // BTGS: our seed nodes are added later
 
         // long living quorum params
-        AddLLMQ(Consensus::LLMQType::LLMQ_50_60);
-        AddLLMQ(Consensus::LLMQType::LLMQ_60_75);
-        AddLLMQ(Consensus::LLMQType::LLMQ_400_60);
-        AddLLMQ(Consensus::LLMQType::LLMQ_400_85);
-        AddLLMQ(Consensus::LLMQType::LLMQ_100_67);
-        consensus.llmqTypeChainLocks = Consensus::LLMQType::LLMQ_400_60;
-        consensus.llmqTypeDIP0024InstantSend = Consensus::LLMQType::LLMQ_60_75;
-        consensus.llmqTypePlatform = Consensus::LLMQType::LLMQ_100_67;
-        consensus.llmqTypeMnhf = Consensus::LLMQType::LLMQ_400_85;
+        // BTGS: small quorums for a small smartnode network
+        AddLLMQ(Consensus::LLMQType::LLMQ_BTGS_15_67);
+        AddLLMQ(Consensus::LLMQType::LLMQ_BTGS_12_67);
+        consensus.llmqTypeChainLocks = Consensus::LLMQType::LLMQ_BTGS_15_67;
+        consensus.llmqTypeDIP0024InstantSend = Consensus::LLMQType::LLMQ_BTGS_12_67;
+        consensus.llmqTypePlatform = Consensus::LLMQType::LLMQ_BTGS_15_67; // Dash Platform is not used
+        consensus.llmqTypeMnhf = Consensus::LLMQType::LLMQ_BTGS_15_67;
 
         fDefaultConsistencyChecks = false;
         fRequireRoutableExternalIP = true;
@@ -338,44 +336,44 @@ public:
         consensus.nMasternodePaymentsIncreasePeriod = 10;
         consensus.nInstantSendConfirmationsRequired = 2;
         consensus.nInstantSendKeepLock = 6;
-        consensus.nBudgetPaymentsStartBlock = 4100;
-        consensus.nBudgetPaymentsCycleBlocks = 50;
+        consensus.nBudgetPaymentsStartBlock = 1000000000; // BTGS
+        consensus.nBudgetPaymentsCycleBlocks = 12960; // BTGS
         consensus.nBudgetPaymentsWindowBlocks = 10;
-        consensus.nSuperblockStartBlock = 4200; // NOTE: Should satisfy nSuperblockStartBlock > nBudgetPeymentsStartBlock
-        consensus.nSuperblockStartHash = uint256(); // do not check this on testnet
-        consensus.nSuperblockCycle = 24; // Superblocks can be issued hourly on testnet
-        consensus.nSuperblockMaturityWindow = 8;
+        consensus.nSuperblockStartBlock = 1000000000; // BTGS
+        consensus.nSuperblockStartHash = uint256(); // BTGS
+        consensus.nSuperblockCycle = 12960; // BTGS
+        consensus.nSuperblockMaturityWindow = 1296; // BTGS
         consensus.nGovernanceMinQuorum = 1;
         consensus.nGovernanceFilterElements = 500;
         consensus.nMasternodeMinimumConfirmations = 1;
-        consensus.BIP34Height = 76;
-        consensus.BIP34Hash = uint256S("0x000008ebb1db2598e897d17275285767717c6acfeac4c73def49fbea1ddcbcb6");
-        consensus.BIP65Height = 2431; // 0000039cf01242c7f921dcb4806a5994bc003b48c1973ae0c89b67809c2bb2ab
-        consensus.BIP66Height = 2075; // 0000002acdd29a14583540cb72e1c5cc83783560e38fa7081495d474fe1671f7
-        consensus.BIP147Height = 4300; // 0000000040c1480d413c9203664253ab18da284130c329bf88fcfc84312bcbe0
-        consensus.CSVHeight = 8064; // 00000005eb94d027e34649373669191188858a22c70f4a6d29105e559124cec7
-        consensus.DIP0001Height = 5500; // 00000001d60a01d8f1f39011cc6b26e3a1c97a24238cab856c2da71a4dd801a9
-        consensus.DIP0003Height = 7000;
-        consensus.DIP0003EnforcementHeight = 7300;
-        consensus.DIP0003EnforcementHash = uint256S("00000055ebc0e974ba3a3fb785c5ad4365a39637d4df168169ee80d313612f8f");
-        consensus.DIP0008Height = 78800; // 000000000e9329d964d80e7dab2e704b43b6bd2b91fea1e9315d38932e55fb55
-        consensus.BRRHeight = 387500; // 0000001537dbfd09dea69f61c1f8b2afa27c8dc91c934e144797761c9f10367b
-        consensus.DIP0020Height = 414100; // 000000cf961868662fbfbb5d1af6f1caa1809f6a4e390efe5f8cd3031adea668
-        consensus.DIP0024Height = 769700; // 0000008d84e4efd890ae95c70a7a6126a70a80e5c19e4cb264a5b3469aeef172
-        consensus.DIP0024QuorumsHeight = 770730; // 0000003c43b3ae7fffe61278ca5537a0e256ebf4d709d45f0ab040271074d51e
-        consensus.V19Height = 850100; // 000004728b8ff2a16b9d4eebb0fd61eeffadc9c7fe4b0ec0b5a739869401ab5b
-        consensus.V20Height = 905100; // 0000020c5e0f86f385cbf8e90210de9a9fd63633f01433bf47a6b3227a2851fd
-        consensus.MN_RRHeight = 1066900; // 000000d05d445958a9a4ad6bdc0f4bfb25af124b2326060703373ff2d3b397e9
-        consensus.WithdrawalsHeight = 1148500; // 000000212a6fec2ee2af040c6d7a176360b154cbaa998888170cfd9ae7dd632d
+        consensus.BIP34Height = 1; // BTGS
+        consensus.BIP34Hash = uint256(); // BTGS
+        consensus.BIP65Height = 1; // BTGS
+        consensus.BIP66Height = 1; // BTGS
+        consensus.BIP147Height = 1; // BTGS
+        consensus.CSVHeight = 1; // BTGS
+        consensus.DIP0001Height = 2; // BTGS
+        consensus.DIP0003Height = 2; // BTGS
+        consensus.DIP0003EnforcementHeight = 2; // BTGS
+        consensus.DIP0003EnforcementHash = uint256(); // BTGS
+        consensus.DIP0008Height = 2; // BTGS
+        consensus.BRRHeight = 2; // BTGS
+        consensus.DIP0020Height = 2; // BTGS
+        consensus.DIP0024Height = 2; // BTGS
+        consensus.DIP0024QuorumsHeight = 2; // BTGS
+        consensus.V19Height = 2; // BTGS
+        consensus.V20Height = 2; // BTGS
+        consensus.MN_RRHeight = 2; // BTGS
+        consensus.WithdrawalsHeight = 2; // BTGS
         consensus.IPv4OptionalHeight = 0; // Version 3 ProTxs without IPv4 primary addresses are already mined
-        consensus.MinBIP9WarningHeight = 1148500 + 2016;  // withdrawals activation height + miner confirmation window
+        consensus.MinBIP9WarningHeight = 0; // BTGS
         consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 20
         consensus.nPowTargetTimespan = 24 * 60 * 60; // Dash: 1 day
         consensus.nPowTargetSpacing = 200; // BTGS: 200 seconds
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = false;
-        consensus.nPowKGWHeight = 4002; // nPowKGWHeight >= nPowDGWHeight means "no KGW"
-        consensus.nPowDGWHeight = 4002; // TODO: make sure to drop all spork6 related code on next testnet reset
+        consensus.nPowKGWHeight = 1; // BTGS
+        consensus.nPowDGWHeight = 1; // BTGS
         consensus.nRuleChangeActivationThreshold = 1512; // 75% for testchains
         consensus.nMinerConfirmationWindow = 2016; // nPowTargetTimespan / nPowTargetSpacing
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
@@ -384,7 +382,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].min_activation_height = 0; // No activation delay
 
         consensus.vDeployments[Consensus::DEPLOYMENT_V24].bit = 13;
-        consensus.vDeployments[Consensus::DEPLOYMENT_V24].nStartTime = 1790208000;     // Thursday, September 24, 2026 0:00:00
+        consensus.vDeployments[Consensus::DEPLOYMENT_V24].nStartTime = Consensus::BIP9Deployment::ALWAYS_ACTIVE; // BTGS: active from the start
         consensus.vDeployments[Consensus::DEPLOYMENT_V24].nTimeout = Consensus::BIP9Deployment::NO_TIMEOUT;
         consensus.vDeployments[Consensus::DEPLOYMENT_V24].nWindowSize = 100;
         consensus.vDeployments[Consensus::DEPLOYMENT_V24].nThresholdStart = 80;       // 80% of 100
@@ -393,7 +391,7 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_V24].useEHF = true;
 
         consensus.vDeployments[Consensus::DEPLOYMENT_EVO_SHARES].bit = 14;
-        consensus.vDeployments[Consensus::DEPLOYMENT_EVO_SHARES].nStartTime = 1790208000;     // Thursday, September 24, 2026 0:00:00
+        consensus.vDeployments[Consensus::DEPLOYMENT_EVO_SHARES].nStartTime = Consensus::BIP9Deployment::ALWAYS_ACTIVE; // BTGS: active from the start
         consensus.vDeployments[Consensus::DEPLOYMENT_EVO_SHARES].nTimeout = Consensus::BIP9Deployment::NO_TIMEOUT;
         consensus.vDeployments[Consensus::DEPLOYMENT_EVO_SHARES].nWindowSize = 100;
         consensus.vDeployments[Consensus::DEPLOYMENT_EVO_SHARES].nThresholdStart = 80;       // 80% of 100
@@ -445,16 +443,13 @@ public:
         nExtCoinType = 1;
 
         // long living quorum params
-        AddLLMQ(Consensus::LLMQType::LLMQ_50_60);
-        AddLLMQ(Consensus::LLMQType::LLMQ_60_75);
-        AddLLMQ(Consensus::LLMQType::LLMQ_400_60);
-        AddLLMQ(Consensus::LLMQType::LLMQ_400_85);
-        AddLLMQ(Consensus::LLMQType::LLMQ_100_67);
-        AddLLMQ(Consensus::LLMQType::LLMQ_25_67);
-        consensus.llmqTypeChainLocks = Consensus::LLMQType::LLMQ_50_60;
-        consensus.llmqTypeDIP0024InstantSend = Consensus::LLMQType::LLMQ_60_75;
-        consensus.llmqTypePlatform = Consensus::LLMQType::LLMQ_25_67;
-        consensus.llmqTypeMnhf = Consensus::LLMQType::LLMQ_50_60;
+        // BTGS: small quorums for a small smartnode network
+        AddLLMQ(Consensus::LLMQType::LLMQ_BTGS_15_67);
+        AddLLMQ(Consensus::LLMQType::LLMQ_BTGS_12_67);
+        consensus.llmqTypeChainLocks = Consensus::LLMQType::LLMQ_BTGS_15_67;
+        consensus.llmqTypeDIP0024InstantSend = Consensus::LLMQType::LLMQ_BTGS_12_67;
+        consensus.llmqTypePlatform = Consensus::LLMQType::LLMQ_BTGS_15_67; // Dash Platform is not used
+        consensus.llmqTypeMnhf = Consensus::LLMQType::LLMQ_BTGS_15_67;
 
         fDefaultConsistencyChecks = false;
         fRequireRoutableExternalIP = true;

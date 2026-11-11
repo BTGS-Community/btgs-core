@@ -26,6 +26,10 @@ enum class LLMQType : uint8_t {
     LLMQ_60_75 = 5,  // 60 members, 45 (75%) threshold, one every 12 hours
     LLMQ_25_67 = 6, // 25 members, 17 (67%) threshold, one per hour
 
+    // BTGS: small quorums for a small smartnode network
+    LLMQ_BTGS_15_67 = 20, // 15 members, 10 (67%) threshold, one every 24 blocks (~80 min): ChainLocks, network upgrades
+    LLMQ_BTGS_12_67 = 21, // 12 members, 8 (67%) threshold, rotating: InstantSend
+
     // for testing only
     LLMQ_TEST = 100, // 3 members, 2 (66%) threshold, one per hour. Params might differ when -llmqtestparams is used
 
@@ -135,7 +139,7 @@ static_assert(std::is_trivially_copyable_v<Consensus::LLMQParams>, "LLMQParams i
 static_assert(std::is_trivially_assignable_v<Consensus::LLMQParams, Consensus::LLMQParams>, "LLMQParams is not trivially assignable");
 
 
-static constexpr std::array<LLMQParams, 14> available_llmqs = {
+static constexpr std::array<LLMQParams, 16> available_llmqs = {
 
     /**
      * llmq_test
@@ -506,6 +510,55 @@ static constexpr std::array<LLMQParams, 14> available_llmqs = {
         .keepOldConnections = 25,
         .keepOldKeys = 24 * 30 * 2, // 2 months of quorums
         .recoveryMembers = 12,
+    },
+
+
+    /**
+     * BTGS: ChainLocks and network upgrade signals (non-rotating)
+     */
+    LLMQParams{
+        .type = LLMQType::LLMQ_BTGS_15_67,
+        .name = "llmq_btgs_15_67",
+        .useRotation = false,
+        .size = 15,
+        .minSize = 12,
+        .threshold = 10,
+
+        .dkgInterval = 24, // one DKG every 24 blocks (~80 min with 200 s blocks)
+        .dkgPhaseBlocks = 2,
+        .dkgMiningWindowStart = 10, // dkgPhaseBlocks * 5 = after finalization
+        .dkgMiningWindowEnd = 18,
+        .dkgBadVotesThreshold = 12,
+
+        .signingActiveQuorumCount = 4,
+
+        .keepOldConnections = 5,
+        .keepOldKeys = 48,
+        .recoveryMembers = 8,
+    },
+
+    /**
+     * BTGS: InstantSend (rotating, DIP0024)
+     */
+    LLMQParams{
+        .type = LLMQType::LLMQ_BTGS_12_67,
+        .name = "llmq_btgs_12_67",
+        .useRotation = true,
+        .size = 12,
+        .minSize = 10,
+        .threshold = 8,
+
+        .dkgInterval = 48, // DKG cycle
+        .dkgPhaseBlocks = 2,
+        .dkgMiningWindowStart = 12, // signingActiveQuorumCount + dkgPhaseBlocks * 5 = after finalization
+        .dkgMiningWindowEnd = 20,
+        .dkgBadVotesThreshold = 10,
+
+        .signingActiveQuorumCount = 2,
+
+        .keepOldConnections = 4,
+        .keepOldKeys = 4,
+        .recoveryMembers = 6,
     },
 
 }; // available_llmqs

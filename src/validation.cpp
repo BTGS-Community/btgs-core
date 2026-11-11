@@ -6668,6 +6668,12 @@ bool ChainstateManager::IsQuorumTypeEnabled(const Consensus::LLMQType llmqType,
     case Consensus::LLMQType::LLMQ_TEST_DIP0024: {
         return fDIP0024IsActive;
     }
+    // BTGS quorums
+    case Consensus::LLMQType::LLMQ_BTGS_15_67:
+        return true;
+    case Consensus::LLMQType::LLMQ_BTGS_12_67:
+        return fDIP0024IsActive;
+
     // TODO: remove it in case of testnet reset
     case Consensus::LLMQType::LLMQ_25_67:
         return pindexPrev->nHeight >= TESTNET_LLMQ_25_67_ACTIVATION_HEIGHT;
