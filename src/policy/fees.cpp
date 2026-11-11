@@ -974,7 +974,7 @@ bool CBlockPolicyEstimator::Read(AutoFile& filein)
         int nVersionRequired, nVersionThatWrote;
         unsigned int nFileBestSeenHeight;
         filein >> nVersionRequired >> nVersionThatWrote;
-        if (nVersionRequired > CLIENT_VERSION) {
+        if (nVersionRequired > 140100) { // BTGS: our version numbers restart at 1.0.0
             throw std::runtime_error(strprintf("up-version (%d) fee estimate file", nVersionRequired));
         }
 
