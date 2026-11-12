@@ -137,7 +137,7 @@ class MasternodeSharesTest(DashTestFramework):
         return protx_hash, prepared["collateralIndex"]
 
     def owner_gbt_payees(self, node):
-        return [p for p in node.getblocktemplate()["masternode"] if p["script"] != "6a"]
+        return [p for p in node.getblocktemplate()["masternode"] if p["script"] not in ("6a", "76a914fa53c9728c3189b12b267be5811b54033525b08d88ac")]  # BTGS: skip dev fund
 
     def build_lifecycle_tx(self, n_type, payload):
         """Returns hex of a minimally well-formed special transaction of the given type. The dummy

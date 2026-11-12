@@ -89,7 +89,7 @@ class P2PIBDStallingTest(BitcoinTestFramework):
 
         # Need to wait until 1023 blocks are received - the magic total bytes number is a workaround in lack of an rpc
         # returning the number of downloaded (but not connected) blocks.
-        bytes_recv = 172761 if not self.options.v2transport else 169692
+        bytes_recv = (172761 if not self.options.v2transport else 169692) + 1023 * 34  # BTGS: dev fund output per block
         self.wait_until(lambda: self.total_bytes_recv_for_blocks() == bytes_recv)
 
         self.all_sync_send_with_ping(peers)

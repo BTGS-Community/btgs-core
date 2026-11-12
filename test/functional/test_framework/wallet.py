@@ -394,7 +394,7 @@ def getnewdestination(address_type='legacy'):
 def address_to_scriptpubkey(address):
     """Converts a given address to the corresponding output script (scriptPubKey)."""
     payload, version = base58_to_byte(address)
-    if version == 140:  # testnet pubkey hash
+    if version == 127:  # testnet pubkey hash (BTGS: t)
         return keyhash_to_p2pkh_script(payload)
     elif version == 19:  # testnet script hash
         return scripthash_to_p2sh_script(payload)

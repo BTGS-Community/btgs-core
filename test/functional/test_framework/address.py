@@ -15,7 +15,7 @@ from .script import hash160, hash256, CScript
 
 # Note unlike in bitcoin, this address isn't bech32 since we don't (at this time) support bech32.
 ADDRESS_BCRT1_UNSPENDABLE = 'tGHCZmbY8tgHayqid39bZvkdTdj7ub44mw'
-ADDRESS_BCRT1_UNSPENDABLE_DESCRIPTOR = 'addr(tGHCZmbY8tgHayqid39bZvkdTdj7ub44mw)#e5kt0jtk'
+ADDRESS_BCRT1_UNSPENDABLE_DESCRIPTOR = 'addr(tGHCZmbY8tgHayqid39bZvkdTdj7ub44mw)#qj0j9wfp'
 ADDRESS_BCRT1_P2SH_OP_TRUE = '8zJctvfrzGZ5s1zQ3kagwyW1DsPYSQ4V2P'
 
 

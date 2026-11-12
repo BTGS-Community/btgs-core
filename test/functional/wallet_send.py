@@ -424,7 +424,7 @@ class WalletSendTest(BitcoinTestFramework):
         res = self.test_send(from_wallet=w0, to_wallet=w1, amount=1, add_to_wallet=False, change_position=0)
         assert res["complete"]
         change_address = self.nodes[0].decodepsbt(res["psbt"])["tx"]["vout"][0]["scriptPubKey"]["address"]
-        assert change_address[0] == "y" or change_address[0] == "8" or change_address[0] == "9"
+        assert change_address[0] == "t" or change_address[0] == "8" or change_address[0] == "9"
 
         self.log.info("Set lock time...")
         height = self.nodes[0].getblockchaininfo()["blocks"]

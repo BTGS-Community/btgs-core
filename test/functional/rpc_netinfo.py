@@ -28,7 +28,7 @@ V24_ACTIVATION_THRESHOLD = 100
 # Height from which masternodes may operate without IPv4, see DEPLOYMENT_IPV4_OPTIONAL in src/consensus/params.h
 IPV4_OPTIONAL_HEIGHT = 500
 # See CMainParams in src/chainparams.cpp
-DEFAULT_PORT_MAINNET_CORE_P2P = 9999
+DEFAULT_PORT_MAINNET_CORE_P2P = 19888  # BTGS
 # See CRegTestParams in src/chainparams.cpp
 DEFAULT_PORT_PLATFORM_P2P = 22200
 DEFAULT_PORT_PLATFORM_HTTP = 22201

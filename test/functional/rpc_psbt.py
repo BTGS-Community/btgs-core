@@ -573,7 +573,8 @@ class PSBTTest(BitcoinTestFramework):
         assert_equal(analysis['error'], 'PSBT is not valid. Input 0 spends unspendable output')
 
         self.log.info("PSBT with invalid values should have error message and Creator as next")
-        analysis = self.nodes[0].analyzepsbt('cHNidP8BAHECAAAAAQXbPuwX0yi0oRvSfIXqeruM5+ibuXvP92RCdIEsJR6jAAAAAAD/////AgD5ApUAAAAAFgAUKNw0x8HRctAgmvoevm4u1SbN7XL87QKVAAAAABYAFPck4gF7iL4NL4wtfRAKgQbghiTUAAAAAAABABMCAAAAAAEBQAda8HUHAAAAAAAAAQcCagABAR8AgIFq49AHABYAFJUDtxf2PHo641HEOBOAIvFMNTr2AAAA')
+        # BTGS: input value is 30,000,000.00000001 (one satoshi above the BTGS cap; Dash used 21M + 1 sat)
+        analysis = self.nodes[0].analyzepsbt('cHNidP8BAHECAAAAAc5aPThfycXAbkUrEY4+7A2fUhRGL8rQjec/1jKQE88KAAAAAAD/////AgD5ApUAAAAAFgAUKNw0x8HRctAgmvoevm4u1SbN7XL87QKVAAAAABYAFPck4gF7iL4NL4wtfRAKgQbghiTUAAAAAAABABMCAAAAAAEBgFPue6gKAAAAAAAAAQcCagABAR8AgIFq49AHABYAFJUDtxf2PHo641HEOBOAIvFMNTr2AAAA')
         assert_equal(analysis['next'], 'creator')
         assert_equal(analysis['error'], 'PSBT is not valid. Input 0 has invalid value')
 
@@ -584,9 +585,9 @@ class PSBTTest(BitcoinTestFramework):
         # currently it fails at `verify pubkey` for signer
         # assert_equal(analysis['next'], 'finalizer')
 
-        analysis = self.nodes[0].analyzepsbt('cHNidP8BAHECAAAAAbmNr2X0Nc+2AtaXYjPu3kIFc3Cmj1aYy5WQs5yaUfRvAAAAAAD/////AgCAgWrj0AcAFgAUKNw0x8HRctAgmvoevm4u1SbN7XL87QKVAAAAABYAFPck4gF7iL4NL4wtfRAKgQbghiTUAAAAAAABABQCAAAAAAGghgEAAAAAAAFRAAAAAAEBHwDyBSoBAAAAFgAUlQO3F/Y8ejrjUcQ4E4Ai8Uw1OvYAAAA=')
+        analysis = self.nodes[0].analyzepsbt('cHNidP8BAHECAAAAAbmNr2X0Nc+2AtaXYjPu3kIFc3Cmj1aYy5WQs5yaUfRvAAAAAAD/////AgGAU+57qAoAFgAUKNw0x8HRctAgmvoevm4u1SbN7XL87QKVAAAAABYAFPck4gF7iL4NL4wtfRAKgQbghiTUAAAAAAABABQCAAAAAAGghgEAAAAAAAFRAAAAAAEBHwDyBSoBAAAAFgAUlQO3F/Y8ejrjUcQ4E4Ai8Uw1OvYAAAA=')
         assert_equal(analysis['next'], 'creator')
-        assert_equal(analysis['error'], 'PSBT is not valid. Output amount invalid')
+        assert_equal(analysis['error'], 'PSBT is not valid. Output amount invalid')  # BTGS: output 30M + 1 sat (Dash: 22M)
 
         assert_raises_rpc_error(-22, "TX decode failed", self.nodes[0].analyzepsbt, 'cHNidP8BAJoCAAAAAkvEW8NnDtdNtDpsmze+Ht2LH35IJcKv00jKAlUs21RrAwAAAAD/////S8Rbw2cO1020OmybN74e3Ysffkglwq/TSMoCVSzbVGsBAAAAAP7///8CwLYClQAAAAAWABSNJKzjaUb3uOxixsvh1GGE3fW7zQD5ApUAAAAAFgAUKNw0x8HRctAgmvoevm4u1SbN7XIAAAAAAAEAnQIAAAACczMa321tVHuN4GKWKRncycI22aX3uXgwSFUKM2orjRsBAAAAAP7///9zMxrfbW1Ue43gYpYpGdzJwjbZpfe5eDBIVQozaiuNGwAAAAAA/v///wIA+QKVAAAAABl2qRT9zXUVA8Ls5iVqynLHe5/vSe1XyYisQM0ClQAAAAAWABRmWQUcjSjghQ8/uH4Bn/zkakwLtAAAAAAAAQEfQM0ClQAAAAAWABRmWQUcjSjghQ8/uH4Bn/zkakwLtAAAAA==')
 

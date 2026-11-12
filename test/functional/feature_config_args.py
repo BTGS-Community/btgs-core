@@ -40,7 +40,7 @@ class ConfArgsTest(BitcoinTestFramework):
             expected_msg=conf_in_config_file_err,
         )
         inc_conf_file_path = os.path.join(self.nodes[0].datadir, 'include.conf')
-        with open(os.path.join(self.nodes[0].datadir, 'dash.conf'), 'a', encoding='utf-8') as conf:
+        with open(os.path.join(self.nodes[0].datadir, 'btgscore.conf'), 'a', encoding='utf-8') as conf:
             conf.write(f'includeconf={inc_conf_file_path}\n')
         with open(inc_conf_file_path, 'w', encoding='utf-8') as conf:
             conf.write('conf=some.conf\n')
@@ -98,7 +98,7 @@ class ConfArgsTest(BitcoinTestFramework):
         self.nodes[0].assert_start_raises_init_error(expected_msg='Error: Error reading configuration file: parse error on line 4, using # in rpcpassword can be ambiguous and should be avoided')
 
         inc_conf_file2_path = os.path.join(self.nodes[0].datadir, 'include2.conf')
-        with open(os.path.join(self.nodes[0].datadir, 'dash.conf'), 'a', encoding='utf-8') as conf:
+        with open(os.path.join(self.nodes[0].datadir, 'btgscore.conf'), 'a', encoding='utf-8') as conf:
             conf.write(f'includeconf={inc_conf_file2_path}\n')
 
         with open(inc_conf_file_path, 'w', encoding='utf-8') as conf:
@@ -126,11 +126,11 @@ class ConfArgsTest(BitcoinTestFramework):
         env, default_datadir = util.get_temp_default_datadir(pathlib.Path(self.options.tmpdir, "test_config_file_log"))
         default_datadir.mkdir(parents=True)
 
-        # Write a dash.conf file in the default data directory containing a
+        # Write a btgscore.conf file in the default data directory containing a
         # datadir= line pointing at the node datadir.
         node = self.nodes[0]
         conf_text = pathlib.Path(node.bitcoinconf).read_text()
-        conf_path = default_datadir / "dash.conf"
+        conf_path = default_datadir / "btgscore.conf"
         conf_path.write_text(f"datadir={node.datadir}\n{conf_text}")
 
         # Drop the node -datadir= argument during this test, because if it is
@@ -319,20 +319,20 @@ class ConfArgsTest(BitcoinTestFramework):
                 self.restart_node(0, extra_args=[connect_arg, '-seednode=fakeaddress2'])
 
     def test_ignored_conf(self):
-        self.log.info('Test error is triggered when the datadir in use contains a dash.conf file that would be ignored '
+        self.log.info('Test error is triggered when the datadir in use contains a btgscore.conf file that would be ignored '
                       'because a conflicting -conf file argument is passed.')
         node = self.nodes[0]
         with tempfile.NamedTemporaryFile(dir=self.options.tmpdir, mode="wt", delete=False) as temp_conf:
             temp_conf.write(f"datadir={node.datadir}\n")
         node.assert_start_raises_init_error([f"-conf={temp_conf.name}"], re.escape(
-            f'Error: Data directory "{node.datadir}" contains a "dash.conf" file which is ignored, because a '
+            f'Error: Data directory "{node.datadir}" contains a "btgscore.conf" file which is ignored, because a '
             f'different configuration file "{temp_conf.name}" from command line argument "-conf={temp_conf.name}" '
             f'is being used instead.') + r"[\s\S]*", match=ErrorMatch.FULL_REGEX)
 
         # Test that passing a redundant -conf command line argument pointing to
-        # the same dash.conf that would be loaded anyway does not trigger an
+        # the same btgscore.conf that would be loaded anyway does not trigger an
         # error.
-        self.start_node(0, [f'-conf={node.datadir}/dash.conf'])
+        self.start_node(0, [f'-conf={node.datadir}/btgscore.conf'])
         self.stop_node(0)
 
     def test_missing_default_datadir(self):
@@ -362,20 +362,20 @@ class ConfArgsTest(BitcoinTestFramework):
         if sys.platform == "win32":
             return
 
-        self.log.info('Test error is triggered when dash.conf in the default data directory sets another datadir '
-                      'and it contains a different dash.conf file that would be ignored')
+        self.log.info('Test error is triggered when btgscore.conf in the default data directory sets another datadir '
+                      'and it contains a different btgscore.conf file that would be ignored')
 
         # Create a temporary directory that will be treated as the default data
         # directory by bitcoind.
         env, default_datadir = util.get_temp_default_datadir(pathlib.Path(self.options.tmpdir, "home"))
         default_datadir.mkdir(parents=True)
 
-        # Write a dash.conf file in the default data directory containing a
+        # Write a btgscore.conf file in the default data directory containing a
         # datadir= line pointing at the node datadir. This will trigger a
         # startup error because the node datadir contains a different
-        # dash.conf that would be ignored.
+        # btgscore.conf that would be ignored.
         node = self.nodes[0]
-        (default_datadir / "dash.conf").write_text(f"datadir={node.datadir}\n")
+        (default_datadir / "btgscore.conf").write_text(f"datadir={node.datadir}\n")
 
         # Drop the node -datadir= argument during this test, because if it is
         # specified it would take precedence over the datadir setting in the
@@ -383,8 +383,8 @@ class ConfArgsTest(BitcoinTestFramework):
         node_args = node.args
         node.args = [arg for arg in node.args if not arg.startswith("-datadir=")]
         node.assert_start_raises_init_error([], re.escape(
-            f'Error: Data directory "{node.datadir}" contains a "dash.conf" file which is ignored, because a '
-            f'different configuration file "{default_datadir}/dash.conf" from data directory "{default_datadir}" '
+            f'Error: Data directory "{node.datadir}" contains a "btgscore.conf" file which is ignored, because a '
+            f'different configuration file "{default_datadir}/btgscore.conf" from data directory "{default_datadir}" '
             f'is being used instead.') + r"[\s\S]*", env=env, match=ErrorMatch.FULL_REGEX)
         node.args = node_args
 
@@ -415,7 +415,7 @@ class ConfArgsTest(BitcoinTestFramework):
         self.nodes[0].assert_start_raises_init_error([f'-datadir={new_data_dir}'], f'Error: Specified data directory "{new_data_dir}" does not exist.')
 
         # Check that using non-existent datadir in conf file fails
-        conf_file = os.path.join(default_data_dir, "dash.conf")
+        conf_file = os.path.join(default_data_dir, "btgscore.conf")
 
         # datadir needs to be set before [chain] section
         with open(conf_file, encoding='utf8') as f:
@@ -427,7 +427,7 @@ class ConfArgsTest(BitcoinTestFramework):
         self.nodes[0].assert_start_raises_init_error([f'-conf={conf_file}'], f'Error: Error reading configuration file: specified data directory "{new_data_dir}" does not exist.')
 
         # Check that an explicitly specified config file that cannot be opened fails
-        none_existent_conf_file = os.path.join(default_data_dir, "none_existent_dash.conf")
+        none_existent_conf_file = os.path.join(default_data_dir, "none_existent_btgscore.conf")
         self.nodes[0].assert_start_raises_init_error(['-conf=' + none_existent_conf_file], 'Error: Error reading configuration file: specified config file "' + none_existent_conf_file + '" could not be opened.')
 
         # Create the directory and ensure the config file now works

@@ -36,7 +36,7 @@ class FilelockTest(BitcoinTestFramework):
         self.log.info("Check that cookie and PID file are not deleted when attempting to start a second dashd using the same datadir")
         cookie_file = Path(datadir) / ".cookie"
         assert cookie_file.exists()  # should not be deleted during the second dashd instance shutdown
-        pid_file = Path(datadir) / "dashd.pid"
+        pid_file = Path(datadir) / "btgsd.pid"
         assert pid_file.exists()
 
         if self.is_wallet_compiled():

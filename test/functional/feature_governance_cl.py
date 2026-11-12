@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
 # Copyright (c) 2024-2025 The Dash Core developers
+# Copyright (c) 2026 The BTGS Community developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
-"""Tests governance checks can be skipped for blocks covered by the best chainlock."""
+"""BTGS: a node that missed proposals and votes still syncs superblocks covered by a ChainLock.
 
+BTGS has no treasury (superblock budget 0), so no trigger is ever created. A node isolated
+while proposals are voted on must still accept the superblock heights once it reconnects."""
 import json
 
-from test_framework.governance import have_trigger_for_height
 from test_framework.messages import uint256_to_string
 from test_framework.test_framework import DashTestFramework
 from test_framework.util import assert_equal, satoshi_round
 
-class DashGovernanceTest (DashTestFramework):
+
+class BTGSGovernanceChainLockTest(DashTestFramework):
     def add_options(self, parser):
         self.add_wallet_options(parser)
 
@@ -19,7 +22,6 @@ class DashGovernanceTest (DashTestFramework):
         self.set_dash_test_params(6, 5, [["-budgetparams=10:10:10"]] * 6)
 
     def prepare_object(self, object_type, parent_hash, creation_time, revision, name, amount, payment_address):
-        proposal_rev = revision
         proposal_time = int(creation_time)
         proposal_template = {
             "type": object_type,
@@ -31,29 +33,20 @@ class DashGovernanceTest (DashTestFramework):
             "url": "https://dash.org"
         }
         proposal_hex = ''.join(format(x, '02x') for x in json.dumps(proposal_template).encode())
-        collateral_hash = self.nodes[0].gobject("prepare", parent_hash, proposal_rev, proposal_time, proposal_hex)
-        return {
-            "parentHash": parent_hash,
-            "collateralHash": collateral_hash,
-            "createdAt": proposal_time,
-            "revision": proposal_rev,
-            "hex": proposal_hex,
-            "data": proposal_template,
-        }
+        collateral_hash = self.nodes[0].gobject("prepare", parent_hash, revision, proposal_time, proposal_hex)
+        return {"collateralHash": collateral_hash, "hex": proposal_hex}
+
+    def check_no_triggers(self, nodes):
+        for node in nodes:
+            assert_equal(len(node.gobject("list", "valid", "triggers")), 0)
 
     def run_test(self):
         sb_cycle = 20
-        sb_maturity_window = 10
-        sb_immaturity_window = sb_cycle - sb_maturity_window
 
         self.log.info("Make sure ChainLocks are active")
-
         self.nodes[0].sporkupdate("SPORK_17_QUORUM_DKG_ENABLED", 0)
         self.wait_for_sporks_same()
-        # ChainLocks use llmq_test on regtest, and the 10-minute mocktime bump below keeps
-        # proposal collateral transactions safe with this shorter quorum setup.
         self.mine_quorum()
-
         self.sync_blocks()
         self.wait_for_chainlocked_block_all_nodes(self.nodes[0].getbestblockhash())
 
@@ -64,124 +57,44 @@ class DashGovernanceTest (DashTestFramework):
             self.generate(self.nodes[0], n, sync_fun=lambda: self.sync_blocks())
 
         self.log.info("Prepare proposals")
-
         proposal_time = self.mocktime
-        self.p0_payout_address = self.nodes[0].getnewaddress()
-        self.p1_payout_address = self.nodes[0].getnewaddress()
-        self.p0_amount = satoshi_round("1.1")
-        self.p1_amount = satoshi_round("3.3")
-
-        p0_collateral_prepare = self.prepare_object(1, uint256_to_string(0), proposal_time, 1, "Proposal_0", self.p0_amount, self.p0_payout_address)
-        p1_collateral_prepare = self.prepare_object(1, uint256_to_string(0), proposal_time, 1, "Proposal_1", self.p1_amount, self.p1_payout_address)
+        p0 = self.prepare_object(1, uint256_to_string(0), proposal_time, 1, "Proposal_0", satoshi_round("1.1"), self.nodes[0].getnewaddress())
+        p1 = self.prepare_object(1, uint256_to_string(0), proposal_time, 1, "Proposal_1", satoshi_round("3.3"), self.nodes[0].getnewaddress())
         self.bump_mocktime(60 * 10 + 1)
-
         self.generate(self.nodes[0], 6, sync_fun=self.sync_blocks())
-
         assert_equal(len(self.nodes[0].gobject("list-prepared")), 2)
-        assert_equal(len(self.nodes[0].gobject("list")), 0)
 
         self.log.info("Submit proposals")
-
-        self.p0_hash = self.nodes[0].gobject("submit", "0", 1, proposal_time, p0_collateral_prepare["hex"], p0_collateral_prepare["collateralHash"])
-        self.p1_hash = self.nodes[0].gobject("submit", "0", 1, proposal_time, p1_collateral_prepare["hex"], p1_collateral_prepare["collateralHash"])
-
+        p0_hash = self.nodes[0].gobject("submit", "0", 1, proposal_time, p0["hex"], p0["collateralHash"])
+        p1_hash = self.nodes[0].gobject("submit", "0", 1, proposal_time, p1["hex"], p1["collateralHash"])
         assert_equal(len(self.nodes[0].gobject("list")), 2)
 
-        self.log.info("Isolate a node so that it would miss votes and triggers")
-        # Isolate a node
+        self.log.info("Isolate a node so that it misses the votes")
         self.isolate_node(5)
 
         self.log.info("Vote proposals")
+        self.nodes[0].gobject("vote-many", p0_hash, "funding", "yes")
+        self.nodes[0].gobject("vote-many", p1_hash, "funding", "yes")
+        assert_equal(self.nodes[0].gobject("get", p0_hash)["FundingResult"]["YesCount"], self.mn_count)
+        assert_equal(self.nodes[0].gobject("get", p1_hash)["FundingResult"]["YesCount"], self.mn_count)
 
-        self.nodes[0].gobject("vote-many", self.p0_hash, "funding", "yes")
-        self.nodes[0].gobject("vote-many", self.p1_hash, "funding", "yes")
-        assert_equal(self.nodes[0].gobject("get", self.p0_hash)["FundingResult"]["YesCount"], self.mn_count)
-        assert_equal(self.nodes[0].gobject("get", self.p1_hash)["FundingResult"]["YesCount"], self.mn_count)
-
-        assert_equal(len(self.nodes[0].gobject("list", "valid", "triggers")), 0)
-
-        self.log.info("Move into sb maturity window")
-        n = sb_immaturity_window - self.nodes[0].getblockcount() % sb_cycle
-        assert n >= 0
-        self.bump_mocktime(156 * n)
-        self.generate(self.nodes[0], n, sync_fun=lambda: self.sync_blocks(self.nodes[0:5]))
-
-        self.log.info("Wait for new trigger and votes on non-isolated nodes")
+        self.log.info("Mine through the maturity window, the superblock and one more cycle: no trigger (budget 0)")
         sb_block_height = self.nodes[0].getblockcount() // sb_cycle * sb_cycle + sb_cycle
-        assert_equal(sb_block_height % sb_cycle, 0)
-
-        assert_equal(self.mninfo[4].nodeIdx, 5)
-        isolated_lastpaid_height = self.nodes[0].protx("info", self.mninfo[4].proTxHash)["state"]["lastPaidHeight"]
-        if isolated_lastpaid_height == self.nodes[0].getblockcount() - self.mn_count + 1:
-            # Isolated node is the one that should create new trigger at this height,
-            # mine a block to pick another node
+        target = sb_block_height + sb_cycle + 1
+        while self.nodes[0].getblockcount() < target:
             self.bump_mocktime(156)
             self.generate(self.nodes[0], 1, sync_fun=lambda: self.sync_blocks(self.nodes[0:5]))
-        self.wait_until(lambda: have_trigger_for_height(self.nodes[0:5], sb_block_height), timeout=5)
-
-        n = sb_cycle - self.nodes[0].getblockcount() % sb_cycle
-        assert n > 1
-
-        self.log.info("Move remaining n blocks until the next Superblock")
-        self.bump_mocktime(156 * (n-1))
-        self.generate(self.nodes[0], n-1, sync_fun=lambda: self.sync_blocks(self.nodes[0:5]))
-
-        # Confirm all is good
-        self.wait_until(lambda: have_trigger_for_height(self.nodes[0:5], sb_block_height), timeout=5)
-
-        self.log.info("Mine superblock")
-        self.bump_mocktime(156)
-        self.generate(self.nodes[0], 1, sync_fun=lambda: self.sync_blocks(self.nodes[0:5]))
+            self.check_no_triggers(self.nodes[0:5])
         self.wait_for_chainlocked_block(self.nodes[0], self.nodes[0].getbestblockhash())
 
-        self.log.info("Mine (superblock cycle + 1) blocks on non-isolated nodes to forget about this trigger")
-        for _ in range(sb_cycle):
-            self.bump_mocktime(156)
-            self.generate(self.nodes[0], 1, sync_fun=lambda: self.sync_blocks(self.nodes[0:5]))
-        # Should still have at least 1 trigger for the old sb cycle and 0 for the current one
-        assert len(self.nodes[0].gobject("list", "valid", "triggers")) >= 1
-        assert not have_trigger_for_height(self.nodes[0:5], sb_block_height + sb_cycle)
-        self.bump_mocktime(156)
-        self.generate(self.nodes[0], 1, sync_fun=lambda: self.sync_blocks(self.nodes[0:5]))
-
-        self.log.info("Wait for governance module to catch up with block updates")
-        tip_height = self.nodes[0].getblockcount()
-        expected_msg = f'CGovernanceManager::UpdatedBlockTip -- nCachedBlockHeight: {tip_height}'
-
-        def governance_tip_updated(node):
-            with open(node.debug_log_path, "rb") as dl:
-                seek_pos = node.debug_log_size(mode="rb") - 100 * 1024  # read the last 100 KiB only
-                dl.seek(seek_pos if seek_pos > 0 else 0)
-                debug_log_part = dl.read().decode("utf-8", errors="replace")
-            return expected_msg in debug_log_part
-
-        for node in self.nodes[0:5]:
-            self.wait_until(lambda node=node: governance_tip_updated(node))
-
-        self.log.info("Bump mocktime to trigger governance cleanup")
-        for delta, expected in (
-            (5 * 60, ['SuperblockManager::Clean -- Removing trigger object']),  # mark old triggers for deletion
-            (10 * 60, ['UpdateCachesAndClean -- Governance Objects: 0']),  # deletion after delay
-        ):
-            self.mocktime += delta
-            for node in self.nodes[0:5]:
-                with node.assert_debug_log(expected_msgs=expected):
-                    node.setmocktime(self.mocktime)
-                    node.mockscheduler(delta)
-            self.nodes[5].setmocktime(self.mocktime)
-            self.nodes[5].mockscheduler(delta)
-
-        # Confirm in RPC
-        for node in self.nodes:
-            assert_equal(len(node.gobject("list", "valid", "triggers")), 0)
-
-        self.log.info("Reconnect isolated node and confirm the next ChainLock will let it sync")
+        self.log.info("Reconnect the isolated node: it syncs past both superblock heights")
         self.reconnect_isolated_node(5, 0)
-        assert_equal(self.nodes[5].mnsync("status")["IsSynced"], False)
         # NOTE: bumping mocktime too much after recent reconnect can result in "timeout downloading block"
         self.bump_mocktime(1)
         self.generate(self.nodes[0], 1, sync_fun=self.sync_blocks())
+        assert_equal(self.nodes[5].getbestblockhash(), self.nodes[0].getbestblockhash())
+        self.check_no_triggers(self.nodes)
 
 
 if __name__ == '__main__':
-    DashGovernanceTest().main()
+    BTGSGovernanceChainLockTest().main()

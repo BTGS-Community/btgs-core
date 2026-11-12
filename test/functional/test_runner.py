@@ -117,7 +117,7 @@ BASE_SCRIPTS = [
     'feature_llmq_is_retroactive.py', # NOTE: needs dash_hash to pass
     'feature_llmq_chainlocks.py', # NOTE: needs dash_hash to pass
     'feature_llmq_chainlocks_automatic.py', # NOTE: needs dash_hash to pass
-    'feature_quorum_proof_chain.py',
+    # 'feature_quorum_proof_chain.py',  # BTGS: Dash mainnet proof data, re-add with BTGS testnet data
     'feature_masternode_payout_shares.py',
     'feature_masternode_shares.py',
     'feature_llmq_signing.py --spork21', # NOTE: needs dash_hash to pass
@@ -385,7 +385,7 @@ BASE_SCRIPTS = [
     'wallet_coinbase_category.py --descriptors',
     'feature_filelock.py',
     'feature_loadblock.py',
-    'p2p_dos_header_tree.py',
+    # 'p2p_dos_header_tree.py',  # BTGS: Dash testnet headers, re-add with BTGS testnet headers
     'p2p_add_connections.py',
     'feature_bind_port_discover.py',
     'p2p_message_capture.py',

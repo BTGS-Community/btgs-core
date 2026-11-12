@@ -8,6 +8,7 @@
 #
 
 from test_framework.blocktools import COINBASE_MATURITY
+from test_framework.descriptors import descsum_create
 from test_framework.test_framework import BitcoinTestFramework
 from test_framework.util import (
     assert_equal,
@@ -24,6 +25,7 @@ class GetblockstatsTest(BitcoinTestFramework):
     max_stat_pos = 2
 
     def add_options(self, parser):
+        self.add_wallet_options(parser)  # BTGS: the data generator needs a wallet (descriptor wallet is picked when BDB is not built)
         parser.add_argument('--gen-test-data', dest='gen_test_data',
                             default=False, action='store_true',
                             help='Generate test data')
@@ -46,7 +48,8 @@ class GetblockstatsTest(BitcoinTestFramework):
         self.generate(self.nodes[0], COINBASE_MATURITY + 1)
         self.nodes[0].createwallet(wallet_name='test')
         privkey = self.nodes[0].get_deterministic_priv_key().key
-        self.nodes[0].importprivkey(privkey)
+        # BTGS: descriptor wallet (no BDB build): import the key as a descriptor
+        self.nodes[0].importdescriptors([{"desc": descsum_create(f"pkh({privkey})"), "timestamp": 0}])
 
         address = self.nodes[0].get_deterministic_priv_key().address
         self.nodes[0].sendtoaddress(address=address, amount=10, subtractfeefromamount=True)
@@ -168,7 +171,7 @@ class GetblockstatsTest(BitcoinTestFramework):
 
         self.log.info('Test block height 0')
         genesis_stats = self.nodes[0].getblockstats(0)
-        assert_equal(genesis_stats["blockhash"], "000008ca1832a4baf228eb1553c03d3a2c8e02399550dd6ea8d65cec3ef23d2e")
+        assert_equal(genesis_stats["blockhash"], "3d00bad1b24a84cfc9d589ef14778170a053faa6941ea90da03908518a9a48b2")
         assert_equal(genesis_stats["utxo_increase"], 1)
         assert_equal(genesis_stats["utxo_size_inc"], 117)
         assert_equal(genesis_stats["utxo_increase_actual"], 0)
@@ -176,10 +179,10 @@ class GetblockstatsTest(BitcoinTestFramework):
 
         self.log.info('Test tip including OP_RETURN')
         tip_stats = self.nodes[0].getblockstats(tip)
-        assert_equal(tip_stats["utxo_increase"], 4)
-        assert_equal(tip_stats["utxo_size_inc"], 300)
-        assert_equal(tip_stats["utxo_increase_actual"], 4)
-        assert_equal(tip_stats["utxo_size_inc_actual"], 300)
+        assert_equal(tip_stats["utxo_increase"], 6)  # BTGS chain (Dash: 4)
+        assert_equal(tip_stats["utxo_size_inc"], 428)  # BTGS chain (Dash: 300)
+        assert_equal(tip_stats["utxo_increase_actual"], 5)  # BTGS chain (Dash: 4)
+        assert_equal(tip_stats["utxo_size_inc_actual"], 375)  # BTGS chain (Dash: 300)
 
 if __name__ == '__main__':
     GetblockstatsTest().main()

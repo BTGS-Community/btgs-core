@@ -33,22 +33,22 @@ class DumptxoutsetTest(BitcoinTestFramework):
 
         assert expected_path.is_file()
 
-        assert_equal(out['coins_written'], 100)
+        assert_equal(out['coins_written'], 200)  # BTGS: miner + dev fund
         assert_equal(out['base_height'], 100)
         assert_equal(out['path'], str(expected_path))
         # Blockhash should be deterministic based on mocked time.
         assert_equal(
             out['base_hash'],
-            '38619d68335f21ded08d6e1f4ef9572eaeb0bb04b9070b3e6be33c7c908564b4')
+            '347dfee0111e615b89edfb99dce761074ef697baa699eacb99465ac1f3a4c41c')  # BTGS regtest
 
 
         # UTXO snapshot hash should be deterministic based on mocked time.
         assert_equal(
             sha256sum_file(str(expected_path)).hex(),
-            '4a34cf865938252bf0bef702989955824d886f595afab596b1edac4dd31cd89f')
+            '05b5aa80fcf992c97f610a46bf96a685d8bbb0b75f035e9c380188adc96031a9')  # BTGS regtest
 
         assert_equal(
-            out['txoutset_hash'], 'b2d7429106c96f5ab831843d5c96ba131ca8793111d0a0e30e7d7d8b4841e6cc')
+            out['txoutset_hash'], '8ea31a0d8b2d32ee3029dec0738d2f05b0756ed8d33dc3d1184426cebeeeea7c')  # BTGS regtest
         assert_equal(out['nchaintx'], 101)
 
         # Specifying a path to an existing or invalid file will fail.

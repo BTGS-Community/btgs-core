@@ -39,7 +39,7 @@ class RPCMasternodeTest(DashTestFramework):
             payments_payee = ""
             for i in range(0, len(payments_block_payees)):
                 if i == 0:
-                    assert_equal(payments_block_payees[i]['script'], '6a')
+                    assert_equal(payments_block_payees[i]['script'], '76a914fa53c9728c3189b12b267be5811b54033525b08d88ac')  # BTGS: first entry is the dev fund (Dash: platform OP_RETURN)
                     continue
 
                 payments_payee += payments_block_payees[i]["address"]

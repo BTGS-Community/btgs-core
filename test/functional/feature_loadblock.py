@@ -52,7 +52,7 @@ class LoadblockTest(BitcoinTestFramework):
             cfg.write(f"host={node_url.hostname}\n")
             cfg.write(f"output_file={bootstrap_file}\n")
             cfg.write(f"max_height=100\n")
-            cfg.write(f"netmagic=fcc1b7dc\n")
+            cfg.write(f"netmagic=87badef7\n")  # BTGS regtest
             cfg.write(f"input={blocks_dir}\n")
             cfg.write(f"genesis={genesis_block}\n")
             cfg.write(f"hashlist={hash_list.name}\n")

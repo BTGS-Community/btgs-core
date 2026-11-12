@@ -208,8 +208,9 @@ class DIP3Test(BitcoinTestFramework):
         found_multisig_payee = False
         for _ in range(len(mns)):
             bt = self.nodes[0].getblocktemplate()
-            expected_payee = bt['masternode'][0]['payee']
-            expected_amount = bt['masternode'][0]['amount']
+            mn_entries = [p for p in bt['masternode'] if p['script'] != '76a914fa53c9728c3189b12b267be5811b54033525b08d88ac']  # BTGS: skip dev fund
+            expected_payee = mn_entries[0]['payee']
+            expected_amount = mn_entries[0]['amount']
             self.generate(self.nodes[0], 1)
             if expected_payee == multisig:
                 block = self.nodes[0].getblock(self.nodes[0].getbestblockhash())

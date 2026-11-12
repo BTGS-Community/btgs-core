@@ -158,7 +158,7 @@ class MasternodePayoutSharesTest(DashTestFramework):
             expected_assert_msg="payouts must not contain more than 8 entries",
         )
 
-        gbt_payees = [p for p in node.getblocktemplate()["masternode"] if p["script"] != "6a"]
+        gbt_payees = [p for p in node.getblocktemplate()["masternode"] if p["script"] not in ("6a", "76a914fa53c9728c3189b12b267be5811b54033525b08d88ac")]  # BTGS: skip dev fund
         assert_equal(len(gbt_payees), 2)
         assert_equal(gbt_payees[0]["payee"], payout1)
         assert_equal(gbt_payees[1]["payee"], payout2)
@@ -168,7 +168,7 @@ class MasternodePayoutSharesTest(DashTestFramework):
 
         self.generate(node, 1, sync_fun=self.no_op)
         payments = node.masternode("payments")[0]["masternodes"][0]["payees"]
-        payment_payees = [p for p in payments if p["script"] != "6a"]
+        payment_payees = [p for p in payments if p["script"] not in ("6a", "76a914fa53c9728c3189b12b267be5811b54033525b08d88ac")]  # BTGS: skip dev fund
         assert_equal([p["address"] for p in payment_payees], [payout1, payout2])
 
         # DIP-0026 cases 13 & 14: coinbase validation must reject a block that omits an
@@ -216,7 +216,7 @@ class MasternodePayoutSharesTest(DashTestFramework):
         assert_equal(info["state"]["version"], 3)
         assert_equal(payout_address_rewards(info["state"]["payouts"]), updated_payouts)
 
-        gbt_payees = [p for p in node.getblocktemplate()["masternode"] if p["script"] != "6a"]
+        gbt_payees = [p for p in node.getblocktemplate()["masternode"] if p["script"] not in ("6a", "76a914fa53c9728c3189b12b267be5811b54033525b08d88ac")]  # BTGS: skip dev fund
         operator_payees = [p for p in gbt_payees if p["payee"] == operator_payout]
         assert_equal(len(operator_payees), 1)
         owner_payees = [p for p in gbt_payees if p["payee"] != operator_payout]
@@ -233,7 +233,7 @@ class MasternodePayoutSharesTest(DashTestFramework):
 
         self.generate(node, 1, sync_fun=self.no_op)
         payments = node.masternode("payments")[0]["masternodes"][0]["payees"]
-        payment_payees = [p for p in payments if p["script"] != "6a"]
+        payment_payees = [p for p in payments if p["script"] not in ("6a", "76a914fa53c9728c3189b12b267be5811b54033525b08d88ac")]  # BTGS: skip dev fund
         rpc_operator_payees = [p for p in payment_payees if p["address"] == operator_payout]
         assert_equal(len(rpc_operator_payees), 1)
         rpc_owner_payees = [p for p in payment_payees if p["address"] != operator_payout]

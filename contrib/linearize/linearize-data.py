@@ -12,7 +12,7 @@ import re
 import os
 import os.path
 import sys
-import dash_hash
+import hashlib
 import datetime
 import time
 import glob
@@ -21,7 +21,7 @@ from collections import namedtuple
 settings = {}
 
 def calc_hash_str(blk_hdr):
-    blk_hdr_hash = dash_hash.getPoWHash(blk_hdr)
+    blk_hdr_hash = hashlib.sha256(hashlib.sha256(blk_hdr).digest()).digest()  # BTGS: SHA-256d
     return blk_hdr_hash[::-1].hex()
 
 def get_blk_dt(blk_hdr):
@@ -269,9 +269,9 @@ if __name__ == '__main__':
     settings['rev_hash_bytes'] = settings['rev_hash_bytes'].lower()
 
     if 'netmagic' not in settings:
-        settings['netmagic'] = 'bf0c6bbd'
+        settings['netmagic'] = 'ce99a8d1'  # BTGS mainnet
     if 'genesis' not in settings:
-        settings['genesis'] = '00000ffd590b1485b3caadc19b22e6379c733355108f107a430458cdf3407ab6'
+        settings['genesis'] = '00000348c92507de2e1eed713c00a75f2c010dba049186613b34cca0e45dbb25'  # BTGS mainnet (temporary genesis)
     if 'input' not in settings:
         settings['input'] = 'input'
     if 'hashlist' not in settings:

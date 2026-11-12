@@ -14,6 +14,7 @@ import struct
 from decimal import Decimal
 
 from test_framework.blocktools import (
+    get_block_subsidy as btgs_block_subsidy,
     create_block,
     create_coinbase,
     COINBASE_MATURITY,
@@ -63,8 +64,8 @@ class CoinStatsIndexTest(BitcoinTestFramework):
         return min(500, max(1, subsidy))
 
     def get_block_subsidy(self, prev_height):
-        prev_block = self.nodes[0].getblockheader(self.nodes[0].getblockhash(prev_height), True)
-        return self.block_subsidy(struct.unpack('!I', bytes.fromhex(prev_block['bits']))[0])
+        # BTGS: fixed reward schedule (625 on regtest, -1/14 every 150 blocks), not Dash's difficulty-based formula
+        return Decimal(btgs_block_subsidy(prev_height + 1)) / COIN
 
     def block_sanity_check(self, block_info, prev_height):
         if prev_height != -1:
@@ -152,7 +153,7 @@ class CoinStatsIndexTest(BitcoinTestFramework):
                 'unspendable': 0,
                 'prevout_spent': 500,
                 'new_outputs_ex_coinbase': Decimal('499.99974500'),
-                'coinbase': Decimal('500.00025500'),
+                'coinbase': Decimal('625.00025500'),  # BTGS: incl. dev fund
                 'unspendables': {
                     'genesis_block': 0,
                     'scripts': 0,
@@ -188,7 +189,7 @@ class CoinStatsIndexTest(BitcoinTestFramework):
                 'unspendable': Decimal('20.99900000'),
                 'prevout_spent': 521,
                 'new_outputs_ex_coinbase': Decimal('499.99999000'),
-                'coinbase': Decimal('500.00101000'),
+                'coinbase': Decimal('625.00101000'),  # BTGS: incl. dev fund
                 'unspendables': {
                     'genesis_block': 0,
                     'scripts': Decimal('20.99900000'),
@@ -218,7 +219,7 @@ class CoinStatsIndexTest(BitcoinTestFramework):
                 'unspendable': 460,
                 'prevout_spent': 0,
                 'new_outputs_ex_coinbase': 0,
-                'coinbase': 40,
+                'coinbase': 165,  # BTGS: 35 + 125 dev fund + 5
                 'unspendables': {
                     'genesis_block': 0,
                     'scripts': 0,

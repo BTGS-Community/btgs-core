@@ -105,14 +105,16 @@ def create_block_with_mnpayments(mninfo, node, vtx=None, mn_payee=None, mn_amoun
     height = bt['height']
     tip_hash = bt['previousblockhash']
     coinbasevalue = bt['coinbasevalue']
+    # BTGS: the dev fund entry is not a smartnode payee (create the dev fund output separately below)
+    mn_entries = [p for p in bt['masternode'] if p['script'] != BTGS_REGTEST_DEVFUND_SCRIPT.hex()]
 
-    assert len(bt['masternode']) <= 2
+    assert len(mn_entries) <= 2
     if mn_payee is None:
-        mn_payee = bt['masternode'][0]['payee']
+        mn_payee = mn_entries[0]['payee']
 
     mn_operator_payee = None
-    if len(bt['masternode']) == 2:
-        mn_operator_payee = bt['masternode'][1]['payee']
+    if len(mn_entries) == 2:
+        mn_operator_payee = mn_entries[1]['payee']
     # we can't take the masternode payee amount from the template here as we might have additional fees in vtx
 
     # calculate fees that the block template included (we'll have to remove it from the coinbase as we won't

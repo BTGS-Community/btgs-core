@@ -725,24 +725,24 @@ class AssetLocksTest(DashTestFramework):
         self.log.info(f'mn-rr height: {node.getblockcount()} credit: {self.get_credit_pool_balance()}')
         assert_equal(locked, self.get_credit_pool_balance())
 
+        # BTGS: no Dash Platform reward. The first template entry is the dev fund, there is no
+        # OP_RETURN platform entry, and smartnodes get 70% of (reward - dev fund + fees)
         bt = node.getblocktemplate()
-        platform_reward = bt['masternode'][0]['amount']
-        assert_equal(bt['masternode'][0]['script'], '6a')  # empty OP_RETURN
+        assert_equal(bt['masternode'][0]['script'], '76a914fa53c9728c3189b12b267be5811b54033525b08d88ac')  # dev fund
+        assert '6a' not in [p['script'] for p in bt['masternode']]
+        dev_fund = bt['masternode'][0]['amount']
         owner_reward = bt['masternode'][1]['amount']
         operator_reward = bt['masternode'][2]['amount'] if len(bt['masternode']) == 3 else 0
-        all_mn_rewards = platform_reward + owner_reward + operator_reward
-        assert_equal(all_mn_rewards, bt['coinbasevalue'] * 3 // 4)  # 75/25 mn/miner reward split
-        assert_equal(platform_reward, all_mn_rewards * 375 // 1000)  # 0.375 platform share
-        assert_equal(platform_reward, 112592247)
+        assert_equal(owner_reward + operator_reward, (bt['coinbasevalue'] - dev_fund) * 7 // 10)  # 70/30 smartnode/miner split
         assert_equal(locked, self.get_credit_pool_balance())
         self.generate(node, 1)
-        locked += platform_reward
+        # BTGS: blocks add nothing to the credit pool
         assert_equal(locked, self.get_credit_pool_balance())
 
         coins = node_wallet.listunspent(query_options={'minimumAmount': 1})
         coin = coins.pop()
         self.send_tx(self.create_assetlock(coin, COIN, pubkey))
-        locked += platform_reward + COIN
+        locked += COIN
         self.generate(node, 1)
         assert_equal(locked, self.get_credit_pool_balance())
 
@@ -1373,7 +1373,7 @@ class AssetLocksTest(DashTestFramework):
         self.send_tx(lock_tx_v1)
 
         # mine all at once
-        locked += node.getblocktemplate()['masternode'][0]['amount'] + 3 * COIN
+        locked += 3 * COIN  # BTGS: no platform reward goes into the credit pool
         self.generate(node, 1)
         assert_equal(self.get_credit_pool_balance(), locked)
 
