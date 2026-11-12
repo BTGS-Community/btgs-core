@@ -341,6 +341,8 @@ BITCOIN_CORE_H = \
   mapport.h \
   masternode/meta.h \
   masternode/payments.h \
+  btgs/snapshot.h \
+  btgs/snapshot_data.h \
   masternode/sync.h \
   masternode/utils.h \
   memusage.h \
@@ -627,6 +629,7 @@ libbitcoin_node_a_SOURCES = \
   mapport.cpp \
   masternode/meta.cpp \
   masternode/payments.cpp \
+  btgs/snapshot.cpp \
   masternode/sync.cpp \
   masternode/utils.cpp \
   net.cpp \
@@ -1348,6 +1351,7 @@ libdashkernel_la_SOURCES = \
   logging.cpp \
   masternode/meta.cpp \
   masternode/payments.cpp \
+  btgs/snapshot.cpp \
   masternode/sync.cpp \
   merkleblock.cpp \
   messagesigner.cpp \

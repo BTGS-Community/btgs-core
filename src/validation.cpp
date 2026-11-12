@@ -71,6 +71,7 @@
 #include <evo/specialtxman.h>
 #include <instantsend/lock.h>
 #include <masternode/payments.h>
+#include <btgs/snapshot.h>
 #include <stats/client.h>
 #include <util/std23.h>
 
@@ -2803,7 +2804,16 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
         : special_tx_rules.v24 ? SuperBlockCheckType::DisallowDuplicates : SuperBlockCheckType::AllowDuplicates;
 
 
-    if (!m_chain_helper->mn_payments->IsBlockValueValid(m_chain, block, pindex->pprev, blockSubsidy + feeReward, strError, check_superblock)) {
+    // BTGS: block 1 pays the balances carried over from the old chain. Its coinbase must contain every
+    // output of the built-in list, and its value limit is raised by exactly the list total.
+    {
+        std::string snapshot_error;
+        if (!btgs::CheckSnapshotCoinbase(*block.vtx[0], pindex->nHeight, snapshot_error)) {
+            LogPrintf("ERROR: ConnectBlock(BTGS): %s\n", snapshot_error);
+            return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-cb-snapshot");
+        }
+    }
+    if (!m_chain_helper->mn_payments->IsBlockValueValid(m_chain, block, pindex->pprev, blockSubsidy + feeReward + btgs::GetSnapshotValue(pindex->nHeight), strError, check_superblock)) {
         // NOTE: Do not punish, the node might be missing governance data
         LogPrintf("ERROR: ConnectBlock(BTGS): %s\n", strError);
         return state.Invalid(BlockValidationResult::BLOCK_RESULT_UNSET, "bad-cb-amount");

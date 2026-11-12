@@ -41,6 +41,7 @@
 #include <llmq/options.h>
 #include <llmq/snapshot.h>
 #include <masternode/payments.h>
+#include <btgs/snapshot.h>
 
 #include <algorithm>
 #include <utility>
@@ -336,6 +337,14 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     // get some info back to pass to getblocktemplate
     const MnRewardEra mn_reward_era{GetMnRewardEraAfter(pindexPrev, m_chainstate.m_chainman)};
     m_chain_helper.mn_payments->FillBlockPayments(coinbaseTx, pindexPrev, blockSubsidy, nFees, mn_reward_era, pblocktemplate->voutMasternodePayments, pblocktemplate->voutSuperblockPayments);
+
+    // BTGS: block 1 pays the balances carried over from the old chain. They are also listed in the
+    // template's superblock payments, so getblocktemplate miners add them like any required payment.
+    if (nHeight == btgs::SNAPSHOT_HEIGHT) {
+        btgs::AppendSnapshotOutputs(coinbaseTx, nHeight);
+        const auto& snapshot_outputs{btgs::GetSnapshotOutputs()};
+        pblocktemplate->voutSuperblockPayments.insert(pblocktemplate->voutSuperblockPayments.end(), snapshot_outputs.begin(), snapshot_outputs.end());
+    }
 
     pblock->vtx[0] = MakeTransactionRef(std::move(coinbaseTx));
     pblocktemplate->vTxFees[0] = -nFees;
