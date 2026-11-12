@@ -329,6 +329,7 @@ BASE_SCRIPTS = [
     'wallet_mnemonicbits.py --descriptors',
     'wallet_crosschain.py',
     'mining_basic.py',
+    'feature_btgs_snapshot.py',
     'rpc_named_arguments.py',
     'feature_startupnotify.py',
     'feature_stats.py',
