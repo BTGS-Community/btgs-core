@@ -1,39 +1,39 @@
 # It is not recommended to modify this file in-place, because it will
 # be overwritten during package upgrades. If you want to add further
 # options or overwrite existing ones then use
-# $ systemctl edit dashd.service
+# $ systemctl edit btgsd.service
 # See "man systemd.service" for details.
 
 # Note that almost all daemon options could be specified in
-# /etc/dash/dash.conf, but keep in mind those explicitly
+# /etc/btgs/btgscore.conf, but keep in mind those explicitly
 # specified as arguments in ExecStart= will override those in the
 # config file.
 
 [Unit]
-Description=Dash daemon
-Documentation=https://github.com/dashpay/dash/blob/master/doc/init.md
+Description=BTGS daemon
+Documentation=https://github.com/BTGS-Community/btgs-core/blob/btgs/doc/init.md
 
 # https://www.freedesktop.org/wiki/Software/systemd/NetworkTarget/
 After=network-online.target
 Wants=network-online.target
 
 [Service]
-ExecStart=/usr/bin/dashd -pid=/run/dashd/dashd.pid \
-                            -conf=/etc/dash/dash.conf \
-                            -datadir=/var/lib/dashd \
+ExecStart=/usr/bin/btgsd -pid=/run/btgsd/btgsd.pid \
+                            -conf=/etc/btgs/btgscore.conf \
+                            -datadir=/var/lib/btgsd \
                             -startupnotify='systemd-notify --ready' \
                             -shutdownnotify='systemd-notify --stopping'
 
 # Make sure the config directory is readable by the service user
 PermissionsStartOnly=true
-ExecStartPre=/bin/chgrp dashcore /etc/dash
+ExecStartPre=/bin/chgrp btgscore /etc/btgs
 
 # Process management
 ####################
 
 Type=notify
 NotifyAccess=all
-PIDFile=/run/dashd/dashd.pid
+PIDFile=/run/btgsd/btgsd.pid
 
 Restart=on-failure
 TimeoutStartSec=infinity
@@ -42,20 +42,20 @@ TimeoutStopSec=600
 # Directory creation and permissions
 ####################################
 
-# Run as dash:dash
-User=dashcore
-Group=dashcore
+# Run as btgscore:btgscore
+User=btgscore
+Group=btgscore
 
-# /run/dashd
-RuntimeDirectory=dashd
+# /run/btgsd
+RuntimeDirectory=btgsd
 RuntimeDirectoryMode=0710
 
-# /etc/dash
-ConfigurationDirectory=dash
+# /etc/btgs
+ConfigurationDirectory=btgs
 ConfigurationDirectoryMode=0710
 
-# /var/lib/dashd
-StateDirectory=dashd
+# /var/lib/btgsd
+StateDirectory=btgsd
 StateDirectoryMode=0710
 
 # Hardening measures

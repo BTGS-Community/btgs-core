@@ -1,11 +1,11 @@
 Sample configuration files for:
 ```
-systemd: dashd.service
-Upstart: dashd.conf
-OpenRC:  dashd.openrc
-         dashd.openrcconf
-CentOS:  dashd.init
-macOS:   org.dash.dashd.plist
+systemd: btgsd.service
+Upstart: btgsd.conf
+OpenRC:  btgsd.openrc
+         btgsd.openrcconf
+CentOS:  btgsd.init
+macOS:   org.btgs.btgsd.plist
 ```
 have been made available to assist packagers in creating node packages here.
 
