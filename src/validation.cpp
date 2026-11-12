@@ -2623,7 +2623,7 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
     if (!m_chain_helper->special_tx->ProcessSpecialTxsInBlock(*this, m_chain, block, pindex, special_tx_rules, view,
                                                               blockSubsidy, fJustCheck, fScriptChecks, state,
                                                               mnlist_updates)) {
-        LogError("ConnectBlock(DASH): ProcessSpecialTxsInBlock for block %s failed with %s\n",
+        LogError("ConnectBlock(BTGS): ProcessSpecialTxsInBlock for block %s failed with %s\n",
                      pindex->GetBlockHash().ToString(), state.ToString());
         return false;
     }
@@ -2766,12 +2766,12 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
             while (auto conflictLockOpt = m_chain_helper->ConflictingISLockIfAny(*tx)) {
                 auto [conflict_islock_hash, conflict_txid] = conflictLockOpt.value();
                 if (has_chainlock) {
-                    LogPrint(BCLog::ALL, "ConnectBlock(DASH): chain-locked transaction %s overrides islock %s\n", tx->GetHash().ToString(), conflict_islock_hash.ToString());
+                    LogPrint(BCLog::ALL, "ConnectBlock(BTGS): chain-locked transaction %s overrides islock %s\n", tx->GetHash().ToString(), conflict_islock_hash.ToString());
                     m_chain_helper->RemoveConflictingISLockByTx(*tx);
                 } else {
                     // The node which relayed this should switch to correct chain.
                     // TODO: relay instantsend data/proof.
-                    LogPrintf("ERROR: ConnectBlock(DASH): transaction %s conflicts with transaction lock %s\n", tx->GetHash().ToString(), conflict_txid.ToString());
+                    LogPrintf("ERROR: ConnectBlock(BTGS): transaction %s conflicts with transaction lock %s\n", tx->GetHash().ToString(), conflict_txid.ToString());
                     return state.Invalid(BlockValidationResult::BLOCK_CHAINLOCK, "conflict-tx-lock");
                 }
             }
@@ -2805,7 +2805,7 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
 
     if (!m_chain_helper->mn_payments->IsBlockValueValid(m_chain, block, pindex->pprev, blockSubsidy + feeReward, strError, check_superblock)) {
         // NOTE: Do not punish, the node might be missing governance data
-        LogPrintf("ERROR: ConnectBlock(DASH): %s\n", strError);
+        LogPrintf("ERROR: ConnectBlock(BTGS): %s\n", strError);
         return state.Invalid(BlockValidationResult::BLOCK_RESULT_UNSET, "bad-cb-amount");
     }
 
@@ -2820,7 +2820,7 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
     if (!m_chain_helper->mn_payments->IsBlockPayeeValid(m_chain, *block.vtx[0], pindex->pprev, blockSubsidy, feeReward,
                                                         mn_reward_era, special_tx_rules.v24, check_superblock)) {
         // NOTE: Do not punish, the node might be missing governance data
-        LogPrintf("ERROR: ConnectBlock(DASH): couldn't find masternode or superblock payments\n");
+        LogPrintf("ERROR: ConnectBlock(BTGS): couldn't find masternode or superblock payments\n");
         return state.Invalid(BlockValidationResult::BLOCK_RESULT_UNSET, "bad-cb-payee");
     }
 
@@ -2833,7 +2833,7 @@ bool Chainstate::ConnectBlock(const CBlock& block, BlockValidationState& state, 
 
     const auto time_5{SteadyClock::now()};
     time_dash_specific += time_5 - time_4;
-    LogPrint(BCLog::BENCHMARK, "    - Dash specific: %.2fms [%.2fs (%.2fms/blk)]\n",
+    LogPrint(BCLog::BENCHMARK, "    - BTGS specific: %.2fms [%.2fs (%.2fms/blk)]\n",
              Ticks<MillisecondsDouble>(time_5 - time_4),
              Ticks<SecondsDouble>(time_dash_specific),
              Ticks<MillisecondsDouble>(time_dash_specific) / num_blocks_total);
@@ -5162,7 +5162,7 @@ bool Chainstate::RollforwardBlock(const CBlockIndex* pindex, CCoinsViewCache& in
                                                               GetSpecialTxRules(pindex->pprev, m_chainman), inputs,
                                                               blockSubsidy, /*fJustCheck=*/false,
                                                               /*fCheckCbTxMerkleRoots=*/false, state, mnlist_updates)) {
-        LogError("RollforwardBlock(DASH): ProcessSpecialTxsInBlock for block %s failed with %s\n",
+        LogError("RollforwardBlock(BTGS): ProcessSpecialTxsInBlock for block %s failed with %s\n",
             pindex->GetBlockHash().ToString(), state.ToString());
         return false;
     }
@@ -5220,7 +5220,7 @@ bool Chainstate::ReplayBlocks()
         assert(pindexFork != nullptr);
         const bool fDIP0003Active = DeploymentActiveAt(*pindexOld, m_chainman.GetConsensus(), Consensus::DEPLOYMENT_DIP0003);
         if (fDIP0003Active && !m_evoDb.VerifyBestBlock(EvoDbIdentity(), pindexOld->GetBlockHash())) {
-            LogError("ReplayBlocks(DASH): %s\n", EvoDbInconsistencyMessage());
+            LogError("ReplayBlocks(BTGS): %s\n", EvoDbInconsistencyMessage());
             return false;
         }
     }

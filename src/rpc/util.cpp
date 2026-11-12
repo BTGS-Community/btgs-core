@@ -180,12 +180,12 @@ std::string ShellQuoteIfNeeded(const std::string& s)
 
 std::string HelpExampleCli(const std::string& methodname, const std::string& args)
 {
-    return "> dash-cli " + methodname + " " + args + "\n";
+    return "> btgs-cli " + methodname + " " + args + "\n";
 }
 
 std::string HelpExampleCliNamed(const std::string& methodname, const RPCArgList& args)
 {
-    std::string result = "> dash-cli -named " + methodname;
+    std::string result = "> btgs-cli -named " + methodname;
     for (const auto& argpair: args) {
         const auto& value = argpair.second.isStr()
                 ? argpair.second.get_str()
@@ -200,7 +200,7 @@ std::string HelpExampleRpc(const std::string& methodname, const std::string& arg
 {
     return "> curl --user myusername --data-binary '{\"jsonrpc\": \"1.0\", \"id\": \"curltest\", "
         "\"method\": \"" + methodname + "\", \"params\": [" + args + "]}' -H 'content-type: application/json;'"
-        " http://127.0.0.1:9998/\n";
+        " http://127.0.0.1:19881/\n";
 }
 
 std::string HelpExampleRpcNamed(const std::string& methodname, const RPCArgList& args)

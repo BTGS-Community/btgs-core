@@ -90,8 +90,8 @@ class MempoolAcceptanceTest(BitcoinTestFramework):
             rawtxs=[raw_tx_in_block],
             maxfeerate=-0.01,
         ))
-        # Also check feerate. 1DASH/kB fails
-        assert_raises_rpc_error(-8, "Fee rates larger than or equal to 1DASH/kB are not accepted", lambda: self.check_mempool_result(
+        # Also check feerate. 1BTGS/kB fails
+        assert_raises_rpc_error(-8, "Fee rates larger than or equal to 1BTGS/kB are not accepted", lambda: self.check_mempool_result(
             result_expected=None,
             rawtxs=[raw_tx_in_block],
             maxfeerate=1,

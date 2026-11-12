@@ -576,13 +576,13 @@ static RPCHelpMan masternodelist_helper(bool is_composite)
         "  json           - Print info in JSON format (can be additionally filtered, partial match)\n"
         "  lastpaidblock  - Print the last block height a node was paid on the network\n"
         "  lastpaidtime   - Print the last time a node was paid on the network\n"
-        "  owneraddress   - Print the masternode owner Dash address (comma-separated share owners for shared masternodes)\n"
-        "  payee          - Print the masternode payout Dash address (can be additionally filtered,\n"
+        "  owneraddress   - Print the masternode owner BTGS address (comma-separated share owners for shared masternodes)\n"
+        "  payee          - Print the masternode payout BTGS address (can be additionally filtered,\n"
         "                   partial match)\n"
         "  pubKeyOperator - Print the masternode operator public key\n"
         "  status         - Print masternode status: ENABLED / POSE_BANNED\n"
         "                   (can be additionally filtered, partial match)\n"
-        "  votingaddress  - Print the masternode voting Dash address\n",
+        "  votingaddress  - Print the masternode voting BTGS address\n",
         {
             {"mode", RPCArg::Type::STR, RPCArg::DefaultHint{"json"}, "The mode to run list in"},
             {"filter", RPCArg::Type::STR, RPCArg::Default{""}, "Filter results. Partial match by outpoint by default in all modes, additional matches in some modes are also available"},
@@ -609,7 +609,7 @@ static RPCHelpMan masternodelist_helper(bool is_composite)
                     GetRpcResult("consecutivePayments"),
                     {RPCResult::Type::NUM, "lastpaidtime", "Timestamp of block the masternode was last paid"},
                     GetRpcResult("lastPaidHeight", /*optional=*/false, /*override_name=*/"lastpaidblock"),
-                    {RPCResult::Type::STR, "owneraddress", "Owner Dash address, or comma-separated share owner addresses for shared masternodes"},
+                    {RPCResult::Type::STR, "owneraddress", "Owner BTGS address, or comma-separated share owner addresses for shared masternodes"},
                     GetRpcResult("votingAddress", /*optional=*/false, /*override_name=*/"votingaddress"),
                     GetRpcResult("collateralAddress", /*optional=*/false, /*override_name=*/"collateraladdress"),
                     GetRpcResult("pubKeyOperator", /*optional=*/false, /*override_name=*/"pubkeyoperator"),
@@ -619,15 +619,15 @@ static RPCHelpMan masternodelist_helper(bool is_composite)
             RPCResult{"for mode = lastpaidtime", RPCResult::Type::OBJ_DYN, "", "json object with masternode outpoint as keys",
                 {{RPCResult::Type::NUM, "<outpoint>", "Timestamp of block the masternode was last paid"}}},
             RPCResult{"for mode = payee", RPCResult::Type::OBJ_DYN, "", "json object with masternode outpoint as keys",
-                {{RPCResult::Type::STR, "<outpoint>", "Dash address used for masternode reward payments"}}},
+                {{RPCResult::Type::STR, "<outpoint>", "BTGS address used for masternode reward payments"}}},
             RPCResult{"for mode = owneraddress", RPCResult::Type::OBJ_DYN, "", "json object with masternode outpoint as keys",
-                {{RPCResult::Type::STR, "<outpoint>", "Owner Dash address, or comma-separated share owner addresses for shared masternodes"}}},
+                {{RPCResult::Type::STR, "<outpoint>", "Owner BTGS address, or comma-separated share owner addresses for shared masternodes"}}},
             RPCResult{"for mode = pubkeyoperator", RPCResult::Type::OBJ_DYN, "", "json object with masternode outpoint as keys",
                 {{RPCResult::Type::STR, "<outpoint>", "BLS public key used for operator signing"}}},
             RPCResult{"for mode = status", RPCResult::Type::OBJ_DYN, "", "json object with masternode outpoint as keys",
                 {{RPCResult::Type::STR, "<outpoint>", "Masternode status (human-readable string)"}}},
             RPCResult{"for mode = votingaddress", RPCResult::Type::OBJ_DYN, "", "json object with masternode outpoint as keys",
-                {{RPCResult::Type::STR, "<outpoint>", "Dash address used for voting"}}},
+                {{RPCResult::Type::STR, "<outpoint>", "BTGS address used for voting"}}},
         },
         RPCExamples{""},
         [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue

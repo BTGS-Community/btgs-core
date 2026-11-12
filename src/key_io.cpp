@@ -96,7 +96,7 @@ CTxDestination DecodeDestination(const std::string& str, const CChainParams& par
     error_str = res.first;
     if (error_locations) *error_locations = std::move(res.second);
     if (error_str.empty()) {
-        error_str = is_platform ? "This is a Dash Platform address, not a Dash Core address" : platform_error_str;
+        error_str = is_platform ? "This is a Dash Platform address, not a BTGS Core address" : platform_error_str;
     }
     return CNoDestination();
 }

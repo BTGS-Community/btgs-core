@@ -215,9 +215,9 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
         parser.add_argument("--pdbonfailure", dest="pdbonfailure", default=False, action="store_true",
                             help="Attach a python debugger if test fails")
         parser.add_argument("--usecli", dest="usecli", default=False, action="store_true",
-                            help="use dash-cli instead of RPC for all commands")
-        parser.add_argument("--dashd-arg", dest="dashd_extra_args", default=[], action="append",
-                            help="Pass extra args to all dashd instances")
+                            help="use btgs-cli instead of RPC for all commands")
+        parser.add_argument("--btgsd-arg", dest="dashd_extra_args", default=[], action="append",
+                            help="Pass extra args to all btgsd instances")
         parser.add_argument("--timeoutscale", dest="timeout_scale", default=1, type=int,
                             help=argparse.SUPPRESS)
         parser.add_argument("--perf", dest="perf", default=False, action="store_true",
@@ -655,7 +655,7 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
         return new_data_dir
 
     def start_node(self, i, *args, **kwargs):
-        """Start a dashd"""
+        """Start a btgsd"""
 
         node = self.nodes[i]
 
@@ -686,11 +686,11 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
                 coverage.write_all_rpc_commands(self.options.coveragedir, node.rpc)
 
     def stop_node(self, i, expected_stderr='', wait=0):
-        """Stop a dashd test node"""
+        """Stop a btgsd test node"""
         self.nodes[i].stop_node(expected_stderr=expected_stderr, wait=wait)
 
     def stop_nodes(self, wait=0):
-        """Stop multiple dashd test nodes"""
+        """Stop multiple btgsd test nodes"""
         for node in self.nodes:
             # Issue RPC to stop nodes
             node.stop_node(wait=wait, wait_until_stopped=False)
@@ -1056,9 +1056,9 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
             raise SkipTest("bcc python module not available")
 
     def skip_if_no_bitcoind_tracepoints(self):
-        """Skip the running test if dashd has not been compiled with USDT tracepoint support."""
+        """Skip the running test if btgsd has not been compiled with USDT tracepoint support."""
         if not self.is_usdt_compiled():
-            raise SkipTest("dashd has not been built with USDT tracepoints enabled.")
+            raise SkipTest("btgsd has not been built with USDT tracepoints enabled.")
 
     def skip_if_no_bpf_permissions(self):
         """Skip the running test if we don't have permissions to do BPF syscalls and load BPF maps."""
@@ -1077,9 +1077,9 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
             raise SkipTest("not on a POSIX system")
 
     def skip_if_no_bitcoind_zmq(self):
-        """Skip the running test if dashd has not been compiled with zmq support."""
+        """Skip the running test if btgsd has not been compiled with zmq support."""
         if not self.is_zmq_compiled():
-            raise SkipTest("dashd has not been built with zmq enabled.")
+            raise SkipTest("btgsd has not been built with zmq enabled.")
 
     def skip_if_no_wallet(self):
         """Skip the running test if wallet has not been compiled."""
@@ -1102,19 +1102,19 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
             raise SkipTest("BDB has not been compiled.")
 
     def skip_if_no_wallet_tool(self):
-        """Skip the running test if dash-wallet has not been compiled."""
+        """Skip the running test if btgs-wallet has not been compiled."""
         if not self.is_wallet_tool_compiled():
-            raise SkipTest("dash-wallet has not been compiled")
+            raise SkipTest("btgs-wallet has not been compiled")
 
     def skip_if_no_bitcoin_util(self):
-        """Skip the running test if dash-util has not been compiled."""
+        """Skip the running test if btgs-util has not been compiled."""
         if not self.is_bitcoin_util_compiled():
-            raise SkipTest("dash-util has not been compiled")
+            raise SkipTest("btgs-util has not been compiled")
 
     def skip_if_no_cli(self):
-        """Skip the running test if dash-cli has not been compiled."""
+        """Skip the running test if btgs-cli has not been compiled."""
         if not self.is_cli_compiled():
-            raise SkipTest("dash-cli has not been compiled.")
+            raise SkipTest("btgs-cli has not been compiled.")
 
     def skip_if_no_previous_releases(self):
         """Skip the running test if previous releases are not available."""
@@ -1135,7 +1135,7 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
             raise SkipTest("external signer support has not been compiled.")
 
     def is_cli_compiled(self):
-        """Checks whether dash-cli was compiled."""
+        """Checks whether btgs-cli was compiled."""
         return self.config["components"].getboolean("ENABLE_CLI")
 
     def is_external_signer_compiled(self):
@@ -1155,11 +1155,11 @@ class BitcoinTestFramework(metaclass=BitcoinTestMetaClass):
             return self.is_bdb_compiled()
 
     def is_wallet_tool_compiled(self):
-        """Checks whether dash-wallet was compiled."""
+        """Checks whether btgs-wallet was compiled."""
         return self.config["components"].getboolean("ENABLE_WALLET_TOOL")
 
     def is_bitcoin_util_compiled(self):
-        """Checks whether dash-util was compiled."""
+        """Checks whether btgs-util was compiled."""
         return self.config["components"].getboolean("ENABLE_UTIL_TOOL")
 
     def is_zmq_compiled(self):

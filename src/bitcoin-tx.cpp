@@ -102,14 +102,14 @@ static int AppInitRawTx(int argc, char* argv[])
 
     if (argc < 2 || HelpRequested(gArgs) || gArgs.IsArgSet("-version")) {
         // First part of help message is specific to this utility
-        std::string strUsage = PACKAGE_NAME " dash-tx utility version " + FormatFullVersion() + "\n";
+        std::string strUsage = PACKAGE_NAME " btgs-tx utility version " + FormatFullVersion() + "\n";
 
         if (gArgs.IsArgSet("-version")) {
             strUsage += FormatParagraph(LicenseInfo());
         } else {
             strUsage += "\n"
-                "Usage:  dash-tx [options] <hex-tx> [commands]  Update hex-encoded dash transaction\n"
-                "or:     dash-tx [options] -create [commands]   Create hex-encoded dash transaction\n"
+                "Usage:  btgs-tx [options] <hex-tx> [commands]  Update hex-encoded BTGS transaction\n"
+                "or:     btgs-tx [options] -create [commands]   Create hex-encoded BTGS transaction\n"
                 "\n";
             strUsage += gArgs.GetHelpMessage();
         }

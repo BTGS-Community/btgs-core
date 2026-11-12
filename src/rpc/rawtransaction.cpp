@@ -172,7 +172,7 @@ static std::vector<RPCResult> ScriptPubKeyDoc() {
              {RPCResult::Type::STR, "asm", "Disassembly of the public key script"},
              {RPCResult::Type::STR, "desc", "Inferred descriptor for the output"},
              {RPCResult::Type::STR_HEX, "hex", "The raw public key script bytes, hex-encoded"},
-             {RPCResult::Type::STR, "address", /*optional=*/true, "The Dash address (only if a well-defined address exists)"},
+             {RPCResult::Type::STR, "address", /*optional=*/true, "The BTGS address (only if a well-defined address exists)"},
              {RPCResult::Type::STR, "type", "The type, eg 'pubkeyhash'"},
          };
 }
@@ -199,7 +199,7 @@ static std::vector<RPCResult> DecodeTxDoc(const std::string& txid_field_doc)
                 }},
                 {RPCResult::Type::STR_AMOUNT, "value", /*optional=*/true, "The value of the spent output in " + CURRENCY_UNIT + " (only if spentindex is enabled)"},
                 {RPCResult::Type::NUM, "valueSat", /*optional=*/true, "The value of the spent output in duffs (only if spentindex is enabled)"},
-                {RPCResult::Type::STR, "address", /*optional=*/true, "The Dash address of the spent output (only if spentindex is enabled and a well-defined address exists)"},
+                {RPCResult::Type::STR, "address", /*optional=*/true, "The BTGS address of the spent output (only if spentindex is enabled and a well-defined address exists)"},
                 {RPCResult::Type::NUM, "sequence", "The script sequence number"},
             }},
         }},
@@ -256,7 +256,7 @@ static std::vector<RPCArg> CreateTxDoc()
             {
                 {"", RPCArg::Type::OBJ_USER_KEYS, RPCArg::Optional::OMITTED, "",
                     {
-                        {"address", RPCArg::Type::AMOUNT, RPCArg::Optional::NO, "A key-value pair. The key (string) is the Dash address, the value (float or string) is the amount in " + CURRENCY_UNIT},
+                        {"address", RPCArg::Type::AMOUNT, RPCArg::Optional::NO, "A key-value pair. The key (string) is the BTGS address, the value (float or string) is the amount in " + CURRENCY_UNIT},
                     },
                 },
                 {"", RPCArg::Type::OBJ, RPCArg::Optional::OMITTED, "",
@@ -974,7 +974,7 @@ static RPCHelpMan decodescript()
                 {RPCResult::Type::STR, "asm", "Script public key"},
                 {RPCResult::Type::STR, "desc", "Inferred descriptor for the script"},
                 {RPCResult::Type::STR, "type", "The output type (e.g. " + GetAllOutputTypes() + ")"},
-                {RPCResult::Type::STR, "address", /*optional=*/true, "The Dash address (only if a well-defined address exists)"},
+                {RPCResult::Type::STR, "address", /*optional=*/true, "The BTGS address (only if a well-defined address exists)"},
                 {RPCResult::Type::STR, "p2sh", /*optional=*/true, "address of P2SH script wrapping this redeem script (not returned for types that should not be wrapped)"},
             },
         },

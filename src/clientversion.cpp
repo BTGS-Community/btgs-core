@@ -100,7 +100,7 @@ std::string CopyrightHolders(const std::string& strPrefix, unsigned int nStartYe
 
 std::string LicenseInfo()
 {
-    const std::string URL_SOURCE_CODE = "<https://github.com/dashpay/dash>";
+    const std::string URL_SOURCE_CODE = "<https://github.com/BTGS-Community/btgs-core>";
 
     return CopyrightHolders(_("Copyright (C)").translated, 2014, COPYRIGHT_YEAR) + "\n" +
            "\n" +

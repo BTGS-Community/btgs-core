@@ -486,7 +486,7 @@ static RPCHelpMan loadwallet()
 {
     return RPCHelpMan{"loadwallet",
                 "\nLoads a wallet from a wallet file or directory."
-                "\nNote that all wallet command-line options used when starting dashd will be"
+                "\nNote that all wallet command-line options used when starting btgsd will be"
                 "\napplied to the new wallet.\n",
                 {
                     {"filename", RPCArg::Type::STR, RPCArg::Optional::NO, "The wallet directory or .dat file."},
@@ -677,7 +677,7 @@ static RPCHelpMan createwallet()
     const bool descriptors_given{!request.params[5].isNull()};
     const bool load_on_startup_given{!request.params[6].isNull()};
     if (descriptors_given && !load_on_startup_given) {
-        throw JSONRPCError(RPC_INVALID_PARAMETER, "The createwallet RPC requires specifying the 'load_on_startup' flag when param 'descriptors' is specified. Dash Core v21 introduced this requirement due to breaking changes in the createwallet RPC.");
+        throw JSONRPCError(RPC_INVALID_PARAMETER, "The createwallet RPC requires specifying the 'load_on_startup' flag when param 'descriptors' is specified. BTGS Core v21 introduced this requirement due to breaking changes in the createwallet RPC.");
     }
     if (request.params[5].isNull() || request.params[5].get_bool()) {
 #ifndef USE_SQLITE

@@ -4,7 +4,7 @@
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 """ Tests the validation:* tracepoint API interface.
-    See https://github.com/dashpay/dash/blob/develop/doc/tracing.md#context-validation
+    See https://github.com/BTGS-Community/btgs-core/blob/develop/doc/tracing.md#context-validation
 """
 
 import ctypes

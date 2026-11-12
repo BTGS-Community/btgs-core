@@ -106,7 +106,7 @@ void WalletInit::AddWalletOptions(ArgsManager& argsman) const
     argsman.AddArg("-allow-deprecated-long-mnemonics",
                    strprintf("Allow creating an HD wallet with a mnemonic passphrase of %d to %d bytes. Seed "
                              "derivation ignores the bytes past the %dth, so use this only to recover a wallet "
-                             "created with such a passphrase by Dash Core 19.2.0 or later. It can't recover one "
+                             "created with such a passphrase by BTGS Core 19.2.0 or later. It can't recover one "
                              "created by an earlier version (default: 0)",
                              CMnemonic::MAX_PASSPHRASE_BYTES + 1, CMnemonic::MAX_DEPRECATED_PASSPHRASE_BYTES,
                              CMnemonic::MAX_PASSPHRASE_BYTES),

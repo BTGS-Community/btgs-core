@@ -43,7 +43,7 @@ BTGS_REGTEST_DEVFUND_SCRIPT = keyhash_to_p2pkh_script(bytes.fromhex("fa53c9728c3
 BTGS_REGTEST_DEVFUND_ADDRESS = "tVkDMN8j3kdq5JHAa2twBjBoXt7KFXfL3x"
 
 def get_block_subsidy(height):
-    """BTGS regtest block reward in satoshis: 625 (20% dev fund -> 500 miner, Dash's test amount; mainnet is 12), cut by 1/14 every 150 blocks"""
+    """BTGS regtest block reward in satoshis: 625 (20% dev fund -> 500 miner, BTGS's test amount; mainnet is 12), cut by 1/14 every 150 blocks"""
     subsidy = 625 * COIN
     i = BTGS_REGTEST_SUBSIDY_INTERVAL
     while i <= height - 1:
@@ -263,7 +263,7 @@ def get_legacy_sigopcount_tx(tx, accurate=True):
     return count
 
 """
-Dash chaintips rpc returns extra info in each tip (difficulty, chainwork, and
+BTGS chaintips rpc returns extra info in each tip (difficulty, chainwork, and
 forkpoint). Filter down to relevant ones checked in this test.
 """
 def filter_tip_keys(chaintips):

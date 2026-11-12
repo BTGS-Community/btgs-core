@@ -134,8 +134,8 @@ BOOST_AUTO_TEST_CASE(ToStringTest)
 {
     CFeeRate feeRate;
     feeRate = CFeeRate(1);
-    BOOST_CHECK_EQUAL(feeRate.ToString(), "0.00000001 DASH/kB");
-    BOOST_CHECK_EQUAL(feeRate.ToString(FeeEstimateMode::DASH_KB), "0.00000001 DASH/kB");
+    BOOST_CHECK_EQUAL(feeRate.ToString(), "0.00000001 BTGS/kB");
+    BOOST_CHECK_EQUAL(feeRate.ToString(FeeEstimateMode::DASH_KB), "0.00000001 BTGS/kB");
     BOOST_CHECK_EQUAL(feeRate.ToString(FeeEstimateMode::DUFF_B), "0.001 duff/B");
 }
 

@@ -2,7 +2,7 @@
 # Copyright (c) 2018-2020 The Bitcoin Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
-"""Verify that starting dashd with -h works as expected."""
+"""Verify that starting btgsd with -h works as expected."""
 
 from pathlib import Path
 
@@ -37,14 +37,14 @@ class HelpTest(BitcoinTestFramework):
         return out, err
 
     def run_test(self):
-        self.log.info("Start dashd with -h for help text")
+        self.log.info("Start btgsd with -h for help text")
         self.nodes[0].start(extra_args=['-h'])
         # Node should exit immediately and output help to stdout.
         output, _ = self.get_node_output(ret_code_expected=0)
         assert b'Options' in output
         self.log.info(f"Help text received: {output[0:60]} (...)")
 
-        self.log.info("Start dashd with -version for version information")
+        self.log.info("Start btgsd with -version for version information")
         self.nodes[0].start(extra_args=['-version'])
         # Node should exit immediately and output version to stdout.
         output, _ = self.get_node_output(ret_code_expected=0)
@@ -54,14 +54,14 @@ class HelpTest(BitcoinTestFramework):
         missing_datadir = Path(self.options.tmpdir) / "missing_crashinfo_datadir"
         assert not missing_datadir.exists()
 
-        self.log.info("Start dashd with -printcrashinfo and a nonexistent datadir")
+        self.log.info("Start btgsd with -printcrashinfo and a nonexistent datadir")
         self.nodes[0].start(extra_args=["-printcrashinfo=invalid", f"-datadir={missing_datadir}"])
         output, error = self.get_node_output(ret_code_expected=0)
         assert b'Error while deserializing crash info' in output
         assert_equal(error, b'')
         assert not missing_datadir.exists()
 
-        self.log.info("Start dashd with a nonexistent datadir and no -printcrashinfo")
+        self.log.info("Start btgsd with a nonexistent datadir and no -printcrashinfo")
         self.nodes[0].start(extra_args=[f"-datadir={missing_datadir}"])
         _, error = self.get_node_output(ret_code_expected=1)
         assert b'Specified data directory' in error

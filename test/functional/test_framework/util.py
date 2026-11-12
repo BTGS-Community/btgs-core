@@ -47,11 +47,11 @@ def assert_fee_amount(fee, tx_size, feerate_DASH_kvB):
     """Assert the fee is in range."""
     target_fee = get_fee(tx_size, feerate_DASH_kvB)
     if fee < target_fee:
-        raise AssertionError("Fee of %s DASH too low! (Should be %s DASH)" % (str(fee), str(target_fee)))
+        raise AssertionError("Fee of %s BTGS too low! (Should be %s BTGS)" % (str(fee), str(target_fee)))
     # allow the wallet's estimation to be at most 2 bytes off
     high_fee = get_fee(tx_size + 2, feerate_DASH_kvB)
     if fee > high_fee:
-        raise AssertionError("Fee of %s DASH too high! (Should be %s DASH)" % (str(fee), str(target_fee)))
+        raise AssertionError("Fee of %s BTGS too high! (Should be %s BTGS)" % (str(fee), str(target_fee)))
 
 
 def summarise_dict_differences(thing1, thing2):
@@ -250,7 +250,7 @@ def ceildiv(a, b):
 
 
 def get_fee(tx_size, feerate_dash_kvb):
-    """Calculate the fee in DASH given a feerate is DASH/kvB. Reflects CFeeRate::GetFee"""
+    """Calculate the fee in BTGS given a feerate is BTGS/kvB. Reflects CFeeRate::GetFee"""
     feerate_sat_kvb = int(feerate_dash_kvb * Decimal(1e8)) # Fee in sat/kvb as an int to avoid float precision errors
     target_fee_sat = ceildiv(feerate_sat_kvb * tx_size, 1000) # Round calculated fee up to nearest sat
     return satoshi_round(target_fee_sat / Decimal(1e8)) # Truncate DASH result to nearest sat

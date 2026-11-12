@@ -2,9 +2,9 @@
 # Copyright (c) 2026 The Dash Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
-"""Test wallet-dependent Dash RPC paths.
+"""Test wallet-dependent BTGS RPC paths.
 
-Covers the wallet-mode-divergent surface of Dash-specific RPCs so that
+Covers the wallet-mode-divergent surface of BTGS-specific RPCs so that
 consensus-heavy tests (feature_governance.py, feature_governance_cl.py,
 feature_dip3_deterministicmns.py) only need to run in a single wallet mode:
 

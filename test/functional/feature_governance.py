@@ -5,7 +5,7 @@
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 """BTGS governance.
 
-BTGS keeps Dash's governance system (proposals, votes, masternode voting),
+BTGS keeps BTGS's governance system (proposals, votes, masternode voting),
 but the treasury share of the block reward is 0. So:
 - the superblock budget is 0 before and after v20,
 - proposals can still be prepared, submitted and voted on,

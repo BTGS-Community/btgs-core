@@ -4,7 +4,7 @@
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 """  Tests the net:* tracepoint API interface.
-     See https://github.com/dashpay/dash/blob/develop/doc/tracing.md#context-net
+     See https://github.com/BTGS-Community/btgs-core/blob/develop/doc/tracing.md#context-net
 """
 
 import ctypes
@@ -150,7 +150,7 @@ class NetTracepointTest(BitcoinTestFramework):
         bpf["inbound_messages"].open_perf_buffer(handle_inbound)
         bpf["outbound_messages"].open_perf_buffer(handle_outbound)
 
-        self.log.info("connect a P2P test node to our dashd node")
+        self.log.info("connect a P2P test node to our btgsd node")
         test_node = P2PInterface()
         self.nodes[0].add_p2p_connection(test_node)
         bpf.perf_buffer_poll(timeout=200)

@@ -19,7 +19,7 @@ BOOST_FIXTURE_TEST_SUITE(masternode_params_tests, BasicTestingSetup)
 static std::vector<std::string> StricterFor(const std::vector<std::string>& args)
 {
     ArgsManager argsman;
-    std::vector<const char*> argv{"dashd"};
+    std::vector<const char*> argv{"btgsd"};
     for (const auto& arg : args) argv.push_back(arg.c_str());
     std::string error;
     argsman.AddArg("-minrelaytxfee", "", ArgsManager::ALLOW_ANY, OptionsCategory::OPTIONS);
