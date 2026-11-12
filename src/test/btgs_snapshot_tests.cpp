@@ -175,4 +175,29 @@ BOOST_FIXTURE_TEST_CASE(block_1_pays_the_list, SnapshotTestingSetup)
     BOOST_CHECK_EQUAL(height(), 2);
 }
 
+struct TestnetSnapshotSetup : public BasicTestingSetup {
+    TestnetSnapshotSetup() : BasicTestingSetup{CBaseChainParams::TESTNET} {}
+};
+
+BOOST_FIXTURE_TEST_CASE(testnet_list_pays_exact_collateral, TestnetSnapshotSetup)
+{
+    // The testnet list funds the smartnode tests: 30 outputs of exactly 20,000 (one collateral each) + 5 x 1,000
+    const std::vector<CTxOut>& list = btgs::GetSnapshotOutputs(); // also checks the pinned fingerprint
+    BOOST_CHECK_EQUAL(list.size(), 35U);
+    CAmount total{0};
+    size_t collateral{0}, small{0};
+    for (const CTxOut& out : list) {
+        total += out.nValue;
+        if (out.nValue == 20000 * COIN) ++collateral;
+        if (out.nValue == 1000 * COIN) ++small;
+        BOOST_CHECK_EQUAL(out.scriptPubKey.size(), 25U);
+        BOOST_CHECK(out.scriptPubKey[0] == OP_DUP && out.scriptPubKey[1] == OP_HASH160);
+    }
+    BOOST_CHECK_EQUAL(collateral, 30U);
+    BOOST_CHECK_EQUAL(small, 5U);
+    BOOST_CHECK_EQUAL(total, 605000 * COIN);
+    BOOST_CHECK_EQUAL(btgs::GetSnapshotValue(1), total);
+    BOOST_CHECK_EQUAL(btgs::GetSnapshotValue(2), 0);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

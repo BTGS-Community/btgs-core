@@ -481,8 +481,8 @@ public:
         nPoolMaxParticipants = 20;
         nFulfilledRequestExpireTime = 5*60; // fulfilled requests expire in 5 minutes
 
-        strSporkAddress = "t6vc3nrbAurGs3i17HJUavZuw4ioKTiFCE"; // BTGS: placeholder, real spork keys added before testnet
-        strDevFundAddress = "8eRTi4fUVRoeYEeeTyL4DPAwxatvbjaxFV"; // BTGS: placeholder, replace with a test multisig before testnet
+        strSporkAddress = "tQPZRXs1cDPQa2EGsAsBZ4cSj8cgAZaTtN"; // BTGS testnet spork key (public address only; key stays private)
+        strDevFundAddress = "8wFiUTPop5FFG5Z6x4WR5SC7fEAGd8Yb2H"; // BTGS testnet dev fund: 2-of-3 test multisig
 
         nCreditPoolPeriodBlocks = 576;
 

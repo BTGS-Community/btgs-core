@@ -25,7 +25,7 @@ namespace {
 // Fingerprints of the built-in lists (printed by contrib/snapshot/generate-snapshot.py).
 // The node refuses to start if a list does not match: a changed list must show up here as well.
 const uint256 EXPECTED_MAIN{uint256S("0x9a538906e6466ebd2617d321f71bc94e56056ce213d366773699e28158e00614")}; // empty until the snapshot is taken
-const uint256 EXPECTED_TEST{uint256S("0x9a538906e6466ebd2617d321f71bc94e56056ce213d366773699e28158e00614")}; // empty until the testnet list is made
+const uint256 EXPECTED_TEST{uint256S("0xac2bb8d51b460853c1fd163f819f7b8692e4ba4dc5f58470305de47e0506a633")}; // testnet list: 35 outputs, 605000 test BTGS (contrib/snapshot/make-testnet-keys.py)
 
 std::vector<CTxOut> BuildOutputs(const std::vector<std::pair<const char*, int64_t>>& raw)
 {
