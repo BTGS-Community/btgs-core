@@ -2,7 +2,7 @@
 [/doc/developer-notes.md#release-notes](/doc/developer-notes.md#release-notes)
 for the process.*
 
-# Dash Core version *version*
+# BTGS Core version *version*
 ===============================
 
 This is a new minor version release, bringing various bugfixes and performance improvements.
@@ -10,7 +10,7 @@ This release is **optional** for all nodes, although recommended.
 
 Please report bugs using the issue tracker at GitHub:
 
-  <https://github.com/dashpay/dash/issues>
+  <https://github.com/BTGS-Community/btgs-core/issues>
 
 
 # Upgrading and downgrading
@@ -20,7 +20,7 @@ Please report bugs using the issue tracker at GitHub:
 If you are running an older version, shut it down. Wait until it has completely
 shut down (which might take a few minutes in some cases), then run the
 installer (on Windows) or just copy over `/Applications/Dash-Qt` (on macOS) or
-`dashd`/`dash-qt` (on Linux).
+`btgsd`/`btgs-qt` (on Linux).
 
 ## Downgrade warning
 
@@ -31,10 +31,10 @@ likely require a reindex.
 
 # Compatibility
 
-Dash Core is supported and tested on operating systems using the
-Linux Kernel 3.17+, macOS 14+, and Windows 10+. Dash Core
+BTGS Core is supported and tested on operating systems using the
+Linux Kernel 3.17+, macOS 14+, and Windows 10+. BTGS Core
 should also work on most other Unix-like systems but is not as
-frequently tested on them. It is not recommended to use Dash Core on
+frequently tested on them. It is not recommended to use BTGS Core on
 unsupported systems.
 
 # Release Notes

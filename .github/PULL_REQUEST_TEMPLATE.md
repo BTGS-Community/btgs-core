@@ -2,11 +2,11 @@
 
 _Provide a general summary of your changes in the Title above. The title must
 follow the format described in
-[CONTRIBUTING.md](https://github.com/dashpay/dash/blob/HEAD/CONTRIBUTING.md#creating-the-pull-request)._
+[CONTRIBUTING.md](https://github.com/BTGS-Community/btgs-core/blob/btgs/CONTRIBUTING.md#creating-the-pull-request)._
 
 _Do not manually line wrap text; allow the GitHub UI to dynamically wrap lines._
 
-_[CONTRIBUTING.md](https://github.com/dashpay/dash/blob/HEAD/CONTRIBUTING.md)
+_[CONTRIBUTING.md](https://github.com/BTGS-Community/btgs-core/blob/btgs/CONTRIBUTING.md)
 describes what is expected of a pull request, including tests, refactoring and
 backports._
 
@@ -14,7 +14,7 @@ _Pull requests without a rationale and clear improvement may be closed
 immediately._
 
 _Please provide clear motivation for your patch and explain how it improves
-Dash Core user experience or Dash Core developer experience
+BTGS Core user experience or BTGS Core developer experience
 significantly:_
 
 

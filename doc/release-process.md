@@ -1,9 +1,9 @@
 Release Process
 ====================
 
-* [ ] Update translations, see [translation_process.md](https://github.com/dashpay/dash/blob/develop/doc/translation_process.md#synchronising-translations).
-* [ ] Update manpages (after rebuilding the binaries), see [gen-manpages.py](https://github.com/dashpay/dash/blob/develop/contrib/devtools/README.md#gen-manpagespy).
-* [ ] Update dash.conf and commit, see [gen-dash-conf.sh](https://github.com/dashpay/dash/blob/develop/contrib/devtools/README.md#gen-dash-confsh).
+* [ ] Update translations, see [translation_process.md](https://github.com/BTGS-Community/btgs-core/blob/btgs/doc/translation_process.md#synchronising-translations).
+* [ ] Update manpages (after rebuilding the binaries), see [gen-manpages.py](https://github.com/BTGS-Community/btgs-core/blob/btgs/contrib/devtools/README.md#gen-manpagespy).
+* [ ] Update btgscore.conf and commit, see [gen-dash-conf.sh](https://github.com/BTGS-Community/btgs-core/blob/btgs/contrib/devtools/README.md#gen-dash-confsh).
 
 Before every minor and major release:
 
@@ -50,10 +50,10 @@ Check out the source code in the following directory hierarchy.
 cd /path/to/your/toplevel/build
 git clone https://github.com/dashpay/guix.sigs.git
 git clone https://github.com/dashpay/dash-detached-sigs.git
-git clone https://github.com/dashpay/dash.git
+git clone https://github.com/BTGS-Community/btgs-core.git
 ```
 
-### Dash Core maintainers/release engineers, suggestion for writing release notes
+### BTGS Core maintainers/release engineers, suggestion for writing release notes
 
 Write release notes. git shortlog helps a lot, for example:
 
@@ -75,7 +75,7 @@ git tag -s v(new version, e.g. 20.0.0)
 
 ### Setup and perform Guix builds
 
-Checkout the Dash Core version you'd like to build:
+Checkout the BTGS Core version you'd like to build:
 
 ```sh
 pushd ./dash
@@ -95,7 +95,7 @@ git -C ./guix.sigs pull
 
 ### Create the macOS SDK tarball (first time, or when SDK version changes)
 
-_Note: this step can be skipped if [our CI](https://github.com/dashpay/dash/blob/master/ci/test/00_setup_env.sh#L64) still uses bitcoin's SDK package (see SDK_URL)_
+_Note: this step can be skipped if [our CI](https://github.com/BTGS-Community/btgs-core/blob/btgs/ci/test/00_setup_env.sh#L64) still uses bitcoin's SDK package (see SDK_URL)_
 
 Create the macOS SDK tarball, see the [macOS build
 instructions](build-osx.md#deterministic-macos-app-notes) for
@@ -127,11 +127,11 @@ popd
 
 ### macOS codesigner only: Create detached macOS signatures (assuming [signapple](https://github.com/achow101/signapple/) is installed and up to date with master branch)
 
-* Transfer `dashcore-osx-unsigned.tar.gz` to macOS for signing
+* Transfer `btgscore-osx-unsigned.tar.gz` to macOS for signing
 * Extract and sign:
 
     ```sh
-    tar xf dashcore-osx-unsigned.tar.gz
+    tar xf btgscore-osx-unsigned.tar.gz
     ./detached-sig-create.sh /path/to/codesign.p12 -o runtime
     ```
 
@@ -143,7 +143,7 @@ popd
 * Extract and sign:
 
     ```sh
-    tar xf dashcore-win-unsigned.tar.gz
+    tar xf btgscore-win-unsigned.tar.gz
     ./detached-sig-create.sh -key /path/to/codesign.key
     ```
 
@@ -236,7 +236,7 @@ popd
 * [ ] Celebrate
 
 ### After the release:
-* [ ] Submit patches to BTCPay to ensure they use latest / compatible version see https://github.com/dashpay/dash/issues/4211#issuecomment-966608207
+* [ ] Submit patches to BTCPay to ensure they use latest / compatible version see https://github.com/BTGS-Community/btgs-core/issues/4211#issuecomment-966608207
 * [ ] Update Core and User docs (docs.dash.org)
 * [ ] Test Docker build runs without error in Dashmate
 * [ ] Add new Release Process items to repo [Release Process](release-process.md) document
@@ -259,7 +259,7 @@ Open Terminal, and navigate to the location of the .dmg file.
 Then, run the following command to notarize the .dmg file:
 
 ```sh
-xcrun notarytool submit dashcore-{version}-{x86_64, arm64}-apple-darwin.dmg --keychain-profile "AC_PASSWORD" --wait
+xcrun notarytool submit btgscore-{version}-{x86_64, arm64}-apple-darwin.dmg --keychain-profile "AC_PASSWORD" --wait
 ```
 
 Replace `{version}` with the version you are notarizing. This command uploads the .dmg file to Apple's notary service.

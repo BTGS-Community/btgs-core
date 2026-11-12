@@ -2,18 +2,18 @@
 
 | Name                     | Description |
 |--------------------------|-------------|
-| *libbitcoin_cli*         | RPC client functionality used by *dash-cli* executable |
+| *libbitcoin_cli*         | RPC client functionality used by *btgs-cli* executable |
 | *libbitcoin_common*      | Home for common functionality shared by different executables and libraries. Similar to *libbitcoin_util*, but higher-level (see [Dependencies](#dependencies)). |
 | *libdash_consensus*      | Stable, backwards-compatible consensus functionality used by *libbitcoin_node* and *libbitcoin_wallet* and also exposed as a [shared library](../shared-libraries.md). |
 | *libbitcoinconsensus*    | Shared library build of static *libdash_consensus* library |
 | *libbitcoin_kernel*      | Consensus engine and support library used for validation by *libbitcoin_node* and also exposed as a [shared library](../shared-libraries.md). |
-| *libbitcoinqt*           | GUI functionality used by *dash-qt* and *dash-gui* executables |
-| *libbitcoin_ipc*         | IPC functionality used by *dash-node*, *dash-wallet*, *dash-gui* executables to communicate when [`--enable-multiprocess`](multiprocess.md) is used. |
-| *libbitcoin_node*        | P2P and RPC server functionality used by *dashd* and *dash-qt* executables. |
+| *libbitcoinqt*           | GUI functionality used by *btgs-qt* and *btgs-gui* executables |
+| *libbitcoin_ipc*         | IPC functionality used by *btgs-node*, *btgs-wallet*, *btgs-gui* executables to communicate when [`--enable-multiprocess`](multiprocess.md) is used. |
+| *libbitcoin_node*        | P2P and RPC server functionality used by *btgsd* and *btgs-qt* executables. |
 | *libbitcoin_util*        | Home for common functionality shared by different executables and libraries. Similar to *libbitcoin_common*, but lower-level (see [Dependencies](#dependencies)). |
-| *libbitcoin_wallet*      | Wallet functionality used by *dashd* and *dash-wallet* executables. |
-| *libbitcoin_wallet_tool* | Lower-level wallet functionality used by *dash-wallet* executable. |
-| *libbitcoin_zmq*         | [ZeroMQ](../zmq.md) functionality used by *dashd* and *dash-qt* executables. |
+| *libbitcoin_wallet*      | Wallet functionality used by *btgsd* and *btgs-wallet* executables. |
+| *libbitcoin_wallet_tool* | Lower-level wallet functionality used by *btgs-wallet* executable. |
+| *libbitcoin_zmq*         | [ZeroMQ](../zmq.md) functionality used by *btgsd* and *btgs-qt* executables. |
 
 Note: libbitcoin_kernel is a subject to be backported & dashified.
 
@@ -41,17 +41,17 @@ Note: libbitcoin_kernel is a subject to be backported & dashified.
 
 graph TD;
 
-dash-cli[dash-cli]-->libbitcoin_cli;
+btgs-cli[btgs-cli]-->libbitcoin_cli;
 
-dashd[dashd]-->libbitcoin_node;
-dashd[dashd]-->libbitcoin_wallet;
+btgsd[btgsd]-->libbitcoin_node;
+btgsd[btgsd]-->libbitcoin_wallet;
 
-dash-qt[dash-qt]-->libbitcoin_node;
-dash-qt[dash-qt]-->libbitcoinqt;
-dash-qt[dash-qt]-->libbitcoin_wallet;
+btgs-qt[btgs-qt]-->libbitcoin_node;
+btgs-qt[btgs-qt]-->libbitcoinqt;
+btgs-qt[btgs-qt]-->libbitcoin_wallet;
 
-dash-wallet[dash-wallet]-->libbitcoin_wallet;
-dash-wallet[dash-wallet]-->libbitcoin_wallet_tool;
+btgs-wallet[btgs-wallet]-->libbitcoin_wallet;
+btgs-wallet[btgs-wallet]-->libbitcoin_wallet_tool;
 
 libbitcoin_cli-->libbitcoin_util;
 libbitcoin_cli-->libbitcoin_common;
@@ -78,7 +78,7 @@ libbitcoin_wallet_tool-->libbitcoin_wallet;
 libbitcoin_wallet_tool-->libbitcoin_util;
 
 classDef bold stroke-width:2px, font-weight:bold, font-size: smaller;
-class dash-qt,dashd,dash-cli,dash-wallet bold
+class btgs-qt,btgsd,btgs-cli,btgs-wallet bold
 ```
 </td></tr><tr><td>
 

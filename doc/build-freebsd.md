@@ -2,7 +2,7 @@
 
 **Updated for FreeBSD [12.3](https://www.freebsd.org/releases/12.3R/announce/)**
 
-This guide describes how to build dashd, command-line utilities, and GUI on FreeBSD.
+This guide describes how to build btgsd, command-line utilities, and GUI on FreeBSD.
 
 ## Preparation
 
@@ -17,9 +17,9 @@ pkg install autoconf automake boost-libs git gmake libevent libtool pkgconf libb
 See [dependencies.md](dependencies.md) for a complete overview.
 
 ### 2. Clone Dash Repo
-Now that `git` and all the required dependencies are installed, let's clone the Dash Core repository to a directory. All build scripts and commands will run from this directory.
+Now that `git` and all the required dependencies are installed, let's clone the BTGS Core repository to a directory. All build scripts and commands will run from this directory.
 ``` bash
-git clone https://github.com/dashpay/dash.git
+git clone https://github.com/BTGS-Community/btgs-core.git
 ```
 
 ### 3. Install Optional Dependencies
@@ -30,7 +30,7 @@ git clone https://github.com/dashpay/dash.git
 pkg install gmp
 ```
 
-It is not necessary to build wallet functionality to run either `dashd` or `dash-qt`.
+It is not necessary to build wallet functionality to run either `btgsd` or `btgs-qt`.
 
 ###### Descriptor Wallet Support
 
@@ -69,7 +69,7 @@ sh/bash: export BDB_PREFIX=[path displayed above]
 #### GUI Dependencies
 ###### Qt5
 
-Dash Core includes a GUI built with the cross-platform Qt Framework. To compile the GUI, we need to install `qt5`. Skip if you don't intend to use the GUI.
+BTGS Core includes a GUI built with the cross-platform Qt Framework. To compile the GUI, we need to install `qt5`. Skip if you don't intend to use the GUI.
 ```bash
 pkg install qt5
 ```
@@ -84,7 +84,7 @@ pkg install libqrencode
 #### Notifications
 ###### ZeroMQ
 
-Dash Core can provide notifications via ZeroMQ. If the package is installed, support will be compiled in.
+BTGS Core can provide notifications via ZeroMQ. If the package is installed, support will be compiled in.
 ```bash
 pkg install libzmq4
 ```
@@ -98,11 +98,11 @@ pkg install python3 databases/py-sqlite3
 ```
 ---
 
-## Building Dash Core
+## Building BTGS Core
 
 ### 1. Configuration
 
-There are many ways to configure Dash Core, here are a few common examples:
+There are many ways to configure BTGS Core, here are a few common examples:
 
 ##### Descriptor Wallet and GUI:
 This explicitly enables the GUI and disables legacy wallet support, assuming `sqlite` and `qt` are installed.

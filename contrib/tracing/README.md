@@ -2,8 +2,8 @@ Example scripts for User-space, Statically Defined Tracing (USDT)
 =================================================================
 
 This directory contains scripts showcasing User-space, Statically Defined
-Tracing (USDT) support for Dash Core on Linux using. For more information on
-USDT support in Dash Core see the [USDT documentation].
+Tracing (USDT) support for BTGS Core on Linux using. For more information on
+USDT support in BTGS Core see the [USDT documentation].
 
 [USDT documentation]: ../../doc/tracing.md
 
@@ -30,14 +30,14 @@ information. For development there exist a [bpftrace Reference Guide], a
 
 ## Examples
 
-The bpftrace examples contain a relative path to the `dashd` binary. By
+The bpftrace examples contain a relative path to the `btgsd` binary. By
 default, the scripts should be run from the repository-root and assume a
-self-compiled `dashd` binary. The paths in the examples can be changed, for
+self-compiled `btgsd` binary. The paths in the examples can be changed, for
 example, to point to release builds if needed. See the
-[Dash Core USDT documentation] on how to list available tracepoints in your
-`dashd` binary.
+[BTGS Core USDT documentation] on how to list available tracepoints in your
+`btgsd` binary.
 
-[Dash Core USDT documentation]: ../../doc/tracing.md#listing-available-tracepoints
+[BTGS Core USDT documentation]: ../../doc/tracing.md#listing-available-tracepoints
 
 **WARNING: eBPF programs require root privileges to be loaded into a Linux
 kernel VM. This means the bpftrace and BCC examples must be executed with root
@@ -82,7 +82,7 @@ about the connection. Peers can be selected individually to view recent P2P
 messages.
 
 ```
-$ python3 contrib/tracing/p2p_monitor.py ./src/dashd
+$ python3 contrib/tracing/p2p_monitor.py ./src/btgsd
 ```
 
 Lists selectable peers and traffic and connection information.
@@ -150,7 +150,7 @@ lost. BCC prints: `Possibly lost 2 samples` on lost messages.
 
 
 ```
-$ python3 contrib/tracing/log_raw_p2p_msgs.py ./src/dashd
+$ python3 contrib/tracing/log_raw_p2p_msgs.py ./src/btgsd
 ```
 
 ```
@@ -184,11 +184,11 @@ longer than 25ms to connect.
 $ bpftrace contrib/tracing/connectblock_benchmark.bt 20000 38000 25
 ```
 
-In a different terminal, starting Dash Core in DevNet mode and with
+In a different terminal, starting BTGS Core in DevNet mode and with
 re-indexing enabled.
 
 ```
-$ ./src/dashd -devnet -reindex
+$ ./src/btgsd -devnet -reindex
 ```
 
 This produces the following output.
@@ -241,7 +241,7 @@ A BCC Python script to log the UTXO cache flushes. Based on the
 `utxocache:flush` tracepoint.
 
 ```bash
-$ python3 contrib/tracing/log_utxocache_flush.py ./src/dashd
+$ python3 contrib/tracing/log_utxocache_flush.py ./src/btgsd
 ```
 
 ```

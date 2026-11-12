@@ -1,7 +1,7 @@
 Benchmarking
 ============
 
-Dash Core has an internal benchmarking framework, with benchmarks
+BTGS Core has an internal benchmarking framework, with benchmarks
 for cryptographic algorithms (e.g. SHA1, SHA256, SHA512, RIPEMD160, Poly1305, ChaCha20), rolling bloom filter, coins selection,
 thread queue, wallet balance.
 
@@ -15,9 +15,9 @@ and lock analysis.
 
     make -C src dash_bench
 
-After compiling Dash Core, the benchmarks can be run with:
+After compiling BTGS Core, the benchmarks can be run with:
 
-    src/bench/bench_dash
+    src/bench/bench_btgs
 
 The output will look similar to:
 ```
@@ -39,7 +39,7 @@ The output will look similar to:
 Help
 ---------------------
 
-    src/bench/bench_dash -?
+    src/bench/bench_btgs -?
 
 To print the various options, like listing the benchmarks without running them
 or using a regex filter to only run certain benchmarks.
@@ -62,11 +62,11 @@ inventories whose hashes are absent locally and clear the request state after
 every iteration. Use an optimized build to measure CPU cost; debug builds
 additionally enable expensive container and lock-order checks.
 
-    src/bench/bench_dash -filter='InventoryBatch.*' -min-time=5000
+    src/bench/bench_btgs -filter='InventoryBatch.*' -min-time=5000
 
 Going Further
 --------------------
 
-To monitor Dash Core performance more in depth (like reindex or IBD): https://github.com/chaincodelabs/bitcoinperf
+To monitor BTGS Core performance more in depth (like reindex or IBD): https://github.com/chaincodelabs/bitcoinperf
 
-To generate Flame Graphs for Dash Core: https://github.com/eklitzke/bitcoin/blob/flamegraphs/doc/flamegraphs.md
+To generate Flame Graphs for BTGS Core: https://github.com/eklitzke/bitcoin/blob/flamegraphs/doc/flamegraphs.md

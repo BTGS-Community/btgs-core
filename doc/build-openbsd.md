@@ -2,7 +2,7 @@
 
 **Updated for OpenBSD [7.3](https://www.openbsd.org/73.html)**
 
-This guide describes how to build dashd, command-line utilities, and GUI on OpenBSD.
+This guide describes how to build btgsd, command-line utilities, and GUI on OpenBSD.
 
 ## Preparation
 
@@ -14,22 +14,22 @@ pkg_add bash git gmake gmp libevent libtool boost
 # Select the newest version of the following packages:
 pkg_add autoconf automake python
 
-git clone https://github.com/dashpay/dash.git
+git clone https://github.com/BTGS-Community/btgs-core.git
 ```
 
 See [dependencies.md](dependencies.md) for a complete overview.
 
-### 2. Clone Dash Core Repo
-Clone the Dash Core repository to a directory. All build scripts and commands will run from this directory.
+### 2. Clone BTGS Core Repo
+Clone the BTGS Core repository to a directory. All build scripts and commands will run from this directory.
 ``` bash
-git clone https://github.com/dashpay/dash.git
+git clone https://github.com/BTGS-Community/btgs-core.git
 ```
 
 ### 3. Install Optional Dependencies
 
 #### Wallet Dependencies
 
-It is not necessary to build wallet functionality to run either `dashd` or `dash-qt`.
+It is not necessary to build wallet functionality to run either `btgsd` or `btgs-qt`.
 
 ###### Descriptor Wallet Support
 
@@ -60,13 +60,13 @@ export BDB_PREFIX="/path/to/dash/depends/x86_64-unknown-openbsd"
 #### GUI Dependencies
 ###### Qt5
 
-Dash Core includes a GUI built with the cross-platform Qt Framework. To compile the GUI, Qt 5 is required.
+BTGS Core includes a GUI built with the cross-platform Qt Framework. To compile the GUI, Qt 5 is required.
 
 ```bash
 pkg_add qt5
 ```
 
-## Building Dash Core
+## Building BTGS Core
 
 **Important**: Use `gmake` (the non-GNU `make` will exit with an error).
 
@@ -82,7 +82,7 @@ export AUTOMAKE_VERSION=1.16
 
 ### 1. Configuration
 
-There are many ways to configure Dash Core, here are a few common examples:
+There are many ways to configure BTGS Core, here are a few common examples:
 
 ##### Descriptor Wallet and GUI:
 This enables the GUI and descriptor wallet support, assuming `sqlite` and `qt5` are installed.

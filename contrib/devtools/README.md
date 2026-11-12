@@ -20,7 +20,7 @@ git diff -U0 HEAD~1.. | ./contrib/devtools/clang-format-diff.py -p1 -i -v
 copyright\_header.py
 ====================
 
-Provides utilities for managing copyright headers of `The Dash Core
+Provides utilities for managing copyright headers of `The BTGS Core
 developers` in repository source files. It has three subcommands:
 
 ```
@@ -93,8 +93,8 @@ BUILDDIR=$PWD/build contrib/devtools/gen-manpages.py
 gen-dash-conf.sh
 ===================
 
-Generates a dash.conf file in `contrib/debian/examples/` by parsing the output from `dashd --help`. This script is run during the
-release process to include a dash.conf with the release binaries and can also be run by users to generate a file locally.
+Generates a btgscore.conf file in `contrib/debian/examples/` by parsing the output from `btgsd --help`. This script is run during the
+release process to include a btgscore.conf with the release binaries and can also be run by users to generate a file locally.
 When generating a file as part of the release process, make sure to commit the changes after running the script.
 
 With in-tree builds this tool can be run from any directory within the
@@ -133,7 +133,7 @@ couldn't mess with the sources.
 
 Setup
 ---------
-Configuring the github-merge tool for the Dash Core repository is done in the following way:
+Configuring the github-merge tool for the BTGS Core repository is done in the following way:
 
     git config githubmerge.repository dashpay/dash
     git config githubmerge.testcmd "make -j4 check" (adapt to whatever you want to use for testing)

@@ -259,7 +259,7 @@ This example lists the steps necessary to setup and build a command line only di
 
 ```sh
 pacman --sync --needed autoconf automake base-devel boost cmake gcc git libbacktrace libevent libtool make patch pkgconf python sqlite
-git clone https://github.com/dashpay/dash.git
+git clone https://github.com/BTGS-Community/btgs-core.git
 cd dash/
 ./autogen.sh
 ./configure

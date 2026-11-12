@@ -1,12 +1,12 @@
-Contributing to Dash Core
+Contributing to BTGS Core
 ============================
 
-The Dash Core project operates an open contributor model where anyone is
+The BTGS Core project operates an open contributor model where anyone is
 welcome to contribute towards development in the form of peer review, testing
 and patches. This document explains the practical process and guidelines for
 contributing.
 
-First, in terms of structure, there is no particular concept of "Dash Core
+First, in terms of structure, there is no particular concept of "BTGS Core
 developers" in the sense of privileged people. Open source often naturally
 revolves around a meritocracy where contributors earn trust from the developer
 community over time. Nevertheless, some hierarchy is necessary for practical
@@ -24,13 +24,13 @@ as a new contributor. It also will teach you much more about the code and
 process than opening pull requests. Please refer to the [peer review](#peer-review)
 section below.
 
-Before you start contributing, familiarize yourself with the Dash Core build
+Before you start contributing, familiarize yourself with the BTGS Core build
 system and tests. Refer to the documentation in the repository on how to build
-Dash Core and how to run the unit and functional tests.
+BTGS Core and how to run the unit and functional tests.
 
 There are many open issues of varying difficulty waiting to be fixed.
 If you're looking for somewhere to start contributing, check out the
-[good first issue](https://github.com/dashpay/dash/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22)
+[good first issue](https://github.com/BTGS-Community/btgs-core/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22)
 list.
 Some of them might no longer be applicable. So if you are interested, but
 unsure, you might want to leave a comment on the issue first.
@@ -51,7 +51,7 @@ and is also an effective way to request assistance if and when you need it.
 Communication Channels
 ----------------------
 
-Most communication about Dash Core development happens on Discord Server.
+Most communication about BTGS Core development happens on Discord Server.
 
 Discussion about codebase improvements happens in GitHub issues and pull
 requests.
@@ -138,7 +138,7 @@ Allowed scopes:
   - *log* for changes to log messages
   - *mining* for changes to the mining code
   - *net* for changes to the peer-to-peer network code
-  - *qt* for changes to dash-qt
+  - *qt* for changes to btgs-qt
   - *rest* for changes to the REST APIs
   - *rpc* for changes to the RPC APIs
   - *scripts* for changes to the scripts and tools
@@ -166,13 +166,13 @@ mailing list discussions).
 The description for a new pull request should not contain any `@` mentions. The
 PR description will be included in the commit message when the PR is merged and
 any users mentioned in the description will be annoyingly notified each time a
-fork of Dash Core copies the merge. Instead, make any username mentions in a
+fork of BTGS Core copies the merge. Instead, make any username mentions in a
 subsequent comment to the PR.
 
 ### Translation changes
 
 Note that translations should not be submitted as pull requests. Please see
-[Translation Process](https://github.com/dashpay/dash/blob/master/doc/translation_process.md)
+[Translation Process](https://github.com/BTGS-Community/btgs-core/blob/btgs/doc/translation_process.md)
 for more information on helping with translations.
 
 ### Work in Progress Changes and Requests for Comments
@@ -228,7 +228,7 @@ pull request to pull request.
 
 When a pull request conflicts with the target branch, you may be asked to rebase it on top of the current target branch.
 
-    git fetch https://github.com/dashpay/dash <target-branch>  # Fetch the latest upstream commit
+    git fetch https://github.com/BTGS-Community/btgs-core <target-branch>  # Fetch the latest upstream commit
     git rebase FETCH_HEAD  # Rebuild commits on top of the new base
 
 Avoid rebasing a non-conflicting pull request on top of the updated target
@@ -264,7 +264,7 @@ feature that will require maintenance, please consider if you are willing to
 maintain it (including bug fixing). If features get orphaned with no maintainer
 in the future, they may be removed by the Repository Maintainer. Features
 might be rejected due to design or scope issues. If a feature is based on a lot
-of dependencies, consider first building the system outside of Dash Core, if
+of dependencies, consider first building the system outside of BTGS Core, if
 possible.
 
 
@@ -289,11 +289,11 @@ experience. Stylistic changes not called for by the
 "Decision Making" Process
 -------------------------
 
-The following applies to code changes to the Dash Core project (and related
+The following applies to code changes to the BTGS Core project (and related
 projects such as libsecp256k1), and is not to be confused with overall Dash
 Network Protocol consensus changes.
 
-Whether a pull request is merged into Dash Core rests with the project merge
+Whether a pull request is merged into BTGS Core rests with the project merge
 maintainers.
 
 Maintainers will take into consideration if a patch is in line with the general
@@ -395,7 +395,7 @@ present locally. See chapter [rebasing changes](#rebasing-changes)
 
 ### Finding Reviewers
 
-The review process is normally fairly responsive on the Dash Core repository, however
+The review process is normally fairly responsive on the BTGS Core repository, however
 this might not always be the case. If you find that you've been waiting
 for a pull request to be given attention for several months, there may be a number
 of reasons for this, some of which you can do something about:
