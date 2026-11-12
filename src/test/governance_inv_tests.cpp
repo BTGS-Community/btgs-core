@@ -75,7 +75,8 @@ struct GovernanceInvSetup : public TestingSetup {
 
         // Anchor the clock so the object and vote timestamps the tests build
         // from GetTime() are deterministic. Nothing advances it.
-        SetMockTime(1'700'000'000s);
+        // BTGS: after the BTGS genesis (Nov 2026), otherwise the genesis is "in the future" and the node is not in IBD
+        SetMockTime(1'800'000'000s);
     }
     ~GovernanceInvSetup() {
         // govman holds a reference to chain_helper->superblocks, so it must be reset before chain_helper (matches PrepareShutdown
@@ -149,7 +150,7 @@ void ProcessInv(PeerManager& peerman, CNode& peer, const CInv& inv)
 CGovernanceObject MakeGovernanceObject(int64_t creation_time, const uint256& collateral_hash)
 {
     const std::string data{
-        R"({"type":1,"name":"proposal","start_epoch":1700000000,"end_epoch":1700100000,"payment_amount":1.0,"payment_address":"XwnLY9Tf7Zsef8gMGL2fhWA9ZmMjt4KPwV","url":"https://dash.org"})"};
+        R"({"type":1,"name":"proposal","start_epoch":1800000000,"end_epoch":1800100000,"payment_amount":1.0,"payment_address":"XwnLY9Tf7Zsef8gMGL2fhWA9ZmMjt4KPwV","url":"https://dash.org"})"};
     return CGovernanceObject{uint256{}, /*revision=*/1, creation_time, collateral_hash, HexStr(data)};
 }
 

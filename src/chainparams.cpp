@@ -11,7 +11,6 @@
 #include <util/std23.h>
 
 #include <arith_uint256.h>
-#include <chainparamsseeds.h>
 #include <consensus/merkle.h>
 #include <deploymentinfo.h>
 #include <util/system.h>
