@@ -37,7 +37,7 @@ Windows  | `%APPDATA%\Dashcore\` <sup>[\[1\]](#note1)</sup>
 Chain option                   | Data directory path
 -------------------------------|------------------------------
 `-chain=main` (default)        | *path_to_datadir*`/`
-`-chain=test` or `-testnet`    | *path_to_datadir*`/testnet3/`
+`-chain=test` or `-testnet`    | *path_to_datadir*`/testnet/`
 `-chain=devnet` or `-devnet`   | *path_to_datadir*`/devnet/`
 `-chain=regtest` or `-regtest` | *path_to_datadir*`/regtest/`
 

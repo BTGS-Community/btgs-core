@@ -93,6 +93,14 @@ static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits
     return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);
 }
 
+// BTGS: the testnet has its own genesis message, so its genesis differs from mainnet and regtest
+static CBlock CreateTestnetGenesisBlock(uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
+{
+    const char* pszTimestamp = "BTGS testnet 2026 - community relaunch on Dash Core v24, SHA-256d";
+    const CScript genesisOutputScript = CScript() << ParseHex("040184710fa689ad5023690c80f3a49c8f13f8d45b8c857fbcbc8bc4a8e4d3eb4b10f4d4604fa08dce601aaf0f470216fe1b51850b4acf21b179c45070ac7b03a9") << OP_CHECKSIG;
+    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);
+}
+
 static CBlock FindDevNetGenesisBlock(const CBlock &prevBlock, const CAmount& reward)
 {
     std::string devNetName = gArgs.GetDevNetName();
@@ -381,7 +389,7 @@ public:
         consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 20
         consensus.nPowTargetTimespan = 24 * 60 * 60; // Dash: 1 day
         consensus.nPowTargetSpacing = 200; // BTGS: 200 seconds
-        consensus.fPowAllowMinDifficultyBlocks = true;
+        consensus.fPowAllowMinDifficultyBlocks = false; // BTGS: same rule as mainnet, so DGW tests show real behaviour
         consensus.fPowNoRetargeting = false;
         consensus.nPowKGWHeight = 1; // BTGS
         consensus.nPowDGWHeight = 1; // BTGS
@@ -425,10 +433,10 @@ public:
         m_assumed_blockchain_size = 10;
         m_assumed_chain_state_size = 1;
 
-        genesis = CreateGenesisBlock(1794355201UL, 271248UL, 0x1e0ffff0, 1, 50 * COIN);
+        genesis = CreateTestnetGenesisBlock(1794355201UL, 4398774UL, 0x1e0ffff0, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x000007065fccae9a9e9afa2c9abc5bf22b5491ce25994011cf47fd3c3ca5d485"));
-        assert(genesis.hashMerkleRoot == uint256S("0xa9cc8412899952b4170bf096205e4d02e931bcf20731333e6fb8b8884f2e7745"));
+        assert(consensus.hashGenesisBlock == uint256S("0x00000f7bab500393f82b56ca3f9fd13e506e7111e04c7a08a97ff949b7a998e1"));
+        assert(genesis.hashMerkleRoot == uint256S("0x9877a0b7fa8028de16b05156a6a9f0a845887190f52776b62bdce61e9cac55d4"));
 
         vFixedSeeds.clear();
         // BTGS: our testnet seed nodes are added later

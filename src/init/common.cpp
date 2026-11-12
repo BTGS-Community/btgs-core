@@ -145,7 +145,7 @@ void LogPackageVersion()
 #ifdef DEBUG_CORE
     version_string += " (debug build)";
 #else
-    version_string += " (release build)";
+    version_string += " (testnet build)";
 #endif
     LogPrintf(PACKAGE_NAME " version %s\n", version_string);
 }

@@ -540,7 +540,7 @@ def get_chain_conf_names(chain):
     """
     Translate chain name to config names
     """
-    if chain == 'testnet3':
+    if chain == 'testnet':
         arg = 'testnet'
         value = '1'
         section = 'test'
