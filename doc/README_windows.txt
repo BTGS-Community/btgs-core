@@ -3,21 +3,23 @@ BTGS Core
 
 Intro
 -----
-Dash is a free open source peer-to-peer electronic cash system that is
-completely decentralized, without the need for a central server or trusted
-parties.  Users hold the crypto keys to their own money and transact directly
-with each other, with the help of a P2P network to check for double-spending.
+BTGS is a free open source peer-to-peer digital currency. It is
+decentralized, without the need for a central server or trusted parties.
+Users hold the keys to their own coins and transact directly with each
+other, with the help of a P2P network to check for double-spending.
 
 
 Setup
 -----
 Unpack the files into a directory and run btgs-qt.exe.
 
-BTGS Core is the original Dash client and it builds the backbone of the network.
-However, it downloads and stores the entire history of Dash transactions;
-depending on the speed of your computer and network connection, the synchronization
-process can take anywhere from a few hours to a day or more.
+BTGS Core is the full node and wallet for the BTGS network. It downloads and
+stores the entire history of BTGS transactions; depending on the speed of
+your computer and network connection, the synchronization process can take
+from a few minutes to a few hours.
 
-See the Dash documentation at:
-  https://docs.dash.org
-for more help and information.
+The settings file is called btgscore.conf and lives in your BTGS Core data
+folder.
+
+More help and information:
+  https://github.com/BTGS-Community/btgs-core
