@@ -115,6 +115,10 @@ static bool VerifyAssetUnlockSig(const CAssetUnlockPayload& payload, ScanQuorums
 
     Consensus::LLMQType llmqType = Params().GetConsensus().llmqTypePlatform;
 
+    if (llmqType == Consensus::LLMQType::LLMQ_NONE || !Params().GetLLMQ(llmqType).has_value()) {
+        // BTGS: there is no Platform quorum, so asset unlock transactions can never be valid
+        return state.Invalid(TxValidationResult::TX_CONSENSUS, "bad-assetunlock-no-platform-quorum");
+    }
     const auto& llmq_params_opt = Params().GetLLMQ(llmqType);
     assert(llmq_params_opt.has_value());
 

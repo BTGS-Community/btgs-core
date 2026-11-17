@@ -304,7 +304,7 @@ public:
         AddLLMQ(Consensus::LLMQType::LLMQ_BTGS_12_67);
         consensus.llmqTypeChainLocks = Consensus::LLMQType::LLMQ_BTGS_15_67;
         consensus.llmqTypeDIP0024InstantSend = Consensus::LLMQType::LLMQ_BTGS_12_67;
-        consensus.llmqTypePlatform = Consensus::LLMQType::LLMQ_BTGS_15_67; // Dash Platform is not used
+        consensus.llmqTypePlatform = Consensus::LLMQType::LLMQ_NONE; // BTGS: no Platform quorum (must differ from ChainLocks)
         consensus.llmqTypeMnhf = Consensus::LLMQType::LLMQ_BTGS_15_67;
 
         fDefaultConsistencyChecks = false;
@@ -468,7 +468,7 @@ public:
         AddLLMQ(Consensus::LLMQType::LLMQ_BTGS_12_67);
         consensus.llmqTypeChainLocks = Consensus::LLMQType::LLMQ_BTGS_15_67;
         consensus.llmqTypeDIP0024InstantSend = Consensus::LLMQType::LLMQ_BTGS_12_67;
-        consensus.llmqTypePlatform = Consensus::LLMQType::LLMQ_BTGS_15_67; // Dash Platform is not used
+        consensus.llmqTypePlatform = Consensus::LLMQType::LLMQ_NONE; // BTGS: no Platform quorum (must differ from ChainLocks)
         consensus.llmqTypeMnhf = Consensus::LLMQType::LLMQ_BTGS_15_67;
 
         fDefaultConsistencyChecks = false;
