@@ -137,12 +137,9 @@ your funds will already be mixed. No additional waiting is required.</li> \
 <b>IMPORTANT:</b> Your wallet only contains 1000 of these \"change addresses.\" Every time a mixing event happens, up to 9 of your addresses are used up. \
 This means those 1000 addresses last for about 100 mixing events. When 900 of them are used, your wallet must create more addresses. \
 It can only do this, however, if you have automatic backups enabled.<br> \
-Consequently, users who have backups disabled will also have %1 disabled. <hr>\
-For more information, see the <a style=\"%2\" href=\"%3\">%1 documentation</a>."
+Consequently, users who have backups disabled will also have %1 disabled."
         )
         .arg(strCoinJoinName)
-        .arg(GUIUtil::getThemedStyleQString(GUIUtil::ThemedStyle::TS_COMMAND))
-        .arg("https://docs.dash.org/en/stable/wallets/dashcore/coinjoin-instantsend.html")
         );
         ui->aboutMessage->setWordWrap(true);
         ui->helpMessage->setVisible(false);

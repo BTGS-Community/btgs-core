@@ -221,10 +221,11 @@ QWidget* RegisterMasternodeWizard::createTypePage()
         tr("EvoNode — %1 collateral").arg(FormatCollateralAmount(m_walletModel, GetMnType(MnType::Evo).collat_amount)),
         page);
     auto evo_card{makeOptionCard(page, m_type_evo,
-                                 tr("Additionally hosts Dash Platform, has four times the voting weight and earns a "
+                                 tr("Additionally hosts Platform, has four times the voting weight and earns a "
                                     "larger share of rewards. Requires a Platform node ID and extra services."))};
     evo_card.body->setVisible(false);
     layout->addWidget(evo_card.card);
+    evo_card.card->setVisible(false); // BTGS has one smartnode type (no Platform), so the EvoNode choice is hidden
     layout->addStretch();
 
     auto* group{new QButtonGroup(page)};
@@ -1664,7 +1665,7 @@ void RegisterMasternodeWizard::populateResult(const QString& pro_tx_hash)
                     "inactive until then.");
     }
     if (isEvo()) {
-        steps << tr("Provision the Dash Platform services (Tenderdash and Drive) with the Platform node key matching "
+        steps << tr("Provision the Platform services (Tenderdash and Drive) with the Platform node key matching "
                     "the node ID you registered.");
         steps << tr("The EvoNode becomes active once the registration is confirmed and the first update is signed by "
                     "the operator.");
