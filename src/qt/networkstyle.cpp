@@ -67,7 +67,7 @@ NetworkStyle::NetworkStyle(const QString &_appName, const int iconColorHueShift,
                            const char *_macIconPath, const char *_titleAddText):
     appName(_appName),
     titleAddText(qApp->translate("SplashScreen", _titleAddText)),
-    badgeColor(QColor(0, 141, 228)) // default badge color is the original Dash's blue, regardless of the current theme
+    badgeColor(QColor(212, 160, 23)) // default badge color is the BTGS gold, regardless of the current theme
 {
     // Allow for separate UI settings for testnets
     QApplication::setApplicationName(appName);
