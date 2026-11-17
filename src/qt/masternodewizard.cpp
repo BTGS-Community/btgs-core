@@ -609,7 +609,7 @@ QWidget* RegisterMasternodeWizard::createSecretPage()
     m_secret_edit->setReadOnly(true);
     m_secret_edit->setFont(GUIUtil::fixedPitchFont());
     box->addWidget(m_secret_edit);
-    box->addWidget(makeHint(tr("Add this line to dash.conf on your masternode server:"), secret_box));
+    box->addWidget(makeHint(tr("Add this line to btgscore.conf on your masternode server:"), secret_box));
     auto* conf_row{new QHBoxLayout()};
     m_conf_line_edit = new QLineEdit(secret_box);
     m_conf_line_edit->setReadOnly(true);
@@ -1651,7 +1651,7 @@ void RegisterMasternodeWizard::populateResult(const QString& pro_tx_hash)
     QStringList steps;
     if (m_operator_widget->hasGeneratedSecret()) {
         steps << tr(
-            "Configure your masternode server with the operator secret key you saved, then restart dashd there.");
+            "Configure your masternode server with the operator secret key you saved, then restart btgsd there.");
     } else {
         steps << tr(
             "Configure your masternode server with the BLS secret key matching the operator public key you provided.");
