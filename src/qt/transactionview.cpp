@@ -95,7 +95,7 @@ TransactionView::TransactionView(QWidget* parent) :
     typeWidget->addItem(tr("%1 Collateral Payment").arg(strCoinJoinName), TransactionFilterProxy::TYPE(TransactionRecord::CoinJoinCollateralPayment));
     typeWidget->addItem(tr("To yourself"), TransactionFilterProxy::TYPE(TransactionRecord::SendToSelf));
     typeWidget->addItem(tr("Mined"), TransactionFilterProxy::TYPE(TransactionRecord::Generated));
-    typeWidget->addItem(tr("Masternode"), TransactionFilterProxy::TYPE(TransactionRecord::MasternodeRegistration) |
+    typeWidget->addItem(tr("Smartnode"), TransactionFilterProxy::TYPE(TransactionRecord::MasternodeRegistration) |
                                               TransactionFilterProxy::TYPE(TransactionRecord::MasternodeUpdate));
     typeWidget->addItem(tr("Platform Transfer"), TransactionFilterProxy::TYPE(TransactionRecord::PlatformTransfer));
     typeWidget->addItem(tr("Asset Lock"), TransactionFilterProxy::TYPE(TransactionRecord::AssetLock));

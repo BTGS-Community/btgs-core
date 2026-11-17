@@ -776,8 +776,8 @@ void BitcoinGUI::createToolBars()
         tabGroup->addButton(coinJoinCoinsButton);
 
         masternodeButton = new QToolButton(this);
-        masternodeButton->setText(tr("&Masternodes"));
-        masternodeButton->setStatusTip(tr("Browse masternodes"));
+        masternodeButton->setText(tr("&Smartnodes"));
+        masternodeButton->setStatusTip(tr("Browse smartnodes"));
         tabGroup->addButton(masternodeButton);
 
         governanceButton = new QToolButton(this);

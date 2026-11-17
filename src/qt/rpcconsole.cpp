@@ -1302,9 +1302,9 @@ void RPCConsole::updateDetailWidget()
         ui->peerPoSeScore->setText(ts.na);
     } else {
         if (stats->nodeStats.verifiedProRegTxHash.IsNull()) {
-            ui->peerNodeType->setText(tr("Masternode"));
+            ui->peerNodeType->setText(tr("Smartnode"));
         } else {
-            ui->peerNodeType->setText(tr("Verified Masternode"));
+            ui->peerNodeType->setText(tr("Verified Smartnode"));
         }
         ui->peerPoSeScore->setText(QString::number(dmn->posePenalty()));
     }

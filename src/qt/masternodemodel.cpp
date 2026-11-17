@@ -222,7 +222,7 @@ QString MasternodeEntry::toHtml(int current_height, const QSet<int>& my_share_in
     }
     ret += "<br>";
 
-    ret += "<b>" + QObject::tr("Masternode Type") + ":</b> " + m_type_description.toHtmlEscaped() + "<br>";
+    ret += "<b>" + QObject::tr("Smartnode Type") + ":</b> " + m_type_description.toHtmlEscaped() + "<br>";
     ret += "<b>" + QObject::tr("Registered Height") + ":</b> " + QString::number(m_registered_height) + "<br>";
     ret += "<b>" + QObject::tr("Last Paid Height") + ":</b> " + QString::number(m_last_paid_height) + "<br>";
     if (m_consecutive_payments) {
@@ -368,7 +368,7 @@ QVariant MasternodeModel::data(const QModelIndex& index, int role) const
 
     if (role == Qt::ToolTipRole) {
         if (index.column() == Column::TYPE && entry->isShared()) {
-            return tr("Shared masternode · you hold %1 of %2 shares")
+            return tr("Shared smartnode · you hold %1 of %2 shares")
                 .arg(m_my_share_counts.value(entry->proTxHash(), 0))
                 .arg(entry->shares().size());
         }

@@ -541,7 +541,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="lblCoinJoinSessionsText">
            <property name="toolTip">
-            <string>Use this many separate masternodes in parallel to mix funds.&lt;br/&gt;Note: You must use this feature carefully.&lt;br/&gt;Make sure you always have recent wallet (auto)backup in a safe place!</string>
+            <string>Use this many separate smartnodes in parallel to mix funds.&lt;br/&gt;Note: You must use this feature carefully.&lt;br/&gt;Make sure you always have recent wallet (auto)backup in a safe place!</string>
            </property>
            <property name="text">
             <string>Parallel sessions</string>
@@ -564,7 +564,7 @@
          <item row="1" column="0">
           <widget class="QLabel" name="lblCoinJoinRoundsText">
            <property name="toolTip">
-            <string>This setting determines the amount of individual masternodes that an input will be mixed through.&lt;br/&gt;More rounds of mixing gives a higher degree of privacy, but also costs more in fees.</string>
+            <string>This setting determines the amount of individual smartnodes that an input will be mixed through.&lt;br/&gt;More rounds of mixing gives a higher degree of privacy, but also costs more in fees.</string>
            </property>
            <property name="text">
             <string>Mixing rounds</string>
@@ -1072,10 +1072,10 @@
        <item>
         <widget class="QCheckBox" name="showMasternodesTab">
          <property name="toolTip">
-          <string>Show additional tab listing all your masternodes in first sub-tab&lt;br/&gt;and all masternodes on the network in second sub-tab.</string>
+          <string>Show additional tab listing all your smartnodes in first sub-tab&lt;br/&gt;and all smartnodes on the network in second sub-tab.</string>
          </property>
          <property name="text">
-          <string>Show Masternodes Tab</string>
+          <string>Show Smartnodes Tab</string>
          </property>
         </widget>
        </item>

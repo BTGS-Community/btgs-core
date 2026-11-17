@@ -180,7 +180,7 @@ void MasternodeActionDialog::setupUi(const QString& title, const QString& intro,
     intro_label->setWordWrap(true);
     layout->addWidget(intro_label);
 
-    auto* protx_label{new QLabel(tr("Masternode: %1").arg(QString::fromStdString(m_protx_hash.ToString())), this)};
+    auto* protx_label{new QLabel(tr("Smartnode: %1").arg(QString::fromStdString(m_protx_hash.ToString())), this)};
     protx_label->setWordWrap(true);
     protx_label->setTextInteractionFlags(Qt::TextSelectableByMouse);
     layout->addWidget(protx_label);
@@ -294,7 +294,7 @@ void MasternodeActionDialog::resolveOperatorKey(OperatorSecretWidget& widget, Se
         return;
     }
     if (!OperatorKeyMatches(*key, m_operator_pubkey)) {
-        abortOperation(tr("The operator secret key does not match this masternode's registered public key."));
+        abortOperation(tr("The operator secret key does not match this smartnode's registered public key."));
         return;
     }
     callback(*key);
@@ -308,7 +308,7 @@ void MasternodeActionDialog::startSubmission(std::function<bool(MasternodeOperat
         setBusy(true);
     }
     if (!start([this](auto result) { finishSubmission(std::move(result)); })) {
-        abortOperation(tr("Another masternode operation is already in progress."));
+        abortOperation(tr("Another smartnode operation is already in progress."));
     }
 }
 
@@ -417,13 +417,13 @@ UpdateServiceDialog::UpdateServiceDialog(interfaces::Node& node, WalletModel* wa
         m_fee_source = addFeeSourceRow(form, tr("The fee is paid from this address of your wallet."));
         m_fee_source->setAutomaticOption(QString{});
     } else {
-        m_fee_source = addFeeSourceRow(form, tr("Automatic uses the current operator payout, then the masternode "
+        m_fee_source = addFeeSourceRow(form, tr("Automatic uses the current operator payout, then the smartnode "
                                                 "payout. Select an address only to override that choice."));
     }
 
-    setupUi(m_type == MnType::Evo ? tr("Update EvoNode Service") : tr("Update Masternode Service"),
+    setupUi(m_type == MnType::Evo ? tr("Update EvoNode Service") : tr("Update Smartnode Service"),
             tr("Update the registered service endpoints. A successful update also revives a PoSe-banned "
-               "masternode. Every current value is prefilled so unchanged fields are preserved."),
+               "smartnode. Every current value is prefilled so unchanged fields are preserved."),
             form, tr("Send Update"));
 }
 
@@ -540,7 +540,7 @@ UpdateRegistrarDialog::UpdateRegistrarDialog(interfaces::Node& node, WalletModel
     connect(m_operator_pubkey_edit, &QLineEdit::textChanged, this, &UpdateRegistrarDialog::validate);
     form->addRow(tr("Operator public key:"), m_operator_pubkey_edit);
 
-    auto* warning{new QLabel(tr("Changing the operator key immediately PoSe-bans the masternode. The new operator must "
+    auto* warning{new QLabel(tr("Changing the operator key immediately PoSe-bans the smartnode. The new operator must "
                                 "send an Update "
                                 "Service transaction to revive it."),
                              this)};
@@ -562,14 +562,14 @@ UpdateRegistrarDialog::UpdateRegistrarDialog(interfaces::Node& node, WalletModel
     if (entry.payoutAddresses().size() != 1) {
         m_payout_edit->setEnabled(false);
         m_payout_edit->setPlaceholderText(tr("Multiple payout shares are preserved; use the RPC to change them"));
-        m_payout_edit->setToolTip(tr("This dialog cannot safely flatten a multi-payout masternode into one address."));
+        m_payout_edit->setToolTip(tr("This dialog cannot safely flatten a multi-payout smartnode into one address."));
     }
 
-    m_fee_source = addFeeSourceRow(form, tr("Automatic uses the masternode's current primary payout address. Select an "
+    m_fee_source = addFeeSourceRow(form, tr("Automatic uses the smartnode's current primary payout address. Select an "
                                             "address only to "
                                             "override that choice."));
 
-    setupUi(tr("Update Masternode Registrar"),
+    setupUi(tr("Update Smartnode Registrar"),
             tr("Update the operator key, voting address, or payout address. All current values are prefilled; "
                "only changed fields are sent. The owner key must be present in this wallet."),
             form, tr("Send Update"));
@@ -677,12 +677,12 @@ RevokeDialog::RevokeDialog(interfaces::Node& node, WalletModel* wallet_model, co
         m_fee_source = addFeeSourceRow(form, tr("The fee is paid from this address of your wallet."));
         m_fee_source->setAutomaticOption(QString{});
     } else {
-        m_fee_source = addFeeSourceRow(form, tr("Automatic uses the current operator payout, then the masternode "
+        m_fee_source = addFeeSourceRow(form, tr("Automatic uses the current operator payout, then the smartnode "
                                                 "payout. Select an address only to override that choice."));
     }
 
-    setupUi(tr("Revoke Masternode Service"),
-            tr("Revoking clears the service address and PoSe-bans the masternode until its owner changes the "
+    setupUi(tr("Revoke Smartnode Service"),
+            tr("Revoking clears the service address and PoSe-bans the smartnode until its owner changes the "
                "operator key. The collateral is not affected."),
             form, tr("Revoke"));
 }

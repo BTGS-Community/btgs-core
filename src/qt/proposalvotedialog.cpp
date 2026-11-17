@@ -91,8 +91,8 @@ ProposalVoteDialog::ProposalVoteDialog(const QString& title, const QString& dead
     m_deadline->setObjectName("dialogVotingDeadline");
     m_deadline->setWordWrap(true);
     layout->addWidget(m_deadline);
-    auto* instructions = new QLabel(tr("Select the masternodes to vote with. Current funding votes are shown below. "
-                                       "Changing a vote replaces that masternode's previous vote; the network limits "
+    auto* instructions = new QLabel(tr("Select the smartnodes to vote with. Current funding votes are shown below. "
+                                       "Changing a vote replaces that smartnode's previous vote; the network limits "
                                        "updates to once per hour."),
                                     this);
     instructions->setWordWrap(true);
@@ -100,7 +100,7 @@ ProposalVoteDialog::ProposalVoteDialog(const QString& title, const QString& dead
     m_table->setObjectName("votingMasternodes");
     m_table->setColumnCount(6);
     m_table->setHorizontalHeaderLabels(
-        {tr("Masternode"), tr("Voting Address"), tr("Weight"), tr("Current Vote"), tr("Vote Time"), tr("ProTx Hash")});
+        {tr("Smartnode"), tr("Voting Address"), tr("Weight"), tr("Current Vote"), tr("Vote Time"), tr("ProTx Hash")});
     m_table->setRowCount(static_cast<int>(m_voters.size()));
     m_table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_table->verticalHeader()->hide();
@@ -177,6 +177,6 @@ void ProposalVoteDialog::updateSelection()
             weight += m_voters[row].weight;
         }
     }
-    m_summary->setText(tr("Masternodes selected: %1 · Vote weight: %2").arg(count).arg(weight));
+    m_summary->setText(tr("Smartnodes selected: %1 · Vote weight: %2").arg(count).arg(weight));
     m_submit->setEnabled(count > 0);
 }

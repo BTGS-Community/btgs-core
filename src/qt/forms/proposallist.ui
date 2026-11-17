@@ -121,7 +121,7 @@
        <item>
         <widget class="QPushButton" name="btnVote">
          <property name="text"><string>Votes…</string></property>
-         <property name="toolTip"><string>View your current votes and vote with selected masternodes</string></property>
+         <property name="toolTip"><string>View your current votes and vote with selected smartnodes</string></property>
         </widget>
        </item>
        <item>
