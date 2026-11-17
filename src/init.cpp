@@ -824,6 +824,7 @@ void SetupServerArgs(ArgsManager& argsman)
                              Ticks<std::chrono::seconds>(DEFAULT_MAX_TIP_AGE)),
                    ArgsManager::ALLOW_ANY | ArgsManager::DEBUG_ONLY, OptionsCategory::DEBUG_TEST);
     argsman.AddArg("-mocktime=<n>", "Replace actual time with " + UNIX_EPOCH_TIME + " (default: 0)", ArgsManager::ALLOW_ANY | ArgsManager::DEBUG_ONLY, OptionsCategory::DEBUG_TEST);
+    argsman.AddArg("-minsporkkeys=<n>", "Overrides minimum spork signers to change spork value. Only useful for regtest and devnet. Using this on mainnet or testnet will ban you.", ArgsManager::ALLOW_ANY, OptionsCategory::DEBUG_TEST);
     argsman.AddArg("-printpriority", strprintf("Log transaction fee per kB when mining blocks (default: %u)", DEFAULT_PRINTPRIORITY), ArgsManager::ALLOW_ANY | ArgsManager::DEBUG_ONLY, OptionsCategory::DEBUG_TEST);
     argsman.AddArg("-pushversion", "Protocol version to report to other nodes", ArgsManager::ALLOW_ANY, OptionsCategory::DEBUG_TEST);
     argsman.AddArg("-btgssnapshottest", "Regtest only: pay the small built-in test snapshot list in block 1 (used by the tests)", ArgsManager::ALLOW_ANY | ArgsManager::DEBUG_ONLY, OptionsCategory::DEBUG_TEST);
@@ -1734,13 +1735,23 @@ bool AppInitMain(NodeContext& node, interfaces::BlockAndHeaderTipInfo* tip_info)
     node.sporkman = std::make_unique<CSporkManager>();
     node.chainlocks = std::make_unique<chainlock::Chainlocks>(*node.sporkman);
 
-    const std::string spork_address{args.GetArg("-sporkaddr", chainparams.SporkAddress())};
-    if (args.GetArgs("-sporkaddr").size() > 1) {
-        InitWarning(strprintf(_("More than one spork address is provided. Using %s."), spork_address));
+    std::vector<std::string> vSporkAddresses;
+    if (args.IsArgSet("-sporkaddr")) {
+        vSporkAddresses = args.GetArgs("-sporkaddr");
+    } else {
+        vSporkAddresses = Params().SporkAddresses();
     }
-    if (!node.sporkman->SetSporkAddress(spork_address)) {
-        return InitError(_("Invalid spork address specified with -sporkaddr"));
+    for (const auto& address: vSporkAddresses) {
+        if (!node.sporkman->SetSporkAddress(address)) {
+            return InitError(_("Invalid spork address specified with -sporkaddr"));
+        }
     }
+
+    int minsporkkeys = args.GetIntArg("-minsporkkeys", Params().MinSporkKeys());
+    if (!node.sporkman->SetMinSporkKeys(minsporkkeys)) {
+        return InitError(_("Invalid minimum number of spork signers specified with -minsporkkeys"));
+    }
+
 
     if (args.IsArgSet("-sporkkey")) { // spork priv key
         if (!node.sporkman->SetPrivKey(args.GetArg("-sporkkey", ""))) {

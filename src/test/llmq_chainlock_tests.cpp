@@ -390,13 +390,16 @@ BOOST_FIXTURE_TEST_CASE(best_chainlock_is_already_have_after_seen_cache_eviction
 }
 
 namespace {
-//! Regtest spork key matching Params().SporkAddress(), as used by the functional tests.
+//! Regtest spork key matching Params().SporkAddresses(), as used by the functional tests.
 constexpr const char* REGTEST_SPORK_PRIVKEY{"cP4EKFyJsHT39LDqgdcB43Y3YXjNyjb5Fuas1GQSeAtjnZWmZEQK"};
 } // namespace
 
 BOOST_FIXTURE_TEST_CASE(coinbase_chainlock_processing, RegTestingSetup)
 {
-    BOOST_REQUIRE(m_node.sporkman->SetSporkAddress(Params().SporkAddress()));
+    for (const auto& address : Params().SporkAddresses()) {
+        BOOST_REQUIRE(m_node.sporkman->SetSporkAddress(address));
+    }
+    BOOST_REQUIRE(m_node.sporkman->SetMinSporkKeys(Params().MinSporkKeys()));
     BOOST_REQUIRE(m_node.sporkman->SetPrivKey(REGTEST_SPORK_PRIVKEY));
     BOOST_REQUIRE(m_node.sporkman->UpdateSpork(SPORK_19_CHAINLOCKS_ENABLED, 0).has_value());
     m_node.mn_sync->SwitchToNextAsset();
@@ -497,7 +500,10 @@ BOOST_FIXTURE_TEST_CASE(unrequested_clsig_is_dropped_and_scored, TestChain100Set
 
     // The CLSIG branch in net_processing is gated on spork 19. The test fixture builds a bare
     // CSporkManager, so wire up the regtest signer before setting the spork.
-    BOOST_REQUIRE(m_node.sporkman->SetSporkAddress(Params().SporkAddress()));
+    for (const auto& address : Params().SporkAddresses()) {
+        BOOST_REQUIRE(m_node.sporkman->SetSporkAddress(address));
+    }
+    BOOST_REQUIRE(m_node.sporkman->SetMinSporkKeys(Params().MinSporkKeys()));
     BOOST_REQUIRE(m_node.sporkman->SetPrivKey(REGTEST_SPORK_PRIVKEY));
     BOOST_REQUIRE(m_node.sporkman->UpdateSpork(SPORK_19_CHAINLOCKS_ENABLED, 0).has_value());
     BOOST_REQUIRE(m_node.chainlocks->IsEnabled());

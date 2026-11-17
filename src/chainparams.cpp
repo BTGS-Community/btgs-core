@@ -318,7 +318,8 @@ public:
         nPoolMaxParticipants = 20;
         nFulfilledRequestExpireTime = 60*60; // fulfilled requests expire in 1 hour
 
-        strSporkAddress = "B4T5ciTCkWauSqVAcVKy88ofjcSasUkSYU"; // BTGS: placeholder, real spork keys added before testnet
+        vSporkAddresses = {"B4T5ciTCkWauSqVAcVKy88ofjcSasUkSYU"}; // BTGS: placeholder, real spork keys added before testnet
+        nMinSporkKeys = 1;
         strDevFundAddress = "M7uAERuQW2AotfyLDyewFGcLUDtAYu9v5V"; // BTGS: placeholder, replace with the 2-of-3 multisig before launch
 
         nCreditPoolPeriodBlocks = 576;
@@ -481,7 +482,8 @@ public:
         nPoolMaxParticipants = 20;
         nFulfilledRequestExpireTime = 5*60; // fulfilled requests expire in 5 minutes
 
-        strSporkAddress = "tQPZRXs1cDPQa2EGsAsBZ4cSj8cgAZaTtN"; // BTGS testnet spork key (public address only; key stays private)
+        vSporkAddresses = {"tQPZRXs1cDPQa2EGsAsBZ4cSj8cgAZaTtN"}; // BTGS testnet spork key (public address only; key stays private)
+        nMinSporkKeys = 1;
         strDevFundAddress = "8wFiUTPop5FFG5Z6x4WR5SC7fEAGd8Yb2H"; // BTGS testnet dev fund: 2-of-3 test multisig
 
         nCreditPoolPeriodBlocks = 576;
@@ -657,7 +659,8 @@ public:
         nPoolMaxParticipants = 20;
         nFulfilledRequestExpireTime = 5*60; // fulfilled requests expire in 5 minutes
 
-        strSporkAddress = "tW13uupHgbiexb6m8mptXXDyhydTKC9K1G"; // BTGS: Dash devnet test key, new address letters
+        vSporkAddresses = {"tW13uupHgbiexb6m8mptXXDyhydTKC9K1G"}; // BTGS: Dash devnet test key, new address letters
+        nMinSporkKeys = 1;
         strDevFundAddress = "tW13uupHgbiexb6m8mptXXDyhydTKC9K1G"; // BTGS: devnet test key
 
         nCreditPoolPeriodBlocks = 576;
@@ -867,7 +870,8 @@ public:
         nPoolMaxParticipants = 20;
 
         // privKey: cP4EKFyJsHT39LDqgdcB43Y3YXjNyjb5Fuas1GQSeAtjnZWmZEQK
-        strSporkAddress = "tVkDMN8j3kdq5JHAa2twBjBoXt7KFXfL3x"; // BTGS: Dash regtest test key, new address letters
+        vSporkAddresses = {"tVkDMN8j3kdq5JHAa2twBjBoXt7KFXfL3x"}; // BTGS: Dash regtest test key, new address letters
+        nMinSporkKeys = 1;
         strDevFundAddress = "tVkDMN8j3kdq5JHAa2twBjBoXt7KFXfL3x"; // BTGS: regtest test key
 
         nCreditPoolPeriodBlocks = 100;
