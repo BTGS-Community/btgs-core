@@ -70,10 +70,10 @@ If the tool prints `WARNING: list address differs`, stop and ask for help in the
 
 ## Step 3: Import the new keys into the new BTGS Core wallet
 
-Install the new BTGS Core wallet and let it sync. Open **Window > Console**. If your wallet is encrypted, unlock it first with `walletpassphrase "your passphrase" 120`. Then open `btgs-import.json` in a plain text editor such as Notepad, select everything and copy it. It is one long line that holds all your keys. In the console, type `importdescriptors`, a space, paste the line, and press Enter. Your line is longer, with one entry per address:
+Install the new BTGS Core wallet and let it sync. Open **Window > Console**. If your wallet is encrypted, unlock it first with `walletpassphrase "your passphrase" 120`. Then open `btgs-import.json` in a plain text editor such as Notepad, select everything and copy it. It is one long line that holds all your keys. In the console, type `importdescriptors`, a space and a single quote `'`, paste the line, type another single quote `'`, and press Enter. The single quotes are required: the console removes double quotes, so without them it fails with "Error parsing JSON". Your line is longer, with one entry per address:
 
 ```
-importdescriptors [{"desc":"pkh(P...)#xxxxxxxx","timestamp":0,"label":"BTGS-old"}]
+importdescriptors '[{"desc":"pkh(P...)#xxxxxxxx","timestamp":0,"label":"BTGS-old"}]'
 ```
 
 The answer shows `"success": true` for every key. The wallet scans the chain by itself, so there is nothing else to run. If an entry shows `"success": false`, copy the error message (never the key) and ask for help.

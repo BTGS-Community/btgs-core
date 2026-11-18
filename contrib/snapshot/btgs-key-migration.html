@@ -77,7 +77,7 @@ details summary { cursor:pointer; color:var(--muted); }
   <div id="warnings"></div>
   <table id="tbl"><thead><tr><th>Old address</th><th>New address</th><th class="amt">BTGS</th></tr></thead><tbody></tbody></table>
   <h2 style="margin-top:18px">4. Import into the new wallet</h2>
-  <p>Download or copy the import line. In the NEW BTGS Core wallet open <b>Window &gt; Console</b>, type <code>importdescriptors</code>, a space, paste the line and press Enter. The wallet then scans the chain by itself.</p>
+  <p>Download or copy the import line. In the NEW BTGS Core wallet open <b>Window &gt; Console</b>, type <code>importdescriptors</code>, a space, a single quote <code>'</code>, paste the line, another single quote <code>'</code>, and press Enter. The single quotes are needed, the console does not accept the line without them. The wallet then scans the chain by itself.</p>
   <button id="dlJson">Download import line (btgs-import.json)</button>
   <button id="cpJson" class="secondary">Copy import line</button>
   <p class="small">Only for wallets created with "Descriptor Wallet" switched off (most people do not need this):</p>
@@ -494,7 +494,7 @@ function init() {
   $("dlKeys").onclick = () => result && download("btgs-new-keys.txt", result.keyList);
   $("cpJson").onclick = async () => {
     if (!result) return;
-    try { await navigator.clipboard.writeText(result.jsonLine.trim()); $("progress").innerHTML = '<span class="ok">Copied. Paste it after "importdescriptors " in the wallet console.</span>'; }
+    try { await navigator.clipboard.writeText(result.jsonLine.trim()); $("progress").innerHTML = '<span class="ok">Copied. In the wallet console type importdescriptors, a space and a single quote, paste, then type another single quote and press Enter.</span>'; }
     catch (e) { const t = document.createElement("textarea"); t.value = result.jsonLine.trim(); document.body.appendChild(t); t.select(); try { document.execCommand("copy"); $("progress").innerHTML = '<span class="ok">Copied.</span>'; } catch (e2) { $("progress").innerHTML = '<span class="warn">Copy did not work. Use the download button instead.</span>'; } t.remove(); }
   };
 }

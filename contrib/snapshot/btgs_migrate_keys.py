@@ -18,7 +18,7 @@ Optional:
   --json FILE           where to write the import command for the new wallet (default btgs-import.json)
 
 Output: a table (old address -> new B... address, balance) and two files with your NEW private keys:
-  btgs-import.json   ONE line for the new wallet console:  importdescriptors <paste the line>   (works with every new wallet)
+  btgs-import.json   ONE line for the new wallet console:  importdescriptors '<paste the line>'   (with single quotes; works with every new wallet)
   btgs-new-keys.txt  the same keys as a list (for wallets created as "legacy": importwallet <file>)
 The wallet scans the chain by itself after the import.
 
@@ -293,7 +293,7 @@ def main():
         for old, new, amt, wif in rows:
             f.write(f"{wif} 1970-01-01T00:00:01Z label=BTGS-old # {new}" + (f" {fmt(amt)} BTGS" if amt is not None else "") + "\n")
     print(f"\nNEW private keys written to:\n  {a.json}  (one line for the wallet console)\n  {a.out}  (key list)\nKeep both secret and delete them when you are done.")
-    print("\nNext: in the NEW wallet open Window > Console and type:  importdescriptors  followed by a space and the whole line from", a.json)
+    print("\nNext: in the NEW wallet open Window > Console and type:  importdescriptors  then a space, a single quote, the whole line from", a.json, ", and a closing single quote")
 
 if __name__ == "__main__":
     main()
