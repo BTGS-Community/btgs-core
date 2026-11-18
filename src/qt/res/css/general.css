@@ -2145,3 +2145,13 @@ QDialog#HelpMessageDialog QScrollBar:horizontal {
 }
 
 </os>
+
+/******************************************************
+BTGS welcome dialog (first start)
+******************************************************/
+
+QDialog#Intro QLabel,
+QDialog#Intro QRadioButton,
+QDialog#Intro QCheckBox {
+    font-size: 15px;
+}

@@ -748,7 +748,7 @@ QToolBar > QToolButton:checked {
 }
 
 QToolBar > QToolButton:disabled {
-    color: #a7a7a7;
+    color: #6b4e0a;
 }
 
 /******************************************************

@@ -135,7 +135,6 @@ Intro::Intro(QWidget *parent, int64_t blockchain_size_gb, int64_t chain_state_si
     ui->lblExplanation1->setText(ui->lblExplanation1->text()
         .arg(PACKAGE_NAME)
         .arg(m_blockchain_size_gb)
-        .arg(2014)
         .arg("BTGS")
     );
     ui->lblExplanation2->setText(ui->lblExplanation2->text().arg(PACKAGE_NAME));
@@ -235,6 +234,7 @@ bool Intro::showIfNeeded(bool& did_show_intro, int64_t& prune_MiB)
         GUIUtil::loadStyleSheet(true);
         intro.setDataDirectory(dataDirDefaultCurrent);
         intro.setWindowIcon(QIcon(":icons/dash"));
+        intro.setMinimumWidth(820);
         did_show_intro = true;
 
         while(true)
