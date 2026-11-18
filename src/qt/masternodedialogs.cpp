@@ -431,6 +431,22 @@ void UpdateServiceDialog::validate()
 {
     QString error;
     bool ok{buildNetInfo(error).has_value()};
+    if (!ok && !m_addrs_edit->text().trimmed().isEmpty()) {
+        // Say why the address is refused, in plain language
+        const QString example{QString("1.2.3.4:%1").arg(Params().GetDefaultPort())};
+        if (error.contains("(invalid input)") || error.contains("(invalid address)") || error.contains("(malformed)")) {
+            error = tr("This is not a valid IPv4 address and port, for example %1.").arg(example);
+        } else if (error.contains("(invalid port)")) {
+            error = tr("This port is not valid for this network. Use the format %1.").arg(example);
+        } else if (error.contains("(unroutable address)")) {
+            error = tr("This is not a public address. Private and reserved addresses cannot be used.");
+        } else if (error.contains("(duplicate)")) {
+            error = tr("The same address is entered more than once.");
+        }
+        showError(error);
+    } else {
+        clearError();
+    }
     ok &= m_operator_key->isValid();
     if (m_operator_payout_edit) {
         ok &= m_operator_payout_edit->text().trimmed().isEmpty() || m_operator_payout_edit->isValid();
