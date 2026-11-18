@@ -1683,9 +1683,13 @@ void SharedMnWizardTests::serviceAddressInUseIsRefused()
     dialog.m_voting_edit->setText(dialog.m_session.terms().votingAddress);
 
     QString error;
-    // No service yet stays allowed: the node is then set up by a later service update
+    // A service address is required, and an invalid one is explained in plain language
     dialog.m_service_edit->clear();
-    QVERIFY2(dialog.validatePage(SharedMnCreateDialog::PageSettings, error), qPrintable(error));
+    QVERIFY(!dialog.validatePage(SharedMnCreateDialog::PageSettings, error));
+    QVERIFY2(error.contains("public IPv4 address"), qPrintable(error));
+    dialog.m_service_edit->setText(QStringLiteral("abc"));
+    QVERIFY(!dialog.validatePage(SharedMnCreateDialog::PageSettings, error));
+    QVERIFY2(error.contains("not a valid IPv4 address"), qPrintable(error));
     dialog.m_service_edit->setText(QStringLiteral("1.2.3.5:") + port);
     QVERIFY2(dialog.validatePage(SharedMnCreateDialog::PageSettings, error), qPrintable(error));
 

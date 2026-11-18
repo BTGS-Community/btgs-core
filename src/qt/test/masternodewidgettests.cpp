@@ -1328,7 +1328,7 @@ void MasternodeWidgetTests::registrationResultStates()
 
     RegisterMasternodeWizard wizard(m_node, &wallet_model);
     wizard.m_col_external->setChecked(true);
-    wizard.m_service_edit->clear();
+    wizard.m_service_edit->setText(QStringLiteral("1.2.3.4:%1").arg(Params().GetDefaultPort()));
 
     // A generated key is shown and must be confirmed before any provider
     // operation can start. This guarantees that owner teardown cannot destroy

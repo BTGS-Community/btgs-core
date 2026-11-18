@@ -529,8 +529,9 @@ QWidget* SharedMnCreateDialog::createSettingsPage()
     {
         auto* block{makeBlock(body_layout)};
         block->addWidget(makeBlockTitle(tr("Service addresses:"), body));
-        block->addWidget(makeHint(tr("Public addresses the smartnode serves the Core P2P network on, separated by "
-                                     "commas or spaces. May be left empty and set later with a service update."),
+        block->addWidget(makeHint(tr("Required: the public IPv4 address and port of the smartnode server, separated by "
+                                     "commas or spaces if there are several. No other smartnode on the network may "
+                                     "use the same address."),
                                   body));
         m_service_edit = new QLineEdit(body);
         m_service_edit->setPlaceholderText(QStringLiteral("1.2.3.4:%1").arg(Params().GetDefaultPort()));
@@ -1380,10 +1381,26 @@ bool SharedMnCreateDialog::validatePage(Page page, QString& err)
         for (const QString& entry : MasternodeWidgetUtil::tokenizeEndpointList(m_service_edit->text())) {
             net_info.core_p2p.push_back(entry.toStdString());
         }
+        const QString service_example{QString("1.2.3.4:%1").arg(Params().GetDefaultPort())};
+        if (net_info.core_p2p.empty()) {
+            err = tr("Enter the public IPv4 address and port of the smartnode server, for example %1.")
+                      .arg(service_example);
+            break;
+        }
         const auto capabilities{m_node.evo().getProviderTxCapabilities()};
         if (const auto error{m_node.evo().validateProviderNetInfo(net_info, MnType::Regular, capabilities.version,
                                                                   capabilities.ipv4_optional, /*optional=*/true)}) {
             err = QString::fromStdString(error->message.translated);
+            // Translate the node's internal status wording into plain language
+            if (err.contains("(invalid input)") || err.contains("(invalid address)") || err.contains("(malformed)")) {
+                err = tr("This is not a valid IPv4 address and port, for example %1.").arg(service_example);
+            } else if (err.contains("(invalid port)")) {
+                err = tr("This port is not valid for this network. Use the format %1.").arg(service_example);
+            } else if (err.contains("(unroutable address)")) {
+                err = tr("This is not a public address. Private and reserved addresses cannot be used.");
+            } else if (err.contains("(duplicate)")) {
+                err = tr("The same address is entered more than once.");
+            }
         } else {
             err = ServiceInUseProblem(m_node, m_service_edit->text());
         }
