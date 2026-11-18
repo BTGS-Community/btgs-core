@@ -934,6 +934,19 @@ bool RegisterMasternodeWizard::validatePage(Page page, QString& err)
                 err = QString::fromStdString(error->message.translated);
             }
         }
+        if (!err.isEmpty() && !list.isEmpty()) {
+            // Translate the node's internal status wording into plain language
+            const QString example{QString("1.2.3.4:%1").arg(Params().GetDefaultPort())};
+            if (err.contains("(invalid input)") || err.contains("(invalid address)") || err.contains("(malformed)")) {
+                err = tr("This is not a valid IPv4 address and port, for example %1.").arg(example);
+            } else if (err.contains("(invalid port)")) {
+                err = tr("This port is not valid for this network. Use the format %1.").arg(example);
+            } else if (err.contains("(unroutable address)")) {
+                err = tr("This is not a public address. Private and reserved addresses cannot be used.");
+            } else if (err.contains("(duplicate)")) {
+                err = tr("The same address is entered more than once.");
+            }
+        }
         break;
     }
     case PageKeys: {
