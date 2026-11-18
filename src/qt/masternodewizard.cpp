@@ -347,8 +347,8 @@ QWidget* RegisterMasternodeWizard::createServicePage()
     m_service_edit = new QLineEdit(page);
     m_service_edit->setPlaceholderText(QString("1.2.3.4:%1").arg(Params().GetDefaultPort()));
     block->addWidget(m_service_edit);
-    block->addWidget(makeHint(tr("May be left empty; the smartnode then stays inactive until you send a service "
-                                 "update with an address."),
+    block->addWidget(makeHint(tr("Required: the public IPv4 address and port of your smartnode server. No other "
+                                 "smartnode on the network may use the same address."),
                               page));
     layout->addStretch();
     return page;
@@ -920,9 +920,9 @@ bool RegisterMasternodeWizard::validatePage(Page page, QString& err)
         break;
     case PageService: {
         const QStringList list{MasternodeWidgetUtil::tokenizeEndpointList(m_service_edit->text())};
-        if (list.isEmpty() && isEvo() && !usesExtendedAddresses()) {
-            err = tr("EvoNodes need at least one service address to carry the Platform ports before v24 "
-                     "activation.");
+        if (list.isEmpty()) {
+            err = tr("Enter the public IPv4 address and port of your smartnode server, for example %1.")
+                      .arg(QString("1.2.3.4:%1").arg(Params().GetDefaultPort()));
         } else if (!isEvo()) {
             validateProviderNetInfo(/*optional=*/true, err);
         } else if (!list.isEmpty()) {
@@ -1141,7 +1141,7 @@ void RegisterMasternodeWizard::updateButtons()
     } else if (current == PageSecret && !secretConfirmed()) {
         enabled = false;
         tooltip = tr("Confirm you saved the operator secret key by typing its last 4 characters.");
-    } else if (m_validation_page && *m_validation_page == current) {
+    } else if ((m_validation_page && *m_validation_page == current) || current == PageService) {
         QString error;
         if (!validatePage(current, error)) {
             enabled = false;
@@ -1154,7 +1154,7 @@ void RegisterMasternodeWizard::updateButtons()
 
 void RegisterMasternodeWizard::onPageEdited()
 {
-    if (m_validation_page && *m_validation_page == currentPage()) {
+    if ((m_validation_page && *m_validation_page == currentPage()) || currentPage() == PageService) {
         QString error;
         validatePage(currentPage(), error);
         showError(error);
