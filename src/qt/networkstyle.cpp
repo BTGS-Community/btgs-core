@@ -25,7 +25,7 @@ static const struct {
     const std::string titleAddText;
 } network_styles[] = {
     {"main",    QAPP_APP_NAME_DEFAULT, 0,   0,  ":/icons/dash_macos_mainnet",  ""},
-    {"test",    QAPP_APP_NAME_TESTNET, 190, 20, ":/icons/dash_macos_testnet",  ""},
+    {"test",    QAPP_APP_NAME_TESTNET, 190, 20, ":/icons/dash_macos_testnet",  "[testnet]"},
     {"devnet",  QAPP_APP_NAME_DEVNET,  35,  15, ":/icons/dash_macos_devnet",   "[devnet: %s]"},
     {"regtest", QAPP_APP_NAME_REGTEST, 160, 30, ":/icons/dash_macos_regtest",  ""},
 };

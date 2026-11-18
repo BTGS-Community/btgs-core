@@ -838,6 +838,14 @@ void BitcoinGUI::createToolBars()
             This is a workaround mostly for toolbar styling on Mac OS but should work fine for every other OSes too.
         */
         QVBoxLayout *layout = new QVBoxLayout;
+        // BTGS: clear banner on test networks, so nobody mistakes a testnet wallet for the real one
+        if (QApplication::applicationName() != QAPP_APP_NAME_DEFAULT) {
+            QLabel* networkBanner = new QLabel(tr("TESTNET - test coins only, they have no value. This is NOT the real BTGS network."));
+            networkBanner->setObjectName("lblTestnetBanner");
+            networkBanner->setAlignment(Qt::AlignCenter);
+            networkBanner->setStyleSheet("QLabel#lblTestnetBanner { background-color: #c0392b; color: #ffffff; font-size: 16px; font-weight: bold; padding: 6px; }");
+            layout->addWidget(networkBanner);
+        }
         layout->addWidget(toolbar);
         layout->addWidget(walletFrame);
         layout->setSpacing(0);
