@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; form-action 'none'; base-uri 'none'">
+<title>BTGS Key Migration (offline tool)</title>
+<style>
+:root { --bg:#1d1d1f; --card:#2a2a2d; --line:#4a4a4f; --text:#f1ede2; --muted:#b9b3a3; --gold:#d4a017; --gold2:#e0a920; --ok:#6fcf7f; --warn:#f0a040; --bad:#ef6b5f; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font:18px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; }
+main { max-width:900px; margin:0 auto; padding:24px 16px 60px; }
+h1 { font-size:30px; margin:0 0 4px; color:var(--gold2); }
+h2 { font-size:22px; margin:0 0 8px; color:var(--gold2); }
+p { margin:8px 0; }
+.sub { color:var(--muted); margin-bottom:18px; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 20px; margin:16px 0; }
+.banner { border-radius:10px; padding:12px 16px; margin:12px 0; font-weight:600; }
+.banner.on { background:#4a2f10; border:1px solid var(--warn); color:#ffd9a8; }
+.banner.off { background:#17361e; border:1px solid var(--ok); color:#c9f0d1; }
+.banner.bad { background:#4a1d19; border:1px solid var(--bad); color:#ffd2cd; }
+textarea { width:100%; min-height:110px; background:#1b1b1d; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:10px; font:15px/1.4 ui-monospace,Consolas,monospace; }
+input[type=file] { width:100%; padding:10px; background:#1b1b1d; border:1px dashed var(--line); border-radius:8px; color:var(--text); font-size:16px; }
+button { background:var(--gold); color:#1d1d1f; border:0; border-radius:10px; padding:12px 20px; font-size:18px; font-weight:700; cursor:pointer; margin:6px 8px 6px 0; }
+button.secondary { background:#3a3a3e; color:var(--text); border:1px solid var(--line); }
+button:disabled { opacity:.45; cursor:not-allowed; }
+table { width:100%; border-collapse:collapse; font-size:15px; margin-top:10px; }
+th,td { text-align:left; padding:8px 6px; border-bottom:1px solid var(--line); word-break:break-all; vertical-align:top; }
+th { color:var(--muted); font-weight:600; }
+td.amt, th.amt { text-align:right; white-space:nowrap; }
+.small { font-size:15px; color:var(--muted); }
+.ok { color:var(--ok); } .bad { color:var(--bad); } .warn { color:var(--warn); }
+code { background:#1b1b1d; padding:2px 6px; border-radius:5px; font-size:16px; }
+details summary { cursor:pointer; color:var(--muted); }
+#progress { color:var(--muted); min-height:1.5em; }
+.hidden { display:none; }
+</style>
+</head>
+<body>
+<main>
+<h1>BTGS Key Migration</h1>
+<p class="sub">Turns your OLD BTGS keys into your NEW BTGS keys and addresses. It runs only inside this page, on your own computer. Nothing is sent anywhere.</p>
+
+<div id="net" class="banner on">Checking your connection...</div>
+<div id="selftest" class="banner on">Running self-test...</div>
+
+<div class="card">
+<h2>Before you start</h2>
+<p>Your private keys are your coins. Anyone who sees them can take them. No one from the BTGS team will ever ask you for your keys, your wallet file, your seed words or the files this page creates.</p>
+<p><b>Disconnect from the internet</b> (Wi-Fi off or cable out) before you load your keys. This page works offline. Do not take screenshots of the keys or post the files anywhere.</p>
+</div>
+
+<div class="card">
+<h2>1. Your old keys</h2>
+<p class="small">Choose the file you saved from your old wallet (the output of <code>listdescriptors true</code>, a <code>dumpwallet</code> file, or a text file with one private key per line). Or paste the text below.</p>
+<input type="file" id="keysFile">
+<p class="small">or paste:</p>
+<textarea id="keysText" spellcheck="false" autocomplete="off" placeholder="Paste your old keys here"></textarea>
+</div>
+
+<div class="card">
+<h2>2. The snapshot list</h2>
+<p class="small">Choose the official list file <code>btgs-snapshot-&lt;height&gt;.csv</code>. It shows what each key gets on the new chain. Without it, every key is converted and no balance is shown.</p>
+<input type="file" id="snapFile" accept=".csv,.txt">
+<details style="margin-top:12px"><summary>Advanced</summary>
+<p class="small"><label><input type="checkbox" id="testnet"> Testnet (for testing only. Never tick this with real keys.)</label></p>
+</details>
+</div>
+
+<div class="card">
+<h2>3. Convert</h2>
+<button id="go" disabled>Convert my keys</button>
+<button id="clear" class="secondary">Clear everything</button>
+<div id="progress"></div>
+<div id="out" class="hidden">
+  <p id="summary"></p>
+  <div id="warnings"></div>
+  <table id="tbl"><thead><tr><th>Old address</th><th>New address</th><th class="amt">BTGS</th></tr></thead><tbody></tbody></table>
+  <h2 style="margin-top:18px">4. Import into the new wallet</h2>
+  <p>Download or copy the import line. In the NEW BTGS Core wallet open <b>Window &gt; Console</b>, type <code>importdescriptors</code>, a space, paste the line and press Enter. The wallet then scans the chain by itself.</p>
+  <button id="dlJson">Download import line (btgs-import.json)</button>
+  <button id="cpJson" class="secondary">Copy import line</button>
+  <p class="small">Only for wallets created with "Descriptor Wallet" switched off (most people do not need this):</p>
+  <button id="dlKeys" class="secondary">Download key list (btgs-new-keys.txt)</button>
+  <p class="warn">When you are done, delete the downloaded files and your old key file, then press "Clear everything".</p>
+</div>
+</div>
+</main>
+
+<script>
+/* BTGS key migration - offline page. Same conversion as contrib/snapshot/btgs_migrate_keys.py.
+   Old chain: P2PKH 38 (G...), WIF 176, bech32 "bcg". New chain: P2PKH 25 (B...), WIF 153 (P...). Testnet: 127 / 239. */
+(function (root) {
+"use strict";
+const OLD_WIF = 176, OLD_P2PKH = 38, OLD_HRP = "bcg";
+const NETS = { main: { wif: 153, p2pkh: 25 }, test: { wif: 239, p2pkh: 127 } };
+const M32 = 0xffffffffn, M64 = (1n << 64n) - 1n;
+
+/* ---------- integer roots (to build the SHA constants exactly) ---------- */
+function isqrt(n) { if (n < 2n) return n; let x = 1n << BigInt((n.toString(2).length + 1) >> 1); for (;;) { const y = (x + n / x) >> 1n; if (y >= x) return x; x = y; } }
+function icbrt(n) { if (n < 2n) return n; let x = 1n << BigInt(Math.ceil(n.toString(2).length / 3)); for (;;) { const y = (2n * x + n / (x * x)) / 3n; if (y >= x) return x; x = y; } }
+const PR = []; for (let n = 2; PR.length < 80; n++) { let ok = true; for (const p of PR) { if (p * p > n) break; if (n % p === 0) { ok = false; break; } } if (ok) PR.push(n); }
+
+/* ---------- SHA-256 ---------- */
+const K256 = PR.slice(0, 64).map(p => Number(icbrt(BigInt(p) << 96n) & M32));
+const H256 = PR.slice(0, 8).map(p => Number(isqrt(BigInt(p) << 64n) & M32));
+function sha256(msg) {
+  const l = msg.length, padlen = ((l + 9 + 63) >> 6) << 6, buf = new Uint8Array(padlen);
+  buf.set(msg); buf[l] = 0x80;
+  const dv = new DataView(buf.buffer); dv.setUint32(padlen - 8, Math.floor(l / 0x20000000)); dv.setUint32(padlen - 4, (l * 8) >>> 0);
+  const h = H256.slice(), w = new Uint32Array(64);
+  for (let off = 0; off < padlen; off += 64) {
+    for (let i = 0; i < 16; i++) w[i] = dv.getUint32(off + 4 * i);
+    for (let i = 16; i < 64; i++) {
+      const a = w[i - 15], b = w[i - 2];
+      const s0 = ((a >>> 7) | (a << 25)) ^ ((a >>> 18) | (a << 14)) ^ (a >>> 3);
+      const s1 = ((b >>> 17) | (b << 15)) ^ ((b >>> 19) | (b << 13)) ^ (b >>> 10);
+      w[i] = (w[i - 16] + s0 + w[i - 7] + s1) >>> 0;
+    }
+    let [a, b, c, d, e, f, g, hh] = h;
+    for (let i = 0; i < 64; i++) {
+      const S1 = ((e >>> 6) | (e << 26)) ^ ((e >>> 11) | (e << 21)) ^ ((e >>> 25) | (e << 7));
+      const ch = (e & f) ^ (~e & g);
+      const t1 = (hh + S1 + ch + K256[i] + w[i]) >>> 0;
+      const S0 = ((a >>> 2) | (a << 30)) ^ ((a >>> 13) | (a << 19)) ^ ((a >>> 22) | (a << 10));
+      const mj = (a & b) ^ (a & c) ^ (b & c);
+      const t2 = (S0 + mj) >>> 0;
+      hh = g; g = f; f = e; e = (d + t1) >>> 0; d = c; c = b; b = a; a = (t1 + t2) >>> 0;
+    }
+    h[0] = (h[0] + a) >>> 0; h[1] = (h[1] + b) >>> 0; h[2] = (h[2] + c) >>> 0; h[3] = (h[3] + d) >>> 0;
+    h[4] = (h[4] + e) >>> 0; h[5] = (h[5] + f) >>> 0; h[6] = (h[6] + g) >>> 0; h[7] = (h[7] + hh) >>> 0;
+  }
+  const out = new Uint8Array(32), odv = new DataView(out.buffer);
+  for (let i = 0; i < 8; i++) odv.setUint32(4 * i, h[i]);
+  return out;
+}
+
+/* ---------- SHA-512 (BigInt) + HMAC ---------- */
+const K512 = PR.map(p => icbrt(BigInt(p) << 192n) & M64);
+const H512 = PR.slice(0, 8).map(p => isqrt(BigInt(p) << 128n) & M64);
+const rotr = (x, n) => ((x >> n) | (x << (64n - n))) & M64;
+function sha512(msg) {
+  const l = msg.length, padlen = ((l + 17 + 127) >> 7) << 7, buf = new Uint8Array(padlen);
+  buf.set(msg); buf[l] = 0x80;
+  const dv = new DataView(buf.buffer); dv.setUint32(padlen - 8, Math.floor(l / 0x20000000)); dv.setUint32(padlen - 4, (l * 8) >>> 0);
+  const h = H512.slice(), w = new Array(80);
+  for (let off = 0; off < padlen; off += 128) {
+    for (let i = 0; i < 16; i++) w[i] = (BigInt(dv.getUint32(off + 8 * i)) << 32n) | BigInt(dv.getUint32(off + 8 * i + 4));
+    for (let i = 16; i < 80; i++) {
+      const a = w[i - 15], b = w[i - 2];
+      const s0 = rotr(a, 1n) ^ rotr(a, 8n) ^ (a >> 7n), s1 = rotr(b, 19n) ^ rotr(b, 61n) ^ (b >> 6n);
+      w[i] = (w[i - 16] + s0 + w[i - 7] + s1) & M64;
+    }
+    let [a, b, c, d, e, f, g, hh] = h;
+    for (let i = 0; i < 80; i++) {
+      const S1 = rotr(e, 14n) ^ rotr(e, 18n) ^ rotr(e, 41n);
+      const ch = (e & f) ^ ((~e & M64) & g);
+      const t1 = (hh + S1 + ch + K512[i] + w[i]) & M64;
+      const S0 = rotr(a, 28n) ^ rotr(a, 34n) ^ rotr(a, 39n);
+      const mj = (a & b) ^ (a & c) ^ (b & c);
+      const t2 = (S0 + mj) & M64;
+      hh = g; g = f; f = e; e = (d + t1) & M64; d = c; c = b; b = a; a = (t1 + t2) & M64;
+    }
+    h[0] = (h[0] + a) & M64; h[1] = (h[1] + b) & M64; h[2] = (h[2] + c) & M64; h[3] = (h[3] + d) & M64;
+    h[4] = (h[4] + e) & M64; h[5] = (h[5] + f) & M64; h[6] = (h[6] + g) & M64; h[7] = (h[7] + hh) & M64;
+  }
+  const out = new Uint8Array(64), odv = new DataView(out.buffer);
+  for (let i = 0; i < 8; i++) { odv.setUint32(8 * i, Number(h[i] >> 32n)); odv.setUint32(8 * i + 4, Number(h[i] & M32)); }
+  return out;
+}
+function concat() { let n = 0; for (const a of arguments) n += a.length; const o = new Uint8Array(n); let p = 0; for (const a of arguments) { o.set(a, p); p += a.length; } return o; }
+function hmac512(key, msg) {
+  if (key.length > 128) key = sha512(key);
+  const k = new Uint8Array(128); k.set(key);
+  const ip = k.map(x => x ^ 0x36), op = k.map(x => x ^ 0x5c);
+  return sha512(concat(op, sha512(concat(ip, msg))));
+}
+
+/* ---------- RIPEMD-160 ---------- */
+const ML = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,7,4,13,1,10,6,15,3,12,0,9,5,2,14,11,8,3,10,14,4,9,15,8,1,2,7,0,6,13,11,5,12,1,9,11,10,0,8,12,4,13,3,7,15,14,5,6,2,4,0,5,9,7,12,2,10,14,1,3,8,11,6,15,13];
+const MR = [5,14,7,0,9,2,11,4,13,6,15,8,1,10,3,12,6,11,3,7,0,13,5,10,14,15,8,12,4,9,1,2,15,5,1,3,7,14,6,9,11,8,12,2,10,0,4,13,8,6,4,1,3,11,15,0,5,12,2,13,9,7,10,14,12,15,10,4,1,5,8,7,6,2,13,14,0,3,9,11];
+const RL = [11,14,15,12,5,8,7,9,11,13,14,15,6,7,9,8,7,6,8,13,11,9,7,15,7,12,15,9,11,7,13,12,11,13,6,7,14,9,13,15,14,8,13,6,5,12,7,5,11,12,14,15,14,15,9,8,9,14,5,6,8,6,5,12,9,15,5,11,6,8,13,12,5,12,13,14,11,8,5,6];
+const RR = [8,9,9,11,13,15,15,5,7,7,8,11,14,14,12,6,9,13,15,7,12,8,9,11,7,7,12,7,6,15,13,11,9,7,15,11,8,6,6,14,12,13,5,14,13,13,7,5,15,5,8,11,14,14,6,14,6,9,12,9,12,5,15,8,8,5,12,9,12,5,14,6,8,13,6,5,15,13,11,11];
+const KL = [0, 0x5a827999, 0x6ed9eba1, 0x8f1bbcdc, 0xa953fd4e], KR = [0x50a28be6, 0x5c4dd124, 0x6d703ef3, 0x7a6d76e9, 0];
+const rol = (x, i) => ((x << i) | (x >>> (32 - i))) >>> 0;
+function rfi(x, y, z, i) { switch (i) { case 0: return x ^ y ^ z; case 1: return (x & y) | (~x & z); case 2: return (x | ~y) ^ z; case 3: return (x & z) | (y & ~z); default: return x ^ (y | ~z); } }
+function ripemd160(data) {
+  const l = data.length, padlen = ((l + 9 + 63) >> 6) << 6, buf = new Uint8Array(padlen);
+  buf.set(data); buf[l] = 0x80;
+  const dv = new DataView(buf.buffer); dv.setUint32(padlen - 8, (l * 8) >>> 0, true); dv.setUint32(padlen - 4, Math.floor(l / 0x20000000), true);
+  let h = [0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0];
+  const x = new Array(16);
+  for (let off = 0; off < padlen; off += 64) {
+    for (let i = 0; i < 16; i++) x[i] = dv.getUint32(off + 4 * i, true);
+    let al = h[0], bl = h[1], cl = h[2], dl = h[3], el = h[4], ar = h[0], br = h[1], cr = h[2], dr = h[3], er = h[4];
+    for (let j = 0; j < 80; j++) {
+      const rnd = j >> 4;
+      let t = (rol(al + rfi(bl, cl, dl, rnd) + x[ML[j]] + KL[rnd], RL[j]) + el) >>> 0;
+      al = el; el = dl; dl = rol(cl, 10); cl = bl; bl = t;
+      t = (rol(ar + rfi(br, cr, dr, 4 - rnd) + x[MR[j]] + KR[rnd], RR[j]) + er) >>> 0;
+      ar = er; er = dr; dr = rol(cr, 10); cr = br; br = t;
+    }
+    h = [(h[1] + cl + dr) >>> 0, (h[2] + dl + er) >>> 0, (h[3] + el + ar) >>> 0, (h[4] + al + br) >>> 0, (h[0] + bl + cr) >>> 0];
+  }
+  const out = new Uint8Array(20), odv = new DataView(out.buffer);
+  for (let i = 0; i < 5; i++) odv.setUint32(4 * i, h[i], true);
+  return out;
+}
+const hash160 = b => ripemd160(sha256(b));
+const dsha = b => sha256(sha256(b));
+
+/* ---------- bytes / hex / base58 / bech32 ---------- */
+const hex = b => Array.from(b, x => x.toString(16).padStart(2, "0")).join("");
+function bigToBytes(n, len) { const o = new Uint8Array(len); for (let i = len - 1; i >= 0; i--) { o[i] = Number(n & 255n); n >>= 8n; } return o; }
+function bytesToBig(b) { let n = 0n; for (const x of b) n = (n << 8n) | BigInt(x); return n; }
+const B58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+function b58check(payload) {
+  const data = concat(payload, dsha(payload).slice(0, 4)); let n = bytesToBig(data), out = "";
+  while (n > 0n) { out = B58[Number(n % 58n)] + out; n /= 58n; }
+  let z = 0; while (z < data.length && data[z] === 0) z++;
+  return "1".repeat(z) + out;
+}
+function b58decodeCheck(s) {
+  let n = 0n;
+  for (const c of s) { const i = B58.indexOf(c); if (i < 0) throw new Error("not a base58 string"); n = n * 58n + BigInt(i); }
+  let hexs = n.toString(16); if (hexs.length % 2) hexs = "0" + hexs;
+  let body = n === 0n ? new Uint8Array(0) : Uint8Array.from(hexs.match(/../g).map(h => parseInt(h, 16)));
+  let z = 0; while (z < s.length && s[z] === "1") z++;
+  const raw = concat(new Uint8Array(z), body);
+  if (raw.length < 5) throw new Error("bad checksum");
+  const pay = raw.slice(0, -4), ck = dsha(pay).slice(0, 4);
+  for (let i = 0; i < 4; i++) if (ck[i] !== raw[raw.length - 4 + i]) throw new Error("bad checksum");
+  return pay;
+}
+const CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
+function polymod(values) {
+  const gen = [0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3]; let chk = 1;
+  for (const v of values) { const top = chk >>> 25; chk = (((chk & 0x1ffffff) << 5) ^ v) >>> 0; for (let i = 0; i < 5; i++) if ((top >> i) & 1) chk = (chk ^ gen[i]) >>> 0; }
+  return chk;
+}
+function bech32P2wpkh(hrp, h160) {
+  const conv = []; let acc = 0, bits = 0;
+  for (const byte of h160) { acc = (acc << 8) | byte; bits += 8; while (bits >= 5) { bits -= 5; conv.push((acc >> bits) & 31); } acc &= 0xff; }
+  if (bits) conv.push((acc << (5 - bits)) & 31);
+  const data = [0].concat(conv);
+  const exp = Array.from(hrp, c => c.charCodeAt(0) >> 5).concat([0], Array.from(hrp, c => c.charCodeAt(0) & 31));
+  const pm = (polymod(exp.concat(data, [0, 0, 0, 0, 0, 0])) ^ 1) >>> 0;
+  let out = hrp + "1" + data.map(d => CHARSET[d]).join("");
+  for (let i = 0; i < 6; i++) out += CHARSET[(pm >>> (5 * (5 - i))) & 31];
+  return out;
+}
+
+/* ---------- secp256k1 (BigInt, Jacobian) ---------- */
+const P = (1n << 256n) - (1n << 32n) - 977n;
+const N = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141n;
+const G = [0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798n, 0x483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8n];
+const md = a => { const r = a % P; return r >= 0n ? r : r + P; };
+function powmod(b, e, m) { let r = 1n; b %= m; while (e > 0n) { if (e & 1n) r = r * b % m; b = b * b % m; e >>= 1n; } return r; }
+function jdouble(p) {
+  const [x, y, z] = p; if (y === 0n) return [0n, 1n, 0n];
+  const s = 4n * x * y * y % P, m = 3n * x * x % P, nx = md(m * m - 2n * s);
+  return [nx, md(m * (s - nx) - 8n * powmod(y, 4n, P)), 2n * y * z % P];
+}
+function jadd(p, q) {
+  if (p[2] === 0n) return q; if (q[2] === 0n) return p;
+  const z1s = p[2] * p[2] % P, z2s = q[2] * q[2] % P, u1 = p[0] * z2s % P, u2 = q[0] * z1s % P;
+  const s1 = p[1] * q[2] % P * z2s % P, s2 = q[1] * p[2] % P * z1s % P;
+  if (u1 === u2) return s1 === s2 ? jdouble(p) : [0n, 1n, 0n];
+  const h = md(u2 - u1), r = md(s2 - s1), h2 = h * h % P, h3 = h * h2 % P, v = u1 * h2 % P;
+  const nx = md(r * r - h3 - 2n * v);
+  return [nx, md(r * (v - nx) - s1 * h3), h * p[2] % P * q[2] % P];
+}
+let GT = null;                                   /* table of 2^i * G, built once */
+function pointMulG(k) {
+  if (!GT) { GT = []; let a = [G[0], G[1], 1n]; for (let i = 0; i < 256; i++) { GT.push(a); a = jdouble(a); } }
+  let r = [0n, 1n, 0n];
+  for (let i = 0; k > 0n; i++, k >>= 1n) if (k & 1n) r = jadd(r, GT[i]);
+  if (r[2] === 0n) throw new Error("point at infinity");
+  const zi = powmod(r[2], P - 2n, P), zi2 = zi * zi % P;
+  return [r[0] * zi2 % P, r[1] * zi2 % P * zi % P];
+}
+function pubkey(k, compressed) {
+  const [x, y] = pointMulG(k);
+  if (compressed) return concat(Uint8Array.of(2 + Number(y & 1n)), bigToBytes(x, 32));
+  return concat(Uint8Array.of(4), bigToBytes(x, 32), bigToBytes(y, 32));
+}
+
+/* ---------- key formats ---------- */
+function parseWif(s, version) {
+  const raw = b58decodeCheck(s);
+  if (raw[0] !== version) throw new Error("not an old-chain private key");
+  const body = raw.slice(1);
+  if (body.length === 33 && body[32] === 1) return { k: bytesToBig(body.slice(0, 32)), compressed: true };
+  if (body.length === 32) return { k: bytesToBig(body), compressed: false };
+  throw new Error("bad private key length");
+}
+const makeWif = (k, compressed, version) => b58check(concat(Uint8Array.of(version), bigToBytes(k, 32), compressed ? Uint8Array.of(1) : new Uint8Array(0)));
+function addressesFromPub(pub, compressed, net) {
+  const h = hash160(pub);
+  const old = [b58check(concat(Uint8Array.of(OLD_P2PKH), h))];
+  if (compressed) old.push(bech32P2wpkh(OLD_HRP, h));
+  return { h, old, nw: b58check(concat(Uint8Array.of(NETS[net].p2pkh), h)) };
+}
+
+/* ---------- output descriptor checksum ---------- */
+const DS_IN = "0123456789()[],'/*abcdefgh@:$%{}IJKLMNOPQRSTUVWXYZ&+-.;<=>?!^_|~ijklmnopqrstuvwxyzABCDEFGH`#\"\\ ";
+const DS_GEN = [0xf5dee51989n, 0xa9fdca3312n, 0x1bab10e32dn, 0x3706b1677an, 0x644d626ffdn];
+function dsPolymod(symbols) {
+  let chk = 1n;
+  for (const v of symbols) { const top = chk >> 35n; chk = ((chk & 0x7ffffffffn) << 5n) ^ BigInt(v); for (let i = 0; i < 5; i++) if ((top >> BigInt(i)) & 1n) chk ^= DS_GEN[i]; }
+  return chk;
+}
+function descsumCreate(s) {
+  const groups = [], symbols = [];
+  for (const c of s) {
+    const v = DS_IN.indexOf(c); if (v < 0) throw new Error("bad descriptor character");
+    symbols.push(v & 31); groups.push(v >> 5);
+    if (groups.length === 3) { symbols.push(groups[0] * 9 + groups[1] * 3 + groups[2]); groups.length = 0; }
+  }
+  if (groups.length === 1) symbols.push(groups[0]); else if (groups.length === 2) symbols.push(groups[0] * 3 + groups[1]);
+  const chk = dsPolymod(symbols.concat([0, 0, 0, 0, 0, 0, 0, 0])) ^ 1n;
+  let out = "";
+  for (let i = 0; i < 8; i++) out += CHARSET[Number((chk >> BigInt(5 * (7 - i))) & 31n)];
+  return s + "#" + out;
+}
+
+/* ---------- BIP32 (private derivation only) ---------- */
+function bip32Decode(xprv) {
+  const raw = b58decodeCheck(xprv);
+  if (raw.length !== 78 || raw[45] !== 0) throw new Error("not an extended PRIVATE key (use: listdescriptors true)");
+  return { k: bytesToBig(raw.slice(46, 78)), c: raw.slice(13, 45) };
+}
+function ckdWith(parentPub, k, c, i) {
+  const idx = new Uint8Array(4); new DataView(idx.buffer).setUint32(0, i);
+  const data = concat(i >= 0x80000000 ? concat(Uint8Array.of(0), bigToBytes(k, 32)) : parentPub, idx);
+  const I = hmac512(c, data), il = bytesToBig(I.slice(0, 32));
+  if (il >= N) throw new Error("invalid child");
+  return { k: (il + k) % N, c: I.slice(32) };
+}
+const ckd = (k, c, i) => ckdWith(i >= 0x80000000 ? null : pubkey(k, true), k, c, i);
+const tick = () => new Promise(r => setTimeout(r, 0));
+const DESC_RE = /^(pkh|wpkh|sh\(wpkh|tr|sh|wsh|combo)\(\s*(\[[^\]]*\])?([1-9A-HJ-NP-Za-km-z]{100,120})((?:\/[0-9]+[h']?)*)(\/\*[h']?)?/;
+async function keysFromDescriptor(desc, rng, gap, progress) {
+  desc = desc.split("#")[0]; const m = DESC_RE.exec(desc);
+  if (!m) return { skipped: "unsupported descriptor" };
+  const kind = m[1];
+  if (kind !== "pkh" && kind !== "wpkh") return { skipped: kind + "(...) is not a single-key address type - those coins must be moved on the old chain first" };
+  let { k, c } = bip32Decode(m[3]);
+  for (const step of m[4].split("/").filter(x => x)) {
+    const hard = "h'".includes(step[step.length - 1]); const idx = parseInt(step.replace(/[h']+$/, ""), 10);
+    ({ k, c } = ckd(k, c, idx + (hard ? 0x80000000 : 0)));
+  }
+  const out = [];
+  if (m[5]) {
+    const parentPub = pubkey(k, true);
+    for (let i = 0; i <= rng + gap; i++) {
+      out.push(ckdWith(parentPub, k, c, i).k);
+      if (i % 25 === 0) { if (progress) progress(i, rng + gap); await tick(); }
+    }
+  } else out.push(k);
+  return { keys: out, kind };
+}
+
+/* ---------- snapshot list ---------- */
+function loadSnapshot(text) {
+  const d = new Map();
+  for (let line of text.split(/\r?\n/)) {
+    line = line.trim(); if (!line || line.startsWith("#")) continue;
+    const p = line.split(","); if (p.length < 3) continue;
+    d.set(p[2], { amount: BigInt(p[1]), addr: p[0] });
+  }
+  return d;
+}
+function fmt(sats) {
+  const neg = sats < 0n; if (neg) sats = -sats;
+  const whole = sats / 100000000n, frac = (sats % 100000000n).toString().padStart(8, "0").replace(/0+$/, "");
+  const w = whole.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return (neg ? "-" : "") + w + (frac ? "." + frac : "");
+}
+
+/* ---------- the conversion ---------- */
+async function convert(opts) {
+  const net = opts.testnet ? "test" : "main", progress = opts.progress || null;
+  const snap = opts.snapshotText ? loadSnapshot(opts.snapshotText) : null;
+  const keys = [], skipped = [], warnings = [];
+  const text = (opts.keysText || "").trim();
+  let json = null;
+  if (text.startsWith("{")) { try { json = JSON.parse(text); } catch (e) { json = null; } }
+  if (json && Array.isArray(json.descriptors)) {
+    for (const d of json.descriptors) {
+      const r = d.range, rng = (Array.isArray(r) ? r[1] : r) || 1000;
+      const res = await keysFromDescriptor(d.desc, rng, 200, progress);
+      if (res.skipped) { skipped.push(res.skipped); continue; }
+      for (const k of res.keys) keys.push({ k, compressed: true });
+    }
+  } else {
+    for (const line of text.split(/\r?\n/)) {
+      const t = line.trim(); if (!t || t.startsWith("#")) continue;
+      try { const { k, compressed } = parseWif(t.split(/\s+/)[0], OLD_WIF); keys.push({ k, compressed }); } catch (e) { /* not a key line */ }
+    }
+  }
+  const seen = new Set(), rows = []; let n = 0;
+  for (const { k, compressed } of keys) {
+    const pub = pubkey(k, compressed), a = addressesFromPub(pub, compressed, net), hh = hex(a.h);
+    if (++n % 25 === 0) { if (progress) progress(n, keys.length, "addresses"); await tick(); }
+    if (seen.has(hh)) continue; seen.add(hh);
+    let amt = null;
+    if (snap) {
+      if (!snap.has(hh)) continue;
+      const e = snap.get(hh);
+      if (e.addr !== a.nw) warnings.push("WARNING: list address differs for " + a.nw);
+      amt = e.amount;
+    }
+    rows.push({ old: a.old, nw: a.nw, amt, wif: makeWif(k, compressed, NETS[net].wif) });
+  }
+  const total = rows.reduce((s, r) => s + (r.amt || 0n), 0n);
+  const jsonLine = JSON.stringify(rows.map(r => ({ desc: descsumCreate("pkh(" + r.wif + ")"), timestamp: 0, label: "BTGS-old" }))) + "\n";
+  let keyList = "# NEW BTGS private keys - SECRET. Legacy wallets: importwallet <this file>. Delete this file when you are done.\n";
+  for (const r of rows) keyList += r.wif + " 1970-01-01T00:00:01Z label=BTGS-old # " + r.nw + (r.amt !== null ? " " + fmt(r.amt) + " BTGS" : "") + "\n";
+  return { rows, total, skipped, warnings, jsonLine, keyList, keysRead: keys.length, haveSnapshot: !!snap };
+}
+
+/* ---------- self-test ---------- */
+function selftest() {
+  const eq = (a, b, name) => { if (a !== b) throw new Error("self-test failed: " + name); };
+  const enc = s => new TextEncoder().encode(s);
+  eq(hex(sha256(enc("abc"))), "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad", "sha256");
+  eq(hex(sha512(enc("abc"))), "ddaf35a193617abacc417349ae20413112e6fa4e89a97ea20a9eeee64b55d39a2192992a274fc1a836ba3c23a3feebbd454d4423643ce80e2a9ac94fa54ca49f", "sha512");
+  eq(hex(ripemd160(enc("abc"))), "8eb208f7e05d987a9b044a8e98c6b087f15a0bfc", "ripemd160");
+  eq(hex(hash160(new Uint8Array(0))), "b472a266d0bd89c13706a4132ccfb16f7c3b9fcb", "hash160");
+  eq(hex(hmac512(enc("key"), enc("The quick brown fox jumps over the lazy dog"))), "b42af09057bac1e2d41708e48a902e09b5ff7f12ab428a4fe86653c73dd248fb82f948a549f7b791a5b41915ee4d1ec3935357e4e2317250d0372afa2ebeeb3a", "hmac512");
+  const p1 = pubkey(1n, true);
+  eq(hex(p1), "0279be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798", "pubkey");
+  eq(hex(hash160(p1)), "751e76e8199196d454941c45d1b3a323f1433bd6", "hash160(pubkey)");
+  eq(bech32P2wpkh("bc", hash160(p1)), "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4", "bech32");
+  const w = makeWif(1n, true, OLD_WIF), r = parseWif(w, OLD_WIF); eq(r.k === 1n && r.compressed ? "y" : "n", "y", "wif round trip");
+  eq(descsumCreate("combo(038af19f35924e37ad7c3c8045d1e19b9b90b7310e08b892e620c253a102fe49f0)"), "combo(038af19f35924e37ad7c3c8045d1e19b9b90b7310e08b892e620c253a102fe49f0)#2j2j0825", "descriptor checksum 1");
+  eq(descsumCreate("pkh(tprv8ZgxMBicQKsPd7Uf69XL1XwhmjHopUGep8GuEiJDZmbQz6o58LninorQAfcKZWARbtRtfnLcJ5MQ2AtHcQJCCRUcMRvmDUjyEmNUWwx8UbK/1h/*h)"), "pkh(tprv8ZgxMBicQKsPd7Uf69XL1XwhmjHopUGep8GuEiJDZmbQz6o58LninorQAfcKZWARbtRtfnLcJ5MQ2AtHcQJCCRUcMRvmDUjyEmNUWwx8UbK/1h/*h)#a0nyvl0k", "descriptor checksum 2");
+  return true;
+}
+
+const API = { sha256, sha512, hmac512, ripemd160, hash160, pubkey, parseWif, makeWif, addressesFromPub, descsumCreate, convert, selftest, b58check, b58decodeCheck, hex, fmt };
+if (typeof module !== "undefined" && module.exports) { module.exports = API; return; }
+
+/* ---------- page ---------- */
+const $ = id => document.getElementById(id);
+let result = null;
+function setNet() {
+  const on = navigator.onLine, el = $("net");
+  el.className = "banner " + (on ? "on" : "off");
+  el.textContent = on ? "You are online. For your safety, disconnect from the internet before you load your keys." : "You are offline. Good. Your keys stay on this computer.";
+}
+function readFile(input) { return new Promise((res, rej) => { const f = input.files && input.files[0]; if (!f) return res(""); const r = new FileReader(); r.onload = () => res(String(r.result)); r.onerror = () => rej(new Error("could not read the file")); r.readAsText(f); }); }
+function download(name, text) {
+  const b = new Blob([text], { type: "application/octet-stream" }), u = URL.createObjectURL(b), a = document.createElement("a");
+  a.href = u; a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(u); a.remove(); }, 1000);
+}
+function clearAll() {
+  result = null; $("keysText").value = ""; $("keysFile").value = ""; $("snapFile").value = "";
+  $("out").className = "hidden"; $("tbl").querySelector("tbody").innerHTML = ""; $("warnings").innerHTML = ""; $("progress").textContent = "";
+}
+async function run() {
+  $("go").disabled = true; $("out").className = "hidden"; $("progress").textContent = "Working...";
+  try {
+    const keysText = ($("keysText").value || "").trim() || await readFile($("keysFile"));
+    const snapshotText = await readFile($("snapFile"));
+    if (!keysText.trim()) { $("progress").innerHTML = '<span class="bad">Please choose your old keys file or paste your keys first.</span>'; return; }
+    result = await convert({ keysText, snapshotText, testnet: $("testnet").checked, progress: (i, n, what) => { $("progress").textContent = "Working... " + (what || "keys") + " " + i + " of " + n; } });
+    $("progress").textContent = "";
+    const tb = $("tbl").querySelector("tbody"); tb.innerHTML = "";
+    for (const r of result.rows) {
+      const tr = document.createElement("tr");
+      [r.old.join(" / "), r.nw, r.amt === null ? "(no list given)" : fmt(r.amt)].forEach((t, i) => { const td = document.createElement("td"); if (i === 2) td.className = "amt"; td.textContent = t; tr.appendChild(td); });
+      tb.appendChild(tr);
+    }
+    const w = $("warnings"); w.innerHTML = "";
+    for (const s of result.skipped.concat(result.warnings)) { const p = document.createElement("p"); p.className = "warn"; p.textContent = s; w.appendChild(p); }
+    $("summary").innerHTML = "";
+    const s = $("summary");
+    if (!result.rows.length) { s.innerHTML = '<span class="bad">No keys that are in the snapshot list were found.</span> Read ' + result.keysRead + " key(s). Check that you used the right wallet file and the official list."; }
+    else { s.innerHTML = "<b>" + result.rows.length + "</b> address(es)" + (result.haveSnapshot ? ", <b>" + fmt(result.total) + " BTGS</b> will be yours on the new chain." : "."); }
+    $("out").className = result.rows.length ? "" : "hidden";
+    if (!result.rows.length) { const o = $("out"); o.className = ""; $("dlJson").disabled = $("cpJson").disabled = $("dlKeys").disabled = true; } else { $("dlJson").disabled = $("cpJson").disabled = $("dlKeys").disabled = false; }
+  } catch (e) { $("progress").innerHTML = '<span class="bad">Error: ' + String(e.message || e).replace(/[<>&]/g, "") + "</span>"; }
+  finally { $("go").disabled = false; }
+}
+function init() {
+  setNet(); window.addEventListener("online", setNet); window.addEventListener("offline", setNet);
+  const st = $("selftest");
+  try { selftest(); st.className = "banner off"; st.textContent = "Self-test passed. The calculations on this page are correct."; $("go").disabled = false; }
+  catch (e) { st.className = "banner bad"; st.textContent = "Self-test FAILED. Do not use this page. " + e.message; }
+  $("go").onclick = run; $("clear").onclick = clearAll;
+  $("dlJson").onclick = () => result && download("btgs-import.json", result.jsonLine);
+  $("dlKeys").onclick = () => result && download("btgs-new-keys.txt", result.keyList);
+  $("cpJson").onclick = async () => {
+    if (!result) return;
+    try { await navigator.clipboard.writeText(result.jsonLine.trim()); $("progress").innerHTML = '<span class="ok">Copied. Paste it after "importdescriptors " in the wallet console.</span>'; }
+    catch (e) { const t = document.createElement("textarea"); t.value = result.jsonLine.trim(); document.body.appendChild(t); t.select(); try { document.execCommand("copy"); $("progress").innerHTML = '<span class="ok">Copied.</span>'; } catch (e2) { $("progress").innerHTML = '<span class="warn">Copy did not work. Use the download button instead.</span>'; } t.remove(); }
+  };
+}
+init();
+})(typeof window !== "undefined" ? window : globalThis);
+</script>
+</body>
+</html>

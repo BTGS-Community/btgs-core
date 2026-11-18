@@ -14,8 +14,13 @@ Optional:
   --gap N               extra addresses past the used range (default 200)
   --out FILE            where to write the new keys (default btgs-new-keys.txt)
 
-Output: a table (old address -> new B... address, balance) and a file with the NEW private keys (WIF; start with P, or with 6 for very old uncompressed keys).
-Import them into the new wallet with:  importprivkey <key> "" false   (then rescan once, after block 1 is mature).
+  --network N           mainnet (default) or testnet (for testing only)
+  --json FILE           where to write the import command for the new wallet (default btgs-import.json)
+
+Output: a table (old address -> new B... address, balance) and two files with your NEW private keys:
+  btgs-import.json   ONE line for the new wallet console:  importdescriptors <paste the line>   (works with every new wallet)
+  btgs-new-keys.txt  the same keys as a list (for wallets created as "legacy": importwallet <file>)
+The wallet scans the chain by itself after the import.
 
 Carried over: single-key addresses (legacy G..., SegWit bcg1q... 42 characters).
 Not carried over automatically: P2SH (also sh(wpkh)), multisig, Taproot - these must be moved on the old chain first."""
@@ -24,6 +29,32 @@ import argparse, hashlib, hmac, json, os, re, sys
 # ----- network constants -----
 OLD_WIF, OLD_P2PKH, OLD_HRP = 176, 38, "bcg"      # old BTGS chain
 NEW_WIF, NEW_P2PKH = 153, 25                       # new BTGS chain (P... keys, B... addresses)
+TESTNET_WIF, TESTNET_P2PKH = 239, 127              # testnet (testing only)
+
+# ----- output descriptor checksum (same algorithm as Bitcoin Core / Dash Core) -----
+_DS_IN = "0123456789()[],'/*abcdefgh@:$%{}IJKLMNOPQRSTUVWXYZ&+-.;<=>?!^_|~ijklmnopqrstuvwxyzABCDEFGH`#\"\\ "
+_DS_CK = "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
+_DS_GEN = [0xf5dee51989, 0xa9fdca3312, 0x1bab10e32d, 0x3706b1677a, 0x644d626ffd]
+
+def _ds_polymod(symbols):
+    chk = 1
+    for v in symbols:
+        top = chk >> 35
+        chk = (chk & 0x7ffffffff) << 5 ^ v
+        for i in range(5): chk ^= _DS_GEN[i] if ((top >> i) & 1) else 0
+    return chk
+
+def descsum_create(s):
+    groups, symbols = [], []
+    for c in s:
+        v = _DS_IN.find(c)
+        if v < 0: raise ValueError("bad descriptor character")
+        symbols.append(v & 31); groups.append(v >> 5)
+        if len(groups) == 3: symbols.append(groups[0] * 9 + groups[1] * 3 + groups[2]); groups = []
+    if len(groups) == 1: symbols.append(groups[0])
+    elif len(groups) == 2: symbols.append(groups[0] * 3 + groups[1])
+    chk = _ds_polymod(symbols + [0] * 8) ^ 1
+    return s + "#" + "".join(_DS_CK[(chk >> (5 * (7 - i))) & 31] for i in range(8))
 
 # ----- secp256k1 (pure Python, Jacobian coordinates) -----
 P = 2**256 - 2**32 - 977
@@ -200,15 +231,22 @@ def selftest():
     assert _ripemd160_py(b"abc").hex() == "8eb208f7e05d987a9b044a8e98c6b087f15a0bfc"
     assert bech32_p2wpkh("bc", bytes.fromhex("751e76e8199196d454941c45d1b3a323f1433bd6")) == "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4"
     w = make_wif(k, True, OLD_WIF); assert parse_wif(w, OLD_WIF) == (k, True)
+    # descriptor checksums: two values taken from the Dash Core / Bitcoin Core test suite
+    assert descsum_create("combo(038af19f35924e37ad7c3c8045d1e19b9b90b7310e08b892e620c253a102fe49f0)") == "combo(038af19f35924e37ad7c3c8045d1e19b9b90b7310e08b892e620c253a102fe49f0)#2j2j0825"
+    assert descsum_create("pkh(tprv8ZgxMBicQKsPd7Uf69XL1XwhmjHopUGep8GuEiJDZmbQz6o58LninorQAfcKZWARbtRtfnLcJ5MQ2AtHcQJCCRUcMRvmDUjyEmNUWwx8UbK/1h/*h)") == "pkh(tprv8ZgxMBicQKsPd7Uf69XL1XwhmjHopUGep8GuEiJDZmbQz6o58LninorQAfcKZWARbtRtfnLcJ5MQ2AtHcQJCCRUcMRvmDUjyEmNUWwx8UbK/1h/*h)#a0nyvl0k"
     print("selftest OK")
 
 def main():
     ap = argparse.ArgumentParser(description="Convert old-chain BTGS keys to the new chain")
     ap.add_argument("--wif"); ap.add_argument("--descriptors"); ap.add_argument("--snapshot")
     ap.add_argument("--range", type=int, default=1000); ap.add_argument("--gap", type=int, default=200)
-    ap.add_argument("--out", default="btgs-new-keys.txt"); ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--out", default="btgs-new-keys.txt"); ap.add_argument("--json", default="btgs-import.json")
+    ap.add_argument("--network", choices=["mainnet", "testnet"], default="mainnet")
+    ap.add_argument("--selftest", action="store_true")
     a = ap.parse_args()
     if a.selftest: return selftest()
+    global NEW_WIF, NEW_P2PKH
+    if a.network == "testnet": NEW_WIF, NEW_P2PKH = TESTNET_WIF, TESTNET_P2PKH
     if not a.wif and not a.descriptors: ap.error("give --wif and/or --descriptors")
     snap = load_snapshot(a.snapshot) if a.snapshot else None
     keys = []                                                   # (k, compressed, source)
@@ -243,11 +281,19 @@ def main():
         print(f"{' / '.join(old):<60} {new:<36} {fmt(amt) if amt is not None else '(no list given)'}")
         total += amt or 0
     if snap is not None: print("-" * 110, f"\n{len(rows)} addresses, {fmt(total)} BTGS will be yours on the new chain")
+    # 1) one line for the new wallet console: importdescriptors <line>   (every new wallet type)
+    reqs = [{"desc": descsum_create("pkh(%s)" % wif), "timestamp": 0, "label": "BTGS-old"} for old, new, amt, wif in rows]
+    fd = os.open(a.json, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, "w", newline="\n") as f:
+        f.write(json.dumps(reqs, separators=(",", ":")) + "\n")
+    # 2) list of keys in the dumpwallet format (only for wallets created as "legacy": importwallet <file>)
     fd = os.open(a.out, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
-    with os.fdopen(fd, "w") as f:
-        f.write("# NEW BTGS private keys - SECRET. Import with: importprivkey <key> \"\" false\n# Delete this file when you are done.\n")
-        for old, new, amt, wif in rows: f.write(f"{wif}  # {new}" + (f"  {fmt(amt)} BTGS" if amt is not None else "") + "\n")
-    print(f"\nNew private keys written to {a.out} (keep it secret, delete it when done)")
+    with os.fdopen(fd, "w", newline="\n") as f:
+        f.write("# NEW BTGS private keys - SECRET. Legacy wallets: importwallet <this file>. Delete this file when you are done.\n")
+        for old, new, amt, wif in rows:
+            f.write(f"{wif} 1970-01-01T00:00:01Z label=BTGS-old # {new}" + (f" {fmt(amt)} BTGS" if amt is not None else "") + "\n")
+    print(f"\nNEW private keys written to:\n  {a.json}  (one line for the wallet console)\n  {a.out}  (key list)\nKeep both secret and delete them when you are done.")
+    print("\nNext: in the NEW wallet open Window > Console and type:  importdescriptors  followed by a space and the whole line from", a.json)
 
 if __name__ == "__main__":
     main()
