@@ -22,6 +22,8 @@
 #include <validation.h>
 
 #include <QFileDialog>
+#include <QHBoxLayout>
+#include <QLabel>
 #include <QSettings>
 #include <QMessageBox>
 
@@ -129,6 +131,21 @@ Intro::Intro(QWidget *parent, int64_t blockchain_size_gb, int64_t chain_state_si
     m_prune_target_gb{GetPruneTargetGB()}
 {
     ui->setupUi(this);
+
+    // BTGS welcome header: big coin next to a big "Welcome" line, and room for the free-space / error lines
+    {
+        QLabel* logo = new QLabel(this);
+        logo->setPixmap(QIcon(":icons/dash").pixmap(110, 110));
+        logo->setFixedSize(120, 120);
+        QHBoxLayout* header = new QHBoxLayout();
+        ui->verticalLayout->removeWidget(ui->welcomeLabel);
+        header->addWidget(logo);
+        header->addWidget(ui->welcomeLabel, 1);
+        ui->verticalLayout->insertLayout(0, header);
+        ui->welcomeLabel->setStyleSheet("QLabel { font-size: 30px; font-weight: bold; font-style: normal; }");
+        ui->freeSpace->setMinimumHeight(34);
+        ui->errorMessage->setMinimumHeight(64);
+    }
     ui->welcomeLabel->setText(ui->welcomeLabel->text().arg(PACKAGE_NAME));
     ui->storageLabel->setText(ui->storageLabel->text().arg(PACKAGE_NAME));
 
@@ -234,7 +251,8 @@ bool Intro::showIfNeeded(bool& did_show_intro, int64_t& prune_MiB)
         GUIUtil::loadStyleSheet(true);
         intro.setDataDirectory(dataDirDefaultCurrent);
         intro.setWindowIcon(QIcon(":icons/dash"));
-        intro.setMinimumWidth(820);
+        intro.setMinimumSize(900, 700);
+        intro.adjustSize();
         did_show_intro = true;
 
         while(true)
