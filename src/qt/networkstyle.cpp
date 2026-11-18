@@ -74,7 +74,12 @@ NetworkStyle::NetworkStyle(const QString &_appName, const int iconColorHueShift,
     // load pixmap
     QPixmap appIconPixmap(":/icons/dash");
 
-    if(iconColorHueShift != 0 && iconColorSaturationReduction != 0)
+    if (appName == QAPP_APP_NAME_TESTNET)
+    {
+        // BTGS: testnet keeps the gold coin, marked with a T badge (no blue tint)
+        appIconPixmap = QPixmap(":/icons/dash_testnet");
+    }
+    else if(iconColorHueShift != 0 && iconColorSaturationReduction != 0)
     {
         // generate QImage from QPixmap
         QImage appIconImg = appIconPixmap.toImage();
