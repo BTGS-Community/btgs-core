@@ -25,7 +25,7 @@ static const struct {
     const std::string titleAddText;
 } network_styles[] = {
     {"main",    QAPP_APP_NAME_DEFAULT, 0,   0,  ":/icons/dash_macos_mainnet",  ""},
-    {"test",    QAPP_APP_NAME_TESTNET, 190, 20, ":/icons/dash_macos_testnet",  ""},
+    {"test",    QAPP_APP_NAME_TESTNET, 190, 20, ":/icons/dash_macos_testnet",  "[testnet]"},
     {"devnet",  QAPP_APP_NAME_DEVNET,  35,  15, ":/icons/dash_macos_devnet",   "[devnet: %s]"},
     {"regtest", QAPP_APP_NAME_REGTEST, 160, 30, ":/icons/dash_macos_regtest",  ""},
 };
@@ -67,14 +67,19 @@ NetworkStyle::NetworkStyle(const QString &_appName, const int iconColorHueShift,
                            const char *_macIconPath, const char *_titleAddText):
     appName(_appName),
     titleAddText(qApp->translate("SplashScreen", _titleAddText)),
-    badgeColor(QColor(0, 141, 228)) // default badge color is the original Dash's blue, regardless of the current theme
+    badgeColor(QColor(212, 160, 23)) // default badge color is the BTGS gold, regardless of the current theme
 {
     // Allow for separate UI settings for testnets
     QApplication::setApplicationName(appName);
     // load pixmap
     QPixmap appIconPixmap(":/icons/dash");
 
-    if(iconColorHueShift != 0 && iconColorSaturationReduction != 0)
+    if (appName == QAPP_APP_NAME_TESTNET)
+    {
+        // BTGS: testnet keeps the gold coin, marked with a T badge (no blue tint)
+        appIconPixmap = QPixmap(":/icons/dash_testnet");
+    }
+    else if(iconColorHueShift != 0 && iconColorSaturationReduction != 0)
     {
         // generate QImage from QPixmap
         QImage appIconImg = appIconPixmap.toImage();

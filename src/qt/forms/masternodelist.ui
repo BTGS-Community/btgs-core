@@ -41,7 +41,7 @@
          <item>
           <widget class="QComboBox" name="comboBoxType">
            <property name="toolTip">
-            <string>Filter by masternode type</string>
+            <string>Filter by smartnode type</string>
            </property>
            <item>
             <property name="text">
@@ -68,7 +68,7 @@
          <item>
           <widget class="QLineEdit" name="filterText">
            <property name="toolTip">
-            <string>Filter masternode list</string>
+            <string>Filter smartnode list</string>
            </property>
            <property name="placeholderText">
             <string>Filter by any property (e.g. address or protx hash)</string>
@@ -78,7 +78,7 @@
          <item>
           <widget class="QCheckBox" name="checkBoxOwned">
            <property name="toolTip">
-            <string>Show only masternodes this wallet has keys for.</string>
+            <string>Show only smartnodes this wallet has keys for.</string>
            </property>
            <property name="text">
             <string>Owned</string>
@@ -88,7 +88,7 @@
          <item>
           <widget class="QCheckBox" name="checkBoxHideBanned">
            <property name="toolTip">
-            <string>Hide masternodes that are currently PoSe banned.</string>
+            <string>Hide smartnodes that are currently PoSe banned.</string>
            </property>
            <property name="text">
             <string>Hide banned</string>
@@ -101,20 +101,20 @@
          <item>
           <widget class="QPushButton" name="btnRegisterMasternode">
            <property name="toolTip">
-            <string>Register a new masternode or evonode using this wallet</string>
+            <string>Register a new smartnode or evonode using this wallet</string>
            </property>
            <property name="text">
-            <string>Register Masternode…</string>
+            <string>Register Smartnode…</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="btnSharedMasternode">
            <property name="toolTip">
-            <string>Create a masternode with collateral pooled by multiple parties, or continue a saved session</string>
+            <string>Create a smartnode with collateral pooled by multiple parties, or continue a saved session</string>
            </property>
            <property name="text">
-            <string>Shared Masternode…</string>
+            <string>Shared Smartnode…</string>
            </property>
           </widget>
          </item>

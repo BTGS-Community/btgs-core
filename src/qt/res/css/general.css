@@ -970,7 +970,7 @@ QToolBar > QToolButton:disabled {
 }
 
 QToolBar QLabel#lblToolbarLogo {
-    padding: 12px;
+    padding: 3px;
     image: url(':/images/dash_logo_toolbar');
     height: 2.5em;
 }
@@ -1321,12 +1321,12 @@ MnemonicVerificationDialog
 ******************************************************/
 
 QDialog#MnemonicVerificationDialog QLabel#warningLabel {
-    font-size: 17px;
+    font-size: 20px;
     font-weight: 700;
 }
 
 QDialog#MnemonicVerificationDialog QLabel#instructionLabel {
-    font-size: 14px;
+    font-size: 17px;
 }
 
 QDialog#MnemonicVerificationDialog QLabel#verificationLabel {
@@ -1348,7 +1348,11 @@ QDialog#MnemonicVerificationDialog QScrollArea#mnemonicScroll {
 
 QDialog#MnemonicVerificationDialog QScrollArea#mnemonicScroll QWidget#mnemonicGridWidget QLabel {
     font-family: monospace;
-    font-size: 13pt;
+    font-size: 17pt;
+}
+
+QDialog#MnemonicVerificationDialog QCheckBox#writtenDownCheckbox {
+    font-size: 17px;
 }
 
 QDialog#MnemonicVerificationDialog QLineEdit#word1Edit,
@@ -2145,3 +2149,13 @@ QDialog#HelpMessageDialog QScrollBar:horizontal {
 }
 
 </os>
+
+/******************************************************
+BTGS welcome dialog (first start)
+******************************************************/
+
+QDialog#Intro QLabel,
+QDialog#Intro QRadioButton,
+QDialog#Intro QCheckBox {
+    font-size: 18px;
+}

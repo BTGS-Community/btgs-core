@@ -100,7 +100,7 @@ RegisterMasternodeWizard::RegisterMasternodeWizard(interfaces::Node& node, Walle
     m_node(node),
     m_walletModel(walletModel)
 {
-    setWindowTitle(tr("Register Masternode"));
+    setWindowTitle(tr("Register Smartnode"));
 
     m_pages = new QStackedWidget(this);
     // Insertion order must match the Page enum: the enum value doubles as the
@@ -205,15 +205,15 @@ QWidget* RegisterMasternodeWizard::createTypePage()
 {
     auto* page{new QWidget(this)};
     auto* layout{makePageLayout(page)};
-    layout->addWidget(makePageTitle(tr("Masternode type"), page));
+    layout->addWidget(makePageTitle(tr("Smartnode type"), page));
 
     m_type_regular = new QRadioButton(
-        tr("Masternode — %1 collateral")
+        tr("Smartnode — %1 collateral")
             .arg(FormatCollateralAmount(m_walletModel, GetMnType(MnType::Regular).collat_amount)),
         page);
     m_type_regular->setChecked(true);
     auto regular_card{makeOptionCard(page, m_type_regular,
-                                     tr("Provides Core network services and earns regular masternode rewards."))};
+                                     tr("Provides Core network services and earns regular smartnode rewards."))};
     regular_card.body->setVisible(false);
     layout->addWidget(regular_card.card);
 
@@ -221,10 +221,11 @@ QWidget* RegisterMasternodeWizard::createTypePage()
         tr("EvoNode — %1 collateral").arg(FormatCollateralAmount(m_walletModel, GetMnType(MnType::Evo).collat_amount)),
         page);
     auto evo_card{makeOptionCard(page, m_type_evo,
-                                 tr("Additionally hosts Dash Platform, has four times the voting weight and earns a "
+                                 tr("Additionally hosts Platform, has four times the voting weight and earns a "
                                     "larger share of rewards. Requires a Platform node ID and extra services."))};
     evo_card.body->setVisible(false);
     layout->addWidget(evo_card.card);
+    evo_card.card->setVisible(false); // BTGS has one smartnode type (no Platform), so the EvoNode choice is hidden
     layout->addStretch();
 
     auto* group{new QButtonGroup(page)};
@@ -232,7 +233,7 @@ QWidget* RegisterMasternodeWizard::createTypePage()
     group->addButton(m_type_evo);
 
     connect(m_type_regular, &QRadioButton::toggled, this, [this] {
-        setWindowTitle(isEvo() ? tr("Register EvoNode") : tr("Register Masternode"));
+        setWindowTitle(isEvo() ? tr("Register EvoNode") : tr("Register Smartnode"));
         rebuildOrder();
         refreshCollateralCandidates();
         updateProgress();
@@ -249,7 +250,7 @@ QWidget* RegisterMasternodeWizard::createCollateralPage()
     m_col_fund = new QRadioButton(tr("Send collateral from this wallet to a new address"), page);
     m_col_fund->setChecked(true);
     auto fund_card{makeOptionCard(page, m_col_fund,
-                                  tr("A single transaction funds the collateral and registers the masternode."))};
+                                  tr("A single transaction funds the collateral and registers the smartnode."))};
     m_col_fund_box = fund_card.body;
     {
         auto* row{new QHBoxLayout()};
@@ -274,7 +275,7 @@ QWidget* RegisterMasternodeWizard::createCollateralPage()
     m_col_wallet = new QRadioButton(tr("Use an existing collateral output of this wallet"), page);
     auto wallet_card{makeOptionCard(page, m_col_wallet,
                                     tr("An unspent P2PKH output of exactly the collateral amount, confirmed and not "
-                                       "used by another masternode."))};
+                                       "used by another smartnode."))};
     m_col_wallet_box = wallet_card.body;
     {
         m_col_utxo_combo = new QComboBox(m_col_wallet_box);
@@ -340,14 +341,14 @@ QWidget* RegisterMasternodeWizard::createServicePage()
     auto* layout{makePageLayout(page)};
     layout->addWidget(makePageTitle(tr("Service addresses"), page));
     auto* block{makeBlock(layout)};
-    block->addWidget(makeHint(tr("Public addresses your masternode will serve the Core P2P network on, separated "
+    block->addWidget(makeHint(tr("Public addresses your smartnode will serve the Core P2P network on, separated "
                                  "by commas or spaces. Each entry must be unique on the network."),
                               page));
     m_service_edit = new QLineEdit(page);
     m_service_edit->setPlaceholderText(QString("1.2.3.4:%1").arg(Params().GetDefaultPort()));
     block->addWidget(m_service_edit);
-    block->addWidget(makeHint(tr("May be left empty; the masternode then stays inactive until you send a service "
-                                 "update with an address."),
+    block->addWidget(makeHint(tr("Required: the public IPv4 address and port of your smartnode server. No other "
+                                 "smartnode on the network may use the same address."),
                               page));
     layout->addStretch();
     return page;
@@ -386,7 +387,7 @@ QWidget* RegisterMasternodeWizard::createKeysPage()
 
     auto* owner_block{makeBlock(key_layout)};
     owner_block->addWidget(makeBlockTitle(tr("Owner address"), key_container));
-    owner_block->addWidget(makeHint(tr("Controls this masternode (P2PKH): its key signs registrar updates. Use "
+    owner_block->addWidget(makeHint(tr("Controls this smartnode (P2PKH): its key signs registrar updates. Use "
                                        "a new address to keep that key in this wallet, or enter an address "
                                        "controlled by the owner."),
                                     key_container));
@@ -402,7 +403,7 @@ QWidget* RegisterMasternodeWizard::createKeysPage()
 
     auto* operator_block{makeBlock(key_layout)};
     operator_block->addWidget(makeBlockTitle(tr("Operator key"), key_container));
-    operator_block->addWidget(makeHint(tr("The operator runs the masternode server (BLS); only the public key is "
+    operator_block->addWidget(makeHint(tr("The operator runs the smartnode server (BLS); only the public key is "
                                           "registered on-chain."),
                                        key_container));
     m_operator_widget = new OperatorKeyWidget(key_container);
@@ -422,7 +423,7 @@ QWidget* RegisterMasternodeWizard::createPayoutPage()
 
     auto* payout_block{makeBlock(layout)};
     payout_block->addWidget(makeBlockTitle(tr("Payout address"), page));
-    payout_block->addWidget(makeHint(tr("Receives this masternode's block rewards (P2PKH or P2SH)."), page));
+    payout_block->addWidget(makeHint(tr("Receives this smartnode's block rewards (P2PKH or P2SH)."), page));
     auto* payout_row{new QHBoxLayout()};
     m_payout_edit = new QValidatedLineEdit(page);
     GUIUtil::setupAddressWidget(m_payout_edit, this);
@@ -454,7 +455,7 @@ QWidget* RegisterMasternodeWizard::createPayoutPage()
     reward_row->addStretch();
     reward_block->addLayout(reward_row);
     m_reward_warning = makeHint(tr("The operator will permanently receive this share of all rewards of this "
-                                   "masternode. Leave it at 0 unless you have an agreement with your operator."),
+                                   "smartnode. Leave it at 0 unless you have an agreement with your operator."),
                                 page);
     m_reward_warning->setStyleSheet(GUIUtil::getThemedStyleQString(GUIUtil::ThemedStyle::TS_WARNING));
     m_reward_warning->setVisible(false);
@@ -609,7 +610,7 @@ QWidget* RegisterMasternodeWizard::createSecretPage()
     m_secret_edit->setReadOnly(true);
     m_secret_edit->setFont(GUIUtil::fixedPitchFont());
     box->addWidget(m_secret_edit);
-    box->addWidget(makeHint(tr("Add this line to dash.conf on your masternode server:"), secret_box));
+    box->addWidget(makeHint(tr("Add this line to btgscore.conf on your smartnode server:"), secret_box));
     auto* conf_row{new QHBoxLayout()};
     m_conf_line_edit = new QLineEdit(secret_box);
     m_conf_line_edit->setReadOnly(true);
@@ -641,7 +642,7 @@ QWidget* RegisterMasternodeWizard::createResultPage()
 {
     auto* page{new QWidget(this)};
     auto* layout{makePageLayout(page)};
-    layout->addWidget(makePageTitle(tr("Masternode registered"), page));
+    layout->addWidget(makePageTitle(tr("Smartnode registered"), page));
 
     auto [result_container, result_layout]{
         MasternodeWidgetUtil::makeScrollBody(page, layout, Qt::ScrollBarAlwaysOff)};
@@ -771,7 +772,7 @@ QString RegisterMasternodeWizard::pageTitle(Page page) const
 {
     switch (page) {
     case PageType:
-        return tr("Masternode type");
+        return tr("Smartnode type");
     case PageCollateral:
         return tr("Collateral");
     case PageService:
@@ -919,9 +920,9 @@ bool RegisterMasternodeWizard::validatePage(Page page, QString& err)
         break;
     case PageService: {
         const QStringList list{MasternodeWidgetUtil::tokenizeEndpointList(m_service_edit->text())};
-        if (list.isEmpty() && isEvo() && !usesExtendedAddresses()) {
-            err = tr("EvoNodes need at least one service address to carry the Platform ports before v24 "
-                     "activation.");
+        if (list.isEmpty()) {
+            err = tr("Enter the public IPv4 address and port of your smartnode server, for example %1.")
+                      .arg(QString("1.2.3.4:%1").arg(Params().GetDefaultPort()));
         } else if (!isEvo()) {
             validateProviderNetInfo(/*optional=*/true, err);
         } else if (!list.isEmpty()) {
@@ -931,6 +932,19 @@ bool RegisterMasternodeWizard::validatePage(Page page, QString& err)
             if (const auto error{m_node.evo().validateProviderNetInfo(
                     core_only, MnType::Regular, capabilities.version, capabilities.ipv4_optional, /*optional=*/true)}) {
                 err = QString::fromStdString(error->message.translated);
+            }
+        }
+        if (!err.isEmpty() && !list.isEmpty()) {
+            // Translate the node's internal status wording into plain language
+            const QString example{QString("1.2.3.4:%1").arg(Params().GetDefaultPort())};
+            if (err.contains("(invalid input)") || err.contains("(invalid address)") || err.contains("(malformed)")) {
+                err = tr("This is not a valid IPv4 address and port, for example %1.").arg(example);
+            } else if (err.contains("(invalid port)")) {
+                err = tr("This port is not valid for this network. Use the format %1.").arg(example);
+            } else if (err.contains("(unroutable address)")) {
+                err = tr("This is not a public address. Private and reserved addresses cannot be used.");
+            } else if (err.contains("(duplicate)")) {
+                err = tr("The same address is entered more than once.");
             }
         }
         break;
@@ -1132,15 +1146,15 @@ void RegisterMasternodeWizard::updateButtons()
     QString tooltip;
     if (m_walletModel == nullptr) {
         enabled = false;
-        tooltip = tr("No wallet is available. Masternode registration requires a wallet.");
+        tooltip = tr("No wallet is available. Smartnode registration requires a wallet.");
     } else if (m_walletModel->wallet().privateKeysDisabled()) {
         enabled = false;
-        tooltip = tr("This wallet is watch-only. Masternode registration requires a wallet that can sign "
+        tooltip = tr("This wallet is watch-only. Smartnode registration requires a wallet that can sign "
                      "transactions.");
     } else if (current == PageSecret && !secretConfirmed()) {
         enabled = false;
         tooltip = tr("Confirm you saved the operator secret key by typing its last 4 characters.");
-    } else if (m_validation_page && *m_validation_page == current) {
+    } else if ((m_validation_page && *m_validation_page == current) || current == PageService) {
         QString error;
         if (!validatePage(current, error)) {
             enabled = false;
@@ -1153,7 +1167,7 @@ void RegisterMasternodeWizard::updateButtons()
 
 void RegisterMasternodeWizard::onPageEdited()
 {
-    if (m_validation_page && *m_validation_page == currentPage()) {
+    if ((m_validation_page && *m_validation_page == currentPage()) || currentPage() == PageService) {
         QString error;
         validatePage(currentPage(), error);
         showError(error);
@@ -1291,7 +1305,7 @@ void RegisterMasternodeWizard::populateReview()
     }
 
     begin_section(tr("Node"));
-    row(tr("Type"), isEvo() ? tr("EvoNode") : tr("Masternode"));
+    row(tr("Type"), isEvo() ? tr("EvoNode") : tr("Smartnode"));
     const QStringList services{MasternodeWidgetUtil::tokenizeEndpointList(m_service_edit->text())};
     row(tr("Service"), services.isEmpty() ? tr("Not set — the node stays inactive until you send a service update") :
                                             services.join(", "),
@@ -1392,7 +1406,7 @@ std::optional<interfaces::ProviderRegistrationRequest> RegisterMasternodeWizard:
                                  static_cast<uint32_t>(
                                      m_col_utxo_combo->itemData(m_col_utxo_combo->currentIndex(), VOUT_ROLE).toInt())};
         if (RegisteredCollaterals(m_walletModel->wallet()).count(outpoint) != 0) {
-            error = tr("The selected collateral output is already used by another masternode.");
+            error = tr("The selected collateral output is already used by another smartnode.");
             return std::nullopt;
         }
         request.collateral = interfaces::ExistingProviderCollateral{outpoint};
@@ -1464,7 +1478,7 @@ void RegisterMasternodeWizard::completeRegistration(const CTransactionRef& trans
 
 bool RegisterMasternodeWizard::confirmBroadcast()
 {
-    const QString node_type{isEvo() ? tr("EvoNode") : tr("masternode")};
+    const QString node_type{isEvo() ? tr("EvoNode") : tr("smartnode")};
     QString consequence;
     if (isFundCollateral()) {
         consequence = tr("This transaction creates %1 of collateral from this wallet and registers the %2.")
@@ -1644,17 +1658,17 @@ void RegisterMasternodeWizard::populateResult(const QString& pro_tx_hash)
             tr("It is recorded in this wallet and appears under Transactions. The external collateral remains "
                "at the outpoint you registered and is not controlled by this wallet.") :
             tr("It is recorded in this wallet and appears under Transactions. The collateral stays in the wallet "
-               "but is locked while the masternode is registered."));
+               "but is locked while the smartnode is registered."));
 
     // The card already carries the "Next steps" heading. Keep numbering in
     // markup so conditional steps never force translators to renumber strings.
     QStringList steps;
     if (m_operator_widget->hasGeneratedSecret()) {
         steps << tr(
-            "Configure your masternode server with the operator secret key you saved, then restart dashd there.");
+            "Configure your smartnode server with the operator secret key you saved, then restart btgsd there.");
     } else {
         steps << tr(
-            "Configure your masternode server with the BLS secret key matching the operator public key you provided.");
+            "Configure your smartnode server with the BLS secret key matching the operator public key you provided.");
     }
     const bool has_service{!MasternodeWidgetUtil::tokenizeEndpointList(m_service_edit->text()).isEmpty()};
     if (has_service) {
@@ -1664,12 +1678,12 @@ void RegisterMasternodeWizard::populateResult(const QString& pro_tx_hash)
                     "inactive until then.");
     }
     if (isEvo()) {
-        steps << tr("Provision the Dash Platform services (Tenderdash and Drive) with the Platform node key matching "
+        steps << tr("Provision the Platform services (Tenderdash and Drive) with the Platform node key matching "
                     "the node ID you registered.");
         steps << tr("The EvoNode becomes active once the registration is confirmed and the first update is signed by "
                     "the operator.");
     } else {
-        steps << tr("The masternode becomes active once the registration is confirmed on the network.");
+        steps << tr("The smartnode becomes active once the registration is confirmed on the network.");
     }
     QString html{"<ol>"};
     for (const QString& step : steps)

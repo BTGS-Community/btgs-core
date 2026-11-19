@@ -160,7 +160,7 @@ MasternodeList::MasternodeList(QWidget* parent) :
     filterMenu->addAction(tr("Voting Address"), this, &MasternodeList::filterByVotingAddress);
 
     ui->btnRegisterMasternode->setEnabled(false);
-    ui->btnRegisterMasternode->setToolTip(tr("Registering a masternode requires a wallet."));
+    ui->btnRegisterMasternode->setToolTip(tr("Registering a smartnode requires a wallet."));
     connect(ui->btnRegisterMasternode, &QPushButton::clicked, this, &MasternodeList::showRegisterWizard);
     ui->btnSharedMasternode->setEnabled(false);
     connect(ui->btnSharedMasternode, &QPushButton::clicked, this, &MasternodeList::showSharedMnCreateDialog);
@@ -241,16 +241,16 @@ void MasternodeList::updateRegistrationAvailability()
                             !walletModel->wallet().privateKeysDisabled()};
     ui->btnRegisterMasternode->setEnabled(can_register);
     if (walletModel == nullptr) {
-        ui->btnRegisterMasternode->setToolTip(tr("Registering a masternode requires a wallet."));
+        ui->btnRegisterMasternode->setToolTip(tr("Registering a smartnode requires a wallet."));
     } else if (walletModel->wallet().privateKeysDisabled()) {
         ui->btnRegisterMasternode->setToolTip(
             walletModel->wallet().hasExternalSigner() ?
-                tr("Masternode registration does not yet support external-signer wallets.") :
-                tr("Masternode registration requires a wallet with private keys."));
+                tr("Smartnode registration does not yet support external-signer wallets.") :
+                tr("Smartnode registration requires a wallet with private keys."));
     } else if (clientModel == nullptr) {
-        ui->btnRegisterMasternode->setToolTip(tr("Masternode registration is unavailable until the node is ready."));
+        ui->btnRegisterMasternode->setToolTip(tr("Smartnode registration is unavailable until the node is ready."));
     } else {
-        ui->btnRegisterMasternode->setToolTip(tr("Register a new masternode or EvoNode using this wallet"));
+        ui->btnRegisterMasternode->setToolTip(tr("Register a new smartnode or EvoNode using this wallet"));
     }
 
     // isV24Active() takes cs_main and this runs on every block; activation is
@@ -260,15 +260,15 @@ void MasternodeList::updateRegistrationAvailability()
     const bool can_shared{can_register && v24_active};
     ui->btnSharedMasternode->setEnabled(can_shared);
     if (walletModel == nullptr) {
-        ui->btnSharedMasternode->setToolTip(tr("Managing shared masternodes requires a wallet."));
+        ui->btnSharedMasternode->setToolTip(tr("Managing shared smartnodes requires a wallet."));
     } else if (walletModel->wallet().privateKeysDisabled()) {
-        ui->btnSharedMasternode->setToolTip(tr("Managing shared masternodes requires a wallet with private keys."));
+        ui->btnSharedMasternode->setToolTip(tr("Managing shared smartnodes requires a wallet with private keys."));
     } else if (clientModel == nullptr) {
-        ui->btnSharedMasternode->setToolTip(tr("Shared masternode management is unavailable until the node is ready."));
+        ui->btnSharedMasternode->setToolTip(tr("Shared smartnode management is unavailable until the node is ready."));
     } else if (!v24_active) {
-        ui->btnSharedMasternode->setToolTip(tr("Shared masternodes require the v24 hard fork, which is not active on this network yet."));
+        ui->btnSharedMasternode->setToolTip(tr("Shared smartnodes require the v24 hard fork, which is not active on this network yet."));
     } else {
-        ui->btnSharedMasternode->setToolTip(tr("Create or continue a multi-party shared masternode registration session"));
+        ui->btnSharedMasternode->setToolTip(tr("Create or continue a multi-party shared smartnode registration session"));
     }
 }
 
@@ -302,7 +302,7 @@ const MasternodeEntry* MasternodeList::entryForProTxHash(const QString& pro_tx_h
 QString MasternodeList::describeStandbyDissolution(const CMutableTransaction& tx, const MasternodeEntry* entry) const
 {
     const auto ptx{GetTxPayload<CProDisTx>(tx)};
-    if (!ptx) return tr("This transaction is not a readable shared masternode dissolution.");
+    if (!ptx) return tr("This transaction is not a readable shared smartnode dissolution.");
 
     const BitcoinUnits::Unit unit{SharedMnDisplayUnit(walletModel)};
     const std::vector<interfaces::MnShare> shares{entry != nullptr ? entry->shares()
@@ -319,9 +319,9 @@ QString MasternodeList::describeStandbyDissolution(const CMutableTransaction& tx
     };
 
     QStringList lines;
-    lines << tr("Masternode: %1").arg(MasternodeWidgetUtil::chunked(QString::fromStdString(ptx->proTxHash.ToString())));
+    lines << tr("Smartnode: %1").arg(MasternodeWidgetUtil::chunked(QString::fromStdString(ptx->proTxHash.ToString())));
     if (entry == nullptr) {
-        lines << tr("This masternode is not in the current masternode list.");
+        lines << tr("This smartnode is not in the current smartnode list.");
     } else {
         lines << tr("Service: %1").arg(entry->service());
         lines << tr("Collateral address: %1").arg(entry->collateralAddress());
@@ -393,8 +393,8 @@ void MasternodeList::openSharedMessage(const QString& text)
     case SharedMnImport::Kind::Sigs: {
         const MasternodeEntry* entry{entryForProTxHash(detected.proTxHash)};
         if (entry == nullptr) {
-            QMessageBox::warning(this, tr("Masternode not found"),
-                                 tr("This message is about a masternode that is not in the list yet."));
+            QMessageBox::warning(this, tr("Smartnode not found"),
+                                 tr("This message is about a smartnode that is not in the list yet."));
             return;
         }
         if (detected.sigKind == QLatin1String("dissolve")) {
@@ -444,7 +444,7 @@ void MasternodeList::updateContextMenuActions(const MasternodeEntry* entry)
     m_action_update_registrar->setVisible(!is_shared);
     m_action_update_registrar->setEnabled(availability.update_registrar);
     m_action_update_registrar->setToolTip(
-        availability.update_registrar ? QString{} : tr("Requires this masternode's owner key in the wallet"));
+        availability.update_registrar ? QString{} : tr("Requires this smartnode's owner key in the wallet"));
     m_action_revoke->setEnabled(availability.revoke);
     m_action_revoke->setToolTip(availability.revoke ? QString{} : tr("Requires a wallet capable of signing transactions"));
 
@@ -456,7 +456,7 @@ void MasternodeList::updateContextMenuActions(const MasternodeEntry* entry)
                                  [&](const auto& share) { return SharedMnWalletOwnsShare(walletModel, share); });
     }
     const QString shared_tooltip{
-        owns_share ? QString{} : tr("Requires one of this masternode's share owner keys in this wallet")};
+        owns_share ? QString{} : tr("Requires one of this smartnode's share owner keys in this wallet")};
     for (auto* action : {m_action_update_share, m_action_rotate_keys, m_action_dissolve, m_action_standby}) {
         action->setVisible(is_shared);
         action->setEnabled(owns_share);
@@ -468,7 +468,7 @@ void MasternodeList::updateContextMenuActions(const MasternodeEntry* entry)
                                                  : tr("Not created on this computer yet"));
     }
 
-    m_action_filter_owner->setToolTip(is_shared ? tr("Filters by one of this masternode's share owner addresses") :
+    m_action_filter_owner->setToolTip(is_shared ? tr("Filters by one of this smartnode's share owner addresses") :
                                                   QString{});
 }
 
@@ -727,7 +727,7 @@ void MasternodeList::extraInfoDIP3_clicked()
             if (SharedMnWalletOwnsShare(walletModel, shares[i])) my_share_indexes.insert(static_cast<int>(i));
         }
     }
-    auto* dialog = new DescriptionDialog(tr("Details for Masternode %1").arg(entry->proTxHash()),
+    auto* dialog = new DescriptionDialog(tr("Details for Smartnode %1").arg(entry->proTxHash()),
                                          entry->toHtml(m_model->currentHeight(), my_share_indexes,
                                                        SharedMnDisplayUnit(walletModel)),
                                          /*parent=*/this);

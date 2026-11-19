@@ -305,7 +305,7 @@ void ProposalList::setProposalList(ProposalData&& data)
     for (const auto& proposal : data.m_proposals) {
         const auto voters = proposalVoters(*proposal);
         QStringList details;
-        details << tr("Current funding votes from eligible masternodes controlled by this wallet. Counts are weighted votes.");
+        details << tr("Current funding votes from eligible smartnodes controlled by this wallet. Counts are weighted votes.");
         for (const auto& voter : voters) {
             details << tr("%1: %2 (weight %3)").arg(QString::fromStdString(voter.pro_tx_hash.ToString()),
                                                 ProposalVoteOutcome(voter.outcome)).arg(voter.weight);
@@ -464,7 +464,7 @@ void ProposalList::updateInfoTooltip()
     const auto voting_remaining_blocks{std::max<int>(0, remaining_blocks - m_gov_info.superblockmaturitywindow)};
     const QString voting_remaining_str{GUIUtil::formatBlockDuration(voting_remaining_blocks, m_gov_info.targetSpacing)};
 
-    const auto tooltip1{tr("%n masternode(s) available for voting", "", votableMasternodes.size())};
+    const auto tooltip1{tr("%n smartnode(s) available for voting", "", votableMasternodes.size())};
     const auto tooltip2{remaining_blocks == 0
         ? (awaiting_superblock ? tr("Superblock imminent") : tr("Voting period ended"))
         : (awaiting_superblock
@@ -602,18 +602,18 @@ void ProposalList::voteForProposal(vote_outcome_enum_t outcome)
     }
 
     if (votableMasternodes.empty()) {
-        QMessageBox::warning(this, tr("Voting Failed"), tr("No masternode voting keys found in wallet."));
+        QMessageBox::warning(this, tr("Voting Failed"), tr("No smartnode voting keys found in wallet."));
         return;
     }
 
     if (!clientModel || !m_feed_masternode) {
-        QMessageBox::warning(this, tr("Voting Failed"), tr("Unable to fetch masternode data."));
+        QMessageBox::warning(this, tr("Voting Failed"), tr("Unable to fetch smartnode data."));
         return;
     }
 
     auto data_mn = m_feed_masternode->data();
     if (!data_mn || !data_mn->m_valid) {
-        QMessageBox::warning(this, tr("Voting Failed"), tr("Unable to fetch masternode data."));
+        QMessageBox::warning(this, tr("Voting Failed"), tr("Unable to fetch smartnode data."));
         return;
     }
 
@@ -661,14 +661,14 @@ void ProposalList::voteForProposal(vote_outcome_enum_t outcome)
     updateProposalList();
     data_mn = m_feed_masternode ? m_feed_masternode->data() : nullptr;
     if (!clientModel || !data_mn || !data_mn->m_valid || !clientModel->masternodeSync().isGovernanceSynced()) {
-        QMessageBox::warning(this, tr("Voting Failed"), tr("Unable to fetch synced masternode data."));
+        QMessageBox::warning(this, tr("Voting Failed"), tr("Unable to fetch synced smartnode data."));
         return;
     }
     for (const auto& proTxHash : selected_masternodes) {
         const auto key = votableMasternodes.find(proTxHash);
         if (key == votableMasternodes.end()) {
             nFailed++;
-            failedMessages.append(tr("Masternode %1 is no longer eligible").arg(QString::fromStdString(proTxHash.ToString())));
+            failedMessages.append(tr("Smartnode %1 is no longer eligible").arg(QString::fromStdString(proTxHash.ToString())));
             continue;
         }
         const auto& votingKeyID = key->second;
@@ -685,7 +685,7 @@ void ProposalList::voteForProposal(vote_outcome_enum_t outcome)
 
         if (!dmn) {
             nFailed++;
-            failedMessages.append(tr("Masternode %1 not found").arg(protx_hash));
+            failedMessages.append(tr("Smartnode %1 not found").arg(protx_hash));
             continue;
         }
 
@@ -695,7 +695,7 @@ void ProposalList::voteForProposal(vote_outcome_enum_t outcome)
         // Sign vote via wallet interface
         if (!walletModel->wallet().signGovernanceVote(votingKeyID, vote)) {
             nFailed++;
-            failedMessages.append(tr("Failed to sign vote for masternode %1").arg(protx_hash));
+            failedMessages.append(tr("Failed to sign vote for smartnode %1").arg(protx_hash));
             continue;
         }
 
@@ -706,7 +706,7 @@ void ProposalList::voteForProposal(vote_outcome_enum_t outcome)
         } else {
             nFailed++;
             failedMessages.append(
-                tr("Masternode %1: %2").arg(QString::fromStdString(proTxHash.ToString()), QString::fromStdString(strError)));
+                tr("Smartnode %1: %2").arg(QString::fromStdString(proTxHash.ToString()), QString::fromStdString(strError)));
         }
     }
 

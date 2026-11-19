@@ -115,16 +115,7 @@ SplashScreen::SplashScreen(const NetworkStyle* networkStyle)
 
     QPixmap pixmapLogo = networkStyle->getSplashImage();
 
-    // Adjust logo color based on the current theme
-    QImage imgLogo = pixmapLogo.toImage().convertToFormat(QImage::Format_ARGB32);
-    QColor logoColor = GUIUtil::getThemedQColor(GUIUtil::ThemedColor::BLUE);
-    for (int x = 0; x < imgLogo.width(); ++x) {
-        for (int y = 0; y < imgLogo.height(); ++y) {
-            const QRgb rgb = imgLogo.pixel(x, y);
-            imgLogo.setPixel(x, y, qRgba(logoColor.red(), logoColor.green(), logoColor.blue(), qAlpha(rgb)));
-        }
-    }
-    pixmapLogo.convertFromImage(imgLogo);
+    // BTGS: the splash picture keeps its own colours (it was a one-colour logo recoloured by theme before)
     pixmapLogo.setDevicePixelRatio(scale);
 
     int canvasWidth = width + SPLASH_PADDING * 2;

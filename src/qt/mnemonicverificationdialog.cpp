@@ -36,7 +36,7 @@ MnemonicVerificationDialog::MnemonicVerificationDialog(const SecureString& mnemo
     }
 
     // Keep minimum small so the page can compress when users scale down
-    setMinimumSize(QSize(550, 360));
+    setMinimumSize(QSize(760, 500));
     resize(minimumSize());
 
     setWindowTitle(m_view_only ? tr("Your Recovery Phrase") : tr("Save Your Mnemonic"));
@@ -123,7 +123,7 @@ void MnemonicVerificationDialog::setupStep1()
     }
 
     // Restore original minimum size (in case we came back from Step 2)
-    setMinimumSize(QSize(550, 360));
+    setMinimumSize(QSize(760, 500));
 
     // Restore to default size if we have it (when coming back from Step 2)
     if (m_defaultSize.isValid() && !m_defaultSize.isEmpty()) {

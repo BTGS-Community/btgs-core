@@ -219,14 +219,14 @@
        <item row="10" column="0">
         <widget class="QLabel" name="labelMasternodes">
          <property name="text">
-          <string>Masternodes</string>
+          <string>Smartnodes</string>
          </property>
         </widget>
        </item>
        <item row="11" column="0">
         <widget class="QLabel" name="masternodeCountLabel">
          <property name="text">
-          <string>Masternode count</string>
+          <string>Smartnode count</string>
          </property>
         </widget>
        </item>

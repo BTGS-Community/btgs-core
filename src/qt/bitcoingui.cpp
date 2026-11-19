@@ -385,14 +385,14 @@ void BitcoinGUI::stopConnectingAnimation()
 void BitcoinGUI::createActions()
 {
     sendCoinsAction = new QAction(tr("&Send"), this);
-    sendCoinsAction->setStatusTip(tr("Send coins to a Dash address"));
+    sendCoinsAction->setStatusTip(tr("Send coins to a BTGS address"));
     QString strCoinJoinName = QString::fromStdString(gCoinJoinName);
     coinJoinCoinsAction = new QAction(QString("&%1").arg(strCoinJoinName), this);
-    coinJoinCoinsAction->setStatusTip(tr("Send %1 funds to a Dash address").arg(strCoinJoinName));
+    coinJoinCoinsAction->setStatusTip(tr("Send %1 funds to a BTGS address").arg(strCoinJoinName));
     coinJoinCoinsAction->setToolTip(coinJoinCoinsAction->statusTip());
 
     receiveCoinsAction = new QAction(tr("&Receive"), this);
-    receiveCoinsAction->setStatusTip(tr("Request payments (generates QR codes and dash: URIs)"));
+    receiveCoinsAction->setStatusTip(tr("Request payments (generates QR codes and btgs: URIs)"));
     receiveCoinsAction->setToolTip(receiveCoinsAction->statusTip());
 
 #ifdef ENABLE_WALLET
@@ -434,9 +434,9 @@ void BitcoinGUI::createActions()
     unlockWalletAction->setToolTip(tr("Unlock wallet"));
     lockWalletAction = new QAction(tr("&Lock Wallet"), this);
     signMessageAction = new QAction(tr("Sign &message…"), this);
-    signMessageAction->setStatusTip(tr("Sign messages with your Dash addresses to prove you own them"));
+    signMessageAction->setStatusTip(tr("Sign messages with your BTGS addresses to prove you own them"));
     verifyMessageAction = new QAction(tr("&Verify message…"), this);
-    verifyMessageAction->setStatusTip(tr("Verify messages to ensure they were signed with specified Dash addresses"));
+    verifyMessageAction->setStatusTip(tr("Verify messages to ensure they were signed with specified BTGS addresses"));
     m_load_psbt_action = new QAction(tr("&Load PSBT from file…"), this);
     m_load_psbt_action->setStatusTip(tr("Load Partially Signed Blockchain Transaction"));
     m_load_psbt_clipboard_action = new QAction(tr("Load PSBT from &clipboard…"), this);
@@ -474,7 +474,7 @@ void BitcoinGUI::createActions()
     usedReceivingAddressesAction->setStatusTip(tr("Show the list of used receiving addresses and labels"));
 
     openAction = new QAction(tr("Open &URI…"), this);
-    openAction->setStatusTip(tr("Open a dash: URI"));
+    openAction->setStatusTip(tr("Open a btgs: URI"));
 
     m_open_wallet_action = new QAction(tr("Open Wallet"), this);
     m_open_wallet_action->setEnabled(false);
@@ -503,7 +503,7 @@ void BitcoinGUI::createActions()
 
     showHelpMessageAction = new QAction(tr("&Command-line options"), this);
     showHelpMessageAction->setMenuRole(QAction::NoRole);
-    showHelpMessageAction->setStatusTip(tr("Show the %1 help message to get a list with possible Dash command-line options").arg(PACKAGE_NAME));
+    showHelpMessageAction->setStatusTip(tr("Show the %1 help message to get a list with possible BTGS command-line options").arg(PACKAGE_NAME));
 
     showCoinJoinHelpAction = new QAction(tr("%1 &information").arg(strCoinJoinName), this);
     showCoinJoinHelpAction->setMenuRole(QAction::NoRole);
@@ -776,8 +776,8 @@ void BitcoinGUI::createToolBars()
         tabGroup->addButton(coinJoinCoinsButton);
 
         masternodeButton = new QToolButton(this);
-        masternodeButton->setText(tr("&Masternodes"));
-        masternodeButton->setStatusTip(tr("Browse masternodes"));
+        masternodeButton->setText(tr("&Smartnodes"));
+        masternodeButton->setStatusTip(tr("Browse smartnodes"));
         tabGroup->addButton(masternodeButton);
 
         governanceButton = new QToolButton(this);
@@ -838,6 +838,14 @@ void BitcoinGUI::createToolBars()
             This is a workaround mostly for toolbar styling on Mac OS but should work fine for every other OSes too.
         */
         QVBoxLayout *layout = new QVBoxLayout;
+        // BTGS: clear banner on test networks, so nobody mistakes a testnet wallet for the real one
+        if (QApplication::applicationName() != QAPP_APP_NAME_DEFAULT) {
+            QLabel* networkBanner = new QLabel(tr("TESTNET - test coins only, they have no value. This is NOT the real BTGS network."));
+            networkBanner->setObjectName("lblTestnetBanner");
+            networkBanner->setAlignment(Qt::AlignCenter);
+            networkBanner->setStyleSheet("QLabel#lblTestnetBanner { background-color: #c0392b; color: #ffffff; font-size: 16px; font-weight: bold; padding: 6px; }");
+            layout->addWidget(networkBanner);
+        }
         layout->addWidget(toolbar);
         layout->addWidget(walletFrame);
         layout->setSpacing(0);
@@ -1423,7 +1431,7 @@ void BitcoinGUI::updateNetworkState()
     QString tooltip;
     if (fNetworkActive) {
         //: A substring of the tooltip.
-        tooltip = tr("%n active connection(s) to Dash network", "", count);
+        tooltip = tr("%n active connection(s) to BTGS network", "", count);
     } else {
         tooltip = tr("Network activity disabled");
         icon = "connect_4";

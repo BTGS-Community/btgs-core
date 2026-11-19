@@ -35,10 +35,10 @@ QString BitcoinUnits::name(Unit unit)
 {
     const bool is_mainnet{Params().NetworkIDString() == CBaseChainParams::MAIN};
     switch (unit) {
-    case Unit::DASH:  return is_mainnet ? QString("DASH") : QString("tDASH");
-    case Unit::mDASH: return is_mainnet ? QString("mDASH") : QString("mtDASH");
-    case Unit::uDASH: return is_mainnet ? QString::fromUtf8("μDASH") : QString::fromUtf8("μtDASH");
-    case Unit::duffs: return is_mainnet ? QString("duffs") : QString("tduffs");
+    case Unit::DASH:  return is_mainnet ? QString("BTGS") : QString("tBTGS");
+    case Unit::mDASH: return is_mainnet ? QString("mBTGS") : QString("mtBTGS");
+    case Unit::uDASH: return is_mainnet ? QString::fromUtf8("μBTGS") : QString::fromUtf8("μtBTGS");
+    case Unit::duffs: return is_mainnet ? QString("sats") : QString("tsats");
     } // no default case, so the compiler can warn about missing cases
     assert(false);
 }
@@ -47,10 +47,10 @@ QString BitcoinUnits::description(Unit unit)
 {
     const QString maybe_prefix{Params().NetworkIDString() == CBaseChainParams::MAIN ? "" : "Test"};
     switch(unit) {
-    case Unit::DASH:  return QString("%1Dash");
-    case Unit::mDASH: return QString("Milli-%1Dash (1 / 1" THIN_SP_UTF8 "000)").arg(maybe_prefix);
-    case Unit::uDASH: return QString("Micro-%1Dash (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)").arg(maybe_prefix);
-    case Unit::duffs: return QString("Ten Nano-%1Dash (1 / 100" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)").arg(maybe_prefix);
+    case Unit::DASH:  return QString("%1BTGS");
+    case Unit::mDASH: return QString("Milli-%1BTGS (1 / 1" THIN_SP_UTF8 "000)").arg(maybe_prefix);
+    case Unit::uDASH: return QString("Micro-%1BTGS (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)").arg(maybe_prefix);
+    case Unit::duffs: return QString("Sat of %1BTGS (1 / 100" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)").arg(maybe_prefix);
     } // no default case, so the compiler can warn about missing cases
     assert(false);
 }

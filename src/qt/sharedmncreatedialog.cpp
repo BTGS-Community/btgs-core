@@ -196,7 +196,7 @@ QString ServiceInUseProblem(interfaces::Node& node, const QString& services)
     const auto in_use{node.evo().findProviderNetInfoInUse(net_info, MnType::Regular, capabilities.version,
                                                           capabilities.ipv4_optional)};
     if (!in_use) return {};
-    return SharedMnCreateDialog::tr("%1 is already the service address of a registered masternode. Every service "
+    return SharedMnCreateDialog::tr("%1 is already the service address of a registered smartnode. Every service "
                                     "address must be unique on the network.")
         .arg(QString::fromStdString(*in_use));
 }
@@ -218,7 +218,7 @@ SharedMnCreateDialog::SharedMnCreateDialog(interfaces::Node& node, WalletModel* 
     m_runner{wallet_model ? new MasternodeOperationRunner(node.evo(), wallet_model->wallet(), this) : nullptr}
 {
     setObjectName(QStringLiteral("SharedMnCreateDialog"));
-    setWindowTitle(tr("Shared Masternode"));
+    setWindowTitle(tr("Shared Smartnode"));
 
     m_pages = new QStackedWidget(this);
     m_pages->insertWidget(PageLanding, createLandingPage());
@@ -389,8 +389,8 @@ QWidget* SharedMnCreateDialog::createLandingPage()
 {
     auto* page{new QWidget(this)};
     auto* layout{makePageLayout(page)};
-    layout->addWidget(makePageTitle(tr("Shared masternode"), page));
-    layout->addWidget(makeHint(tr("Several people fund one masternode together. One person coordinates; everyone else "
+    layout->addWidget(makePageTitle(tr("Shared smartnode"), page));
+    layout->addWidget(makeHint(tr("Several people fund one smartnode together. One person coordinates; everyone else "
                                   "pastes what they receive and copies back a reply. Nothing reaches the network "
                                   "until the final broadcast."),
                                page));
@@ -405,11 +405,11 @@ QWidget* SharedMnCreateDialog::createLandingPage()
     {
         auto* box{MakeTitledCard(page, layout, tr("Start"))};
         auto* card{box->parentWidget()};
-        box->addWidget(makeHint(tr("You will enter who takes part and the masternode settings, then invite the "
+        box->addWidget(makeHint(tr("You will enter who takes part and the smartnode settings, then invite the "
                                    "others."),
                                 card));
         auto* row{new QHBoxLayout()};
-        m_start_button = new QPushButton(tr("Start a Shared Masternode"), card);
+        m_start_button = new QPushButton(tr("Start a Shared Smartnode"), card);
         connect(m_start_button, &QPushButton::clicked, this, &SharedMnCreateDialog::startSession);
         row->addWidget(m_start_button);
         row->addStretch();
@@ -520,8 +520,8 @@ QWidget* SharedMnCreateDialog::createSettingsPage()
 {
     auto* page{new QWidget(this)};
     auto* layout{makePageLayout(page)};
-    layout->addWidget(makePageTitle(tr("Masternode settings"), page));
-    layout->addWidget(makeHint(tr("These apply to the whole masternode and are the same for every participant."),
+    layout->addWidget(makePageTitle(tr("Smartnode settings"), page));
+    layout->addWidget(makeHint(tr("These apply to the whole smartnode and are the same for every participant."),
                                page));
 
     auto [body, body_layout]{MasternodeWidgetUtil::makeScrollBody(page, layout)};
@@ -529,8 +529,9 @@ QWidget* SharedMnCreateDialog::createSettingsPage()
     {
         auto* block{makeBlock(body_layout)};
         block->addWidget(makeBlockTitle(tr("Service addresses:"), body));
-        block->addWidget(makeHint(tr("Public addresses the masternode serves the Core P2P network on, separated by "
-                                     "commas or spaces. May be left empty and set later with a service update."),
+        block->addWidget(makeHint(tr("Required: the public IPv4 address and port of the smartnode server, separated by "
+                                     "commas or spaces if there are several. No other smartnode on the network may "
+                                     "use the same address."),
                                   body));
         m_service_edit = new QLineEdit(body);
         m_service_edit->setPlaceholderText(QStringLiteral("1.2.3.4:%1").arg(Params().GetDefaultPort()));
@@ -576,7 +577,7 @@ QWidget* SharedMnCreateDialog::createSettingsPage()
     {
         auto* block{makeBlock(body_layout)};
         block->addWidget(makeBlockTitle(tr("Voting address:"), body));
-        block->addWidget(makeHint(tr("Votes on governance proposals for the whole masternode (P2PKH)."), body));
+        block->addWidget(makeHint(tr("Votes on governance proposals for the whole smartnode (P2PKH)."), body));
         auto* row{new QHBoxLayout()};
         m_voting_edit = new QValidatedLineEdit(body);
         GUIUtil::setupAddressWidget(m_voting_edit, this);
@@ -636,7 +637,7 @@ QWidget* SharedMnCreateDialog::createExitTermsPage()
     {
         auto* box{MakeTitledCard(body, body_layout, tr("How leaving works"))};
         auto* card{box->parentWidget()};
-        box->addWidget(makeHint(tr("Anyone can dissolve the masternode on their own at any time, and everyone gets "
+        box->addWidget(makeHint(tr("Anyone can dissolve the smartnode on their own at any time, and everyone gets "
                                    "their principal back. During the early period, whoever dissolves alone pays the "
                                    "early-exit penalty out of their own share and it is split among the others. If "
                                    "everyone agrees, dissolving is free at any time."),
@@ -772,7 +773,7 @@ QWidget* SharedMnCreateDialog::createContributionPage()
                     tr("Controls your share: approves key changes and dissolutions. Kept in this wallet."),
                     m_owner_edit);
         address_row(tr("Refund address:"),
-                    tr("Receives your principal when the masternode is dissolved. Cannot be changed later."),
+                    tr("Receives your principal when the smartnode is dissolved. Cannot be changed later."),
                     m_refund_edit);
         address_row(tr("Reward address (optional):"),
                     tr("Receives your part of the rewards. Leave empty to use the refund address; you can change it "
@@ -844,7 +845,7 @@ QWidget* SharedMnCreateDialog::createSecretPage()
     connect(copy_secret, &QPushButton::clicked, this, [this] { GUIUtil::setClipboard(m_secret_edit->text()); });
     secret_row->addWidget(copy_secret);
     box->addLayout(secret_row);
-    box->addWidget(makeHint(tr("Add this line to dash.conf on the masternode server:"), card));
+    box->addWidget(makeHint(tr("Add this line to btgscore.conf on the smartnode server:"), card));
     auto* conf_row{new QHBoxLayout()};
     m_conf_line_edit = new QLineEdit(card);
     m_conf_line_edit->setReadOnly(true);
@@ -1074,7 +1075,7 @@ QWidget* SharedMnCreateDialog::createCompletePage()
 {
     auto* page{new QWidget(this)};
     auto* layout{makePageLayout(page)};
-    layout->addWidget(makePageTitle(tr("Shared masternode registered"), page));
+    layout->addWidget(makePageTitle(tr("Shared smartnode registered"), page));
 
     auto [body, body_layout]{MasternodeWidgetUtil::makeScrollBody(page, layout)};
 
@@ -1090,7 +1091,7 @@ QWidget* SharedMnCreateDialog::createCompletePage()
         copy_row->addWidget(copy_hash);
         copy_row->addStretch();
         box->addLayout(copy_row);
-        box->addWidget(makeHint(tr("It appears under Masternodes after one confirmation."), card));
+        box->addWidget(makeHint(tr("It appears under Smartnodes after one confirmation."), card));
     }
 
     {
@@ -1113,7 +1114,7 @@ QWidget* SharedMnCreateDialog::createCompletePage()
         box->addWidget(makeHint(tr("A signed dissolution you keep offline. It recovers your principal even if this "
                                    "wallet is lost. Create it after the first confirmation."),
                                 card));
-        box->addWidget(makeHint(tr("Create it from the Masternodes list (right-click the masternode) once the "
+        box->addWidget(makeHint(tr("Create it from the Smartnodes list (right-click the smartnode) once the "
                                    "registration is confirmed, and store it with your refund-address backup, "
                                    "separately from this wallet."),
                                 card));
@@ -1203,11 +1204,11 @@ QString SharedMnCreateDialog::pageTitle(Page page) const
     const bool coordinator{m_role == Role::Coordinator};
     switch (page) {
     case PageLanding:
-        return tr("Shared masternode");
+        return tr("Shared smartnode");
     case PageParticipants:
         return tr("Participants");
     case PageSettings:
-        return tr("Masternode settings");
+        return tr("Smartnode settings");
     case PageExitTerms:
         return tr("Exit terms");
     case PageContribution:
@@ -1380,10 +1381,26 @@ bool SharedMnCreateDialog::validatePage(Page page, QString& err)
         for (const QString& entry : MasternodeWidgetUtil::tokenizeEndpointList(m_service_edit->text())) {
             net_info.core_p2p.push_back(entry.toStdString());
         }
+        const QString service_example{QString("1.2.3.4:%1").arg(Params().GetDefaultPort())};
+        if (net_info.core_p2p.empty()) {
+            err = tr("Enter the public IPv4 address and port of the smartnode server, for example %1.")
+                      .arg(service_example);
+            break;
+        }
         const auto capabilities{m_node.evo().getProviderTxCapabilities()};
         if (const auto error{m_node.evo().validateProviderNetInfo(net_info, MnType::Regular, capabilities.version,
                                                                   capabilities.ipv4_optional, /*optional=*/true)}) {
             err = QString::fromStdString(error->message.translated);
+            // Translate the node's internal status wording into plain language
+            if (err.contains("(invalid input)") || err.contains("(invalid address)") || err.contains("(malformed)")) {
+                err = tr("This is not a valid IPv4 address and port, for example %1.").arg(service_example);
+            } else if (err.contains("(invalid port)")) {
+                err = tr("This port is not valid for this network. Use the format %1.").arg(service_example);
+            } else if (err.contains("(unroutable address)")) {
+                err = tr("This is not a public address. Private and reserved addresses cannot be used.");
+            } else if (err.contains("(duplicate)")) {
+                err = tr("The same address is entered more than once.");
+            }
         } else {
             err = ServiceInUseProblem(m_node, m_service_edit->text());
         }
@@ -1770,8 +1787,8 @@ void SharedMnCreateDialog::refreshAll()
 
 void SharedMnCreateDialog::refreshWindowTitle()
 {
-    setWindowTitle(m_role == Role::Undecided ? tr("Shared Masternode")
-                                             : tr("Shared Masternode — Session %1").arg(m_session.sessionCode()));
+    setWindowTitle(m_role == Role::Undecided ? tr("Shared Smartnode")
+                                             : tr("Shared Smartnode — Session %1").arg(m_session.sessionCode()));
 }
 
 void SharedMnCreateDialog::refreshShareTable()
@@ -1897,7 +1914,7 @@ void SharedMnCreateDialog::refreshExitTerms()
     if (blocks == 0 || penalty == 0) {
         m_early_preview->setText(tr("Anyone can leave at any time for free."));
     } else if (smallest_index >= 0) {
-        m_early_preview->setText(tr("If %1 leaves before block %2 of the masternode's life, %1 forfeits %3, split "
+        m_early_preview->setText(tr("If %1 leaves before block %2 of the smartnode's life, %1 forfeits %3, split "
                                     "among the others.")
                                      .arg(ShareName(m_session, smallest_index))
                                      .arg(blocks)
@@ -1909,7 +1926,7 @@ void SharedMnCreateDialog::refreshExitTerms()
     m_early_preview->setTextFormat(Qt::PlainText);
     m_early_warning->setVisible(blocks > 0 && penalty == 0);
     m_early_warning->setText(tr("With a zero penalty the early period has no effect: anyone can dissolve the "
-                                "masternode alone at any time and pay nothing."));
+                                "smartnode alone at any time and pay nothing."));
 }
 
 void SharedMnCreateDialog::refreshContributionPage()
@@ -2113,7 +2130,7 @@ void SharedMnCreateDialog::refreshWaitingPages()
         }
         QString next{tr("Next you will receive %1. Paste it here when it arrives.").arg(expected)};
         if (page == PageWaitBroadcast) {
-            next = tr("%1 broadcasts the registration. When the masternode appears in your list, create your standby "
+            next = tr("%1 broadcasts the registration. When the smartnode appears in your list, create your standby "
                       "dissolution.")
                        .arg(coordinator);
         }
@@ -2142,7 +2159,7 @@ void SharedMnCreateDialog::refreshCompletePage()
                                                             : m_session.operatorSecretHolder()));
 
     QStringList steps;
-    steps << tr("Configure the masternode server with the operator secret key and restart dashd there.");
+    steps << tr("Configure the smartnode server with the operator secret key and restart btgsd there.");
     steps << (m_session.terms().coreP2PAddrs.isEmpty()
                   ? tr("Send a service update once the node's addresses are ready; it stays inactive until then.")
                   : tr("Make sure every registered service address and port is reachable from the internet."));
@@ -2844,8 +2861,8 @@ bool SharedMnCreateDialog::confirmBroadcast()
         details.prepend(tr("Transaction ID: %1").arg(QString::fromStdString(CTransaction(*tx).GetHash().ToString())) +
                         QStringLiteral("\n\n"));
     }
-    SendConfirmationDialog confirmation{tr("Confirm shared masternode registration"),
-                                        tr("Broadcast this shared masternode registration?"),
+    SendConfirmationDialog confirmation{tr("Confirm shared smartnode registration"),
+                                        tr("Broadcast this shared smartnode registration?"),
                                         detail.join(QLatin1Char('\n')),
                                         details,
                                         SEND_CONFIRM_DELAY,
@@ -2962,11 +2979,11 @@ bool SharedMnCreateDialog::saveSession()
         // saved now would describe a masternode nobody can run
         goToPage(PageSecret);
         showError(tr("Save the operator secret key first. It is shown only here, and the session file does not "
-                     "carry it: without it the masternode could never be run."));
+                     "carry it: without it the smartnode could never be run."));
         return false;
     }
     const QString suggested{QStringLiteral("shared-mn-session-%1.json").arg(m_session.sessionCode())};
-    const QString filename{GUIUtil::getSaveFileName(this, tr("Save shared masternode message"), suggested,
+    const QString filename{GUIUtil::getSaveFileName(this, tr("Save shared smartnode message"), suggested,
                                                     tr("Session files (*.json)"), nullptr)};
     if (filename.isEmpty()) return false;
     QFile file(filename);
@@ -2993,11 +3010,11 @@ void SharedMnCreateDialog::onPaste()
 
 void SharedMnCreateDialog::onOpenFile()
 {
-    const QString filename{GUIUtil::getOpenFileName(this, tr("Open shared masternode message"), QString(),
+    const QString filename{GUIUtil::getOpenFileName(this, tr("Open shared smartnode message"), QString(),
                                                     tr("Session files (*.json)"), nullptr)};
     if (filename.isEmpty()) return;
     if (QFileInfo(filename).size() > MAX_ENVELOPE_FILE_BYTES) {
-        showError(tr("That message is too large to be a shared masternode message."));
+        showError(tr("That message is too large to be a shared smartnode message."));
         return;
     }
     QFile file(filename);
@@ -3018,7 +3035,7 @@ void SharedMnCreateDialog::handleImportedText(const QString& text)
     if (text.toUtf8().size() > MAX_ENVELOPE_FILE_BYTES) {
         // Parsing megabytes of JSON, or building a widget row per share in it,
         // happens on the GUI thread; a session message is a few kilobytes
-        showError(tr("That message is too large to be a shared masternode message."));
+        showError(tr("That message is too large to be a shared smartnode message."));
         return;
     }
     const SharedMnImport::Detected detected{SharedMnImport::Detect(text)};
@@ -3032,7 +3049,7 @@ void SharedMnCreateDialog::handleImportedText(const QString& text)
         if (isSignalConnected(QMetaMethod::fromSignal(&SharedMnCreateDialog::maintenanceMessage))) {
             Q_EMIT maintenanceMessage(text);
         } else {
-            showError(tr("This message is about an existing masternode. Open it from the Masternodes list."));
+            showError(tr("This message is about an existing smartnode. Open it from the Smartnodes list."));
         }
         return;
     case SharedMnImport::Kind::Unknown:
@@ -3949,7 +3966,7 @@ void SharedMnCreateDialog::reject()
         // key, so closing without the secret leaves a masternode nobody can run
         box.setWindowTitle(tr("Save the operator key first?"));
         box.setText(tr("The operator secret key exists nowhere but this window — the session file carries only its "
-                       "public half. Close now and the masternode could never be run."));
+                       "public half. Close now and the smartnode could never be run."));
     } else {
         box.setWindowTitle(tr("Keep this session for later?"));
         box.setText(tr("Saving keeps your coins reserved so you can carry on where you left off. Discarding releases "

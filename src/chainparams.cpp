@@ -266,7 +266,7 @@ public:
         nDefaultPlatformHTTPPort = 443;
         nPruneAfterHeight = 100000;
         m_min_blocks_to_keep = 2304; // four days
-        m_assumed_blockchain_size = 62;
+        m_assumed_blockchain_size = 1;
         m_assumed_chain_state_size = 1;
 
         genesis = CreateGenesisBlock(1794355200, 66586, 0x1e0ffff0, 1, 50 * COIN);
@@ -442,7 +442,7 @@ public:
         nDefaultPlatformHTTPPort = 22001;
         nPruneAfterHeight = 3000;
         m_min_blocks_to_keep = 2304; // four days
-        m_assumed_blockchain_size = 10;
+        m_assumed_blockchain_size = 1;
         m_assumed_chain_state_size = 1;
 
         genesis = CreateTestnetGenesisBlock(1794355201UL, 4398774UL, 0x1e0ffff0, 1, 50 * COIN);

@@ -355,7 +355,7 @@ UpdateShareDialog::UpdateShareDialog(interfaces::Node& node, WalletModel* wallet
     connect(m_fee_source, qOverload<int>(&QComboBox::currentIndexChanged), this, &UpdateShareDialog::validate);
 
     setupUi(tr("Change Reward Address"),
-            tr("Change where your share of this masternode's rewards is paid. Only your share is affected; the "
+            tr("Change where your share of this smartnode's rewards is paid. Only your share is affected; the "
                "share's amount and refund address never change."),
             form, tr("Send Update"));
     // Shares, addresses and balances are long, and a wrapped hint must not be
@@ -378,7 +378,7 @@ QString UpdateShareDialog::RewardAddressProblem(const QString& address, const QS
         return QCoreApplication::translate("UpdateShareDialog", "Enter the address that should receive the rewards.");
     }
     if (!IsValidDestination(DecodeDestination(trimmed.toStdString()))) {
-        return QCoreApplication::translate("UpdateShareDialog", "Enter a valid Dash address.");
+        return QCoreApplication::translate("UpdateShareDialog", "Enter a valid BTGS address.");
     }
     if (trimmed == voting_address) {
         return QCoreApplication::translate("UpdateShareDialog",
@@ -405,7 +405,7 @@ void UpdateShareDialog::validate()
     m_reward_edit->setValid(problem.isEmpty() || m_reward_edit->text().trimmed().isEmpty());
 
     if (!m_is_shared) {
-        showError(tr("This masternode is not shared and has no share table."));
+        showError(tr("This smartnode is not shared and has no share table."));
     } else if (!m_v24_active) {
         showError(SharedMnV24InactiveMessage());
     } else if (m_share_combo->count() == 0) {
@@ -668,14 +668,14 @@ bool SharedSigCollector::importEnvelope(const QString& text, QString& error)
 {
     UniValue json;
     if (!json.read(text.trimmed().toStdString())) {
-        error = tr("This is not a shared masternode message.");
+        error = tr("This is not a shared smartnode message.");
         return false;
     }
     try {
         return importEnvelopeChecked(json, error);
     } catch (const std::exception&) {
         // UniValue accessors throw on unexpectedly typed fields
-        error = tr("This is not a shared masternode message.");
+        error = tr("This is not a shared smartnode message.");
         return false;
     }
 }
@@ -690,7 +690,7 @@ bool SharedSigCollector::importEnvelopeChecked(const UniValue& json, QString& er
         return absorbed > 0 || sig_error.isEmpty();
     }
     if (!json.isObject() || !json.exists("type") || json.find_value("type").get_str() != SIG_ENVELOPE_TYPE) {
-        error = tr("This is not a shared masternode message.");
+        error = tr("This is not a shared smartnode message.");
         return false;
     }
     QString fingerprint_warning;
@@ -704,12 +704,12 @@ bool SharedSigCollector::importEnvelopeChecked(const UniValue& json, QString& er
     }
     const std::string expected_kind{m_kind == Kind::Dissolve ? "dissolve" : "registrar"};
     if (!json.exists("kind") || json.find_value("kind").get_str() != expected_kind) {
-        error = tr("This message is about a different kind of change to this masternode.");
+        error = tr("This message is about a different kind of change to this smartnode.");
         return false;
     }
     if (!json.exists("proTxHash") ||
         QString::fromStdString(json.find_value("proTxHash").get_str()).compare(m_protx_hash, Qt::CaseInsensitive) != 0) {
-        error = tr("This message is about a different masternode.");
+        error = tr("This message is about a different smartnode.");
         return false;
     }
     if (json.exists("tx") && !json.find_value("tx").get_str().empty()) {
@@ -740,7 +740,7 @@ void SharedSigCollector::copyEnvelope()
 void SharedSigCollector::saveEnvelope()
 {
     const QString filename{GUIUtil::getSaveFileName(this, tr("Save Request"), QString{},
-                                                    tr("Shared masternode message (*.json)"), nullptr)};
+                                                    tr("Shared smartnode message (*.json)"), nullptr)};
     if (filename.isEmpty()) return;
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
@@ -761,7 +761,7 @@ void SharedSigCollector::pasteEnvelope()
     // Same cap as loadEnvelope(): a request is a few kilobytes and parsing
     // happens on the GUI thread
     if (text.toUtf8().size() > MAX_ENVELOPE_FILE_BYTES) {
-        const QString error{tr("That message is too large to be a shared masternode message.")};
+        const QString error{tr("That message is too large to be a shared smartnode message.")};
         showStatus(error, /*error=*/true);
         Q_EMIT imported(/*accepted=*/false, error);
         return;
@@ -791,7 +791,7 @@ void SharedSigCollector::importAndReport(const QString& text)
 void SharedSigCollector::loadEnvelope()
 {
     const QString filename{GUIUtil::getOpenFileName(this, tr("Open Request"), QString{},
-                                                    tr("Shared masternode message (*.json);;All files (*)"), nullptr)};
+                                                    tr("Shared smartnode message (*.json);;All files (*)"), nullptr)};
     if (filename.isEmpty()) return;
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly) || file.size() > MAX_ENVELOPE_FILE_BYTES) {
@@ -1109,7 +1109,7 @@ DissolveDialog::DissolveDialog(interfaces::Node& node, WalletModel* wallet_model
     SharedMnDialog(node, wallet_model, entry, parent),
     m_current_height{current_height}
 {
-    setWindowTitle(tr("Dissolve Shared Masternode"));
+    setWindowTitle(tr("Dissolve Shared Smartnode"));
 
     auto* layout = new QVBoxLayout(this);
 
@@ -1118,7 +1118,7 @@ DissolveDialog::DissolveDialog(interfaces::Node& node, WalletModel* wallet_model
     // A ProDisTx spending the collateral in the block that created it would be
     // rejected; every flow below builds against the confirmed masternode list
     if (m_current_height <= m_registered_height) {
-        auto* wait_label = new QLabel(tr("This masternode was registered in block %1 and the chain is still at "
+        auto* wait_label = new QLabel(tr("This smartnode was registered in block %1 and the chain is still at "
                                          "block %2. Wait for one confirmation, then reopen this window.")
                                           .arg(m_registered_height)
                                           .arg(m_current_height),
@@ -1161,7 +1161,7 @@ QWidget* DissolveDialog::buildNowTab()
     layout->setSpacing(MasternodeWidgetUtil::ROW_SPACING);
 
     layout->addWidget(MasternodeWidgetUtil::makeHint(
-        tr("Ends the masternode on your own. Everyone gets their principal back at their refund address."), tab));
+        tr("Ends the smartnode on your own. Everyone gets their principal back at their refund address."), tab));
 
     auto* form = new QFormLayout();
     m_now_actor = makeMyShareCombo(tab);
@@ -1329,8 +1329,8 @@ void DissolveDialog::submitNow()
     if (early && !m_now_accept->isChecked()) return;
 
     if (QMessageBox::question(this, windowTitle(),
-                              tr("Dissolve this shared masternode now? Every participant's principal returns to "
-                                 "their refund address and the masternode stops earning. This cannot be undone.")) !=
+                              tr("Dissolve this shared smartnode now? Every participant's principal returns to "
+                                 "their refund address and the smartnode stops earning. This cannot be undone.")) !=
         QMessageBox::Yes) {
         return;
     }
@@ -1730,13 +1730,13 @@ QString DissolveDialog::standbyFileText() const
     const int blocks_left{std::max(penalty_free_height - m_current_height - 1, 0)};
 
     QStringList lines;
-    lines << tr("Dash shared masternode — standby dissolution");
-    lines << tr("Masternode: %1").arg(m_protx_hash);
+    lines << tr("BTGS shared smartnode — standby dissolution");
+    lines << tr("Smartnode: %1").arg(m_protx_hash);
     lines << shareLabel(m_sb_share_index);
     lines << tr("Created: %1").arg(QDate::currentDate().toString(Qt::ISODate));
     lines << QString{};
     lines << tr("Each block below is a complete signed transaction. Broadcast one of them with "
-                "\"sendrawtransaction\" only when you want to end the masternode and get your principal back. "
+                "\"sendrawtransaction\" only when you want to end the smartnode and get your principal back. "
                 "They never expire. Store this file with your refund-address backup, separately from the wallet.");
     lines << QString{};
     lines << (blocks_left > 0 ? tr("FULL PRINCIPAL — valid from block %1 (~%2)")
@@ -1827,7 +1827,7 @@ RotateSharedKeysDialog::RotateSharedKeysDialog(interfaces::Node& node, WalletMod
     operator_layout->addWidget(m_operator_copy);
     form->addRow(tr("New operator key:"), operator_row);
 
-    m_pose_warning = new QLabel(tr("The masternode is banned the moment the operator key changes, until the new "
+    m_pose_warning = new QLabel(tr("The smartnode is banned the moment the operator key changes, until the new "
                                    "operator sends a service update."),
                                 keys_card);
     m_pose_warning->setWordWrap(true);

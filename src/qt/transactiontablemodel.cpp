@@ -438,9 +438,9 @@ QString TransactionTableModel::formatTxType(const TransactionRecord *wtx) const
     case TransactionRecord::DustReceive:
         return tr("Dust Receive");
     case TransactionRecord::MasternodeRegistration:
-        return tr("Masternode Registration");
+        return tr("Smartnode Registration");
     case TransactionRecord::MasternodeUpdate:
-        return tr("Masternode Update");
+        return tr("Smartnode Update");
     case TransactionRecord::AssetLock:
         return tr("Asset Lock");
 
@@ -635,15 +635,15 @@ QString TransactionTableModel::formatTooltip(const TransactionRecord *rec) const
     }
     switch (rec->type) {
     case TransactionRecord::MasternodeRegistration:
-        tooltip += QString("\n") + tr("Registers a masternode. The amount is this wallet's net balance change and is "
+        tooltip += QString("\n") + tr("Registers a smartnode. The amount is this wallet's net balance change and is "
                                       "normally only the network fee when the collateral remains in this wallet.");
         break;
     case TransactionRecord::MasternodeUpdate:
-        tooltip += QString("\n") + tr("Updates an existing masternode registration. The amount is this wallet's net "
+        tooltip += QString("\n") + tr("Updates an existing smartnode registration. The amount is this wallet's net "
                                       "balance change, normally only the network fee.");
         break;
     case TransactionRecord::AssetLock:
-        tooltip += QString("\n") + tr("Locks funds for use on Dash Platform. The amount is this wallet's net balance "
+        tooltip += QString("\n") + tr("Locks funds in the credit pool. The amount is this wallet's net balance "
                                       "change, including the network fee.");
         break;
     default:

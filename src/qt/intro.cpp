@@ -22,6 +22,8 @@
 #include <validation.h>
 
 #include <QFileDialog>
+#include <QHBoxLayout>
+#include <QLabel>
 #include <QSettings>
 #include <QMessageBox>
 
@@ -129,14 +131,28 @@ Intro::Intro(QWidget *parent, int64_t blockchain_size_gb, int64_t chain_state_si
     m_prune_target_gb{GetPruneTargetGB()}
 {
     ui->setupUi(this);
+
+    // BTGS welcome header: big coin next to a big "Welcome" line, and room for the free-space / error lines
+    {
+        QLabel* logo = new QLabel(this);
+        logo->setPixmap(QIcon(":icons/dash").pixmap(110, 110));
+        logo->setFixedSize(120, 120);
+        QHBoxLayout* header = new QHBoxLayout();
+        ui->verticalLayout->removeWidget(ui->welcomeLabel);
+        header->addWidget(logo);
+        header->addWidget(ui->welcomeLabel, 1);
+        ui->verticalLayout->insertLayout(0, header);
+        ui->welcomeLabel->setStyleSheet("QLabel { font-size: 30px; font-weight: bold; font-style: normal; }");
+        ui->freeSpace->setMinimumHeight(34);
+        ui->errorMessage->setMinimumHeight(64);
+    }
     ui->welcomeLabel->setText(ui->welcomeLabel->text().arg(PACKAGE_NAME));
     ui->storageLabel->setText(ui->storageLabel->text().arg(PACKAGE_NAME));
 
     ui->lblExplanation1->setText(ui->lblExplanation1->text()
         .arg(PACKAGE_NAME)
         .arg(m_blockchain_size_gb)
-        .arg(2014)
-        .arg("Dash")
+        .arg("BTGS")
     );
     ui->lblExplanation2->setText(ui->lblExplanation2->text().arg(PACKAGE_NAME));
 
@@ -235,6 +251,8 @@ bool Intro::showIfNeeded(bool& did_show_intro, int64_t& prune_MiB)
         GUIUtil::loadStyleSheet(true);
         intro.setDataDirectory(dataDirDefaultCurrent);
         intro.setWindowIcon(QIcon(":icons/dash"));
+        intro.setMinimumSize(900, 700);
+        intro.adjustSize();
         did_show_intro = true;
 
         while(true)
@@ -396,7 +414,7 @@ void Intro::UpdatePruneLabels(bool prune_checked)
         //: Explanatory text on the capability of the current prune target.
         tr("(sufficient to restore backups %n day(s) old)", "", expected_backup_days));
     ui->sizeWarningLabel->setText(
-        tr("%1 will download and store a copy of the Dash block chain.").arg(PACKAGE_NAME) + " " +
+        tr("%1 will download and store a copy of the BTGS block chain.").arg(PACKAGE_NAME) + " " +
         storageRequiresMsg.arg(m_required_space_gb) + " " +
         tr("The wallet will also be stored in this directory.")
     );

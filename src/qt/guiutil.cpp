@@ -96,7 +96,7 @@ static QString stylesheetDirectory = defaultStylesheetDirectory;
 // The name of the traditional theme
 static const QString traditionalTheme = "Traditional";
 // The theme to set by default if settings are missing or incorrect
-static const QString defaultTheme = "Light";
+static const QString defaultTheme = "Dark";
 // The prefix a theme name should have if we want to apply dark colors and styles to it
 static const QString darkThemePrefix = "Dark";
 // The theme to set as a base one for non-traditional themes
@@ -117,7 +117,7 @@ static std::set<QWidget*> setRectsDisabled;
 static const std::map<ThemedColor, QColor> themedColors = {
     { ThemedColor::DEFAULT, QColor(85, 85, 85) },
     { ThemedColor::UNCONFIRMED, QColor(128, 128, 128) },
-    { ThemedColor::BLUE, QColor(0, 141, 228) },
+    { ThemedColor::BLUE, QColor(212, 160, 23) },
     { ThemedColor::ORANGE, QColor(199, 147, 4) },
     { ThemedColor::RED, QColor(168, 72, 50) },
     { ThemedColor::GREEN, QColor(94, 140, 65) },
@@ -134,7 +134,7 @@ static const std::map<ThemedColor, QColor> themedColors = {
 static const std::map<ThemedColor, QColor> themedDarkColors = {
     { ThemedColor::DEFAULT, QColor(199, 199, 199) },
     { ThemedColor::UNCONFIRMED, QColor(170, 170, 170) },
-    { ThemedColor::BLUE, QColor(0, 89, 154) },
+    { ThemedColor::BLUE, QColor(184, 134, 11) },
     { ThemedColor::ORANGE, QColor(199, 147, 4) },
     { ThemedColor::RED, QColor(168, 72, 50) },
     { ThemedColor::GREEN, QColor(94, 140, 65) },
@@ -153,17 +153,17 @@ static const std::map<ThemedStyle, QString> themedStyles = {
     { ThemedStyle::TS_ERROR, "color:#a84832;" },
     { ThemedStyle::TS_WARNING, "color:#999900;" },
     { ThemedStyle::TS_SUCCESS, "color:#5e8c41;" },
-    { ThemedStyle::TS_COMMAND, "color:#008de4;" },
+    { ThemedStyle::TS_COMMAND, "color:#d4a017;" },
     { ThemedStyle::TS_PRIMARY, "color:#333;" },
     { ThemedStyle::TS_SECONDARY, "color:#444;" },
 };
 
 static const std::map<ThemedStyle, QString> themedDarkStyles = {
     { ThemedStyle::TS_INVALID, "border: 3px solid #a84832;" },
-    { ThemedStyle::TS_ERROR, "color:#a84832;" },
+    { ThemedStyle::TS_ERROR, "color:#ff8266;" },
     { ThemedStyle::TS_WARNING, "color:#999900;" },
     { ThemedStyle::TS_SUCCESS, "color:#5e8c41;" },
-    { ThemedStyle::TS_COMMAND, "color:#00599a;" },
+    { ThemedStyle::TS_COMMAND, "color:#b8860b;" },
     { ThemedStyle::TS_PRIMARY, "color:#c7c7c7;" },
     { ThemedStyle::TS_SECONDARY, "color:#aaa;" },
 };
@@ -267,7 +267,7 @@ void setupAddressWidget(QValidatedLineEdit *widget, QWidget *parent, bool fAllow
 
     // We don't want translators to use own addresses in translations
     // and this is the only place, where this address is supplied.
-    widget->setPlaceholderText(QObject::tr("Enter a Dash address (e.g. %1)").arg(
+    widget->setPlaceholderText(QObject::tr("Enter a BTGS address (e.g. %1)").arg(
         QString::fromStdString(DummyAddress(Params()))));
     widget->setValidator(new BitcoinAddressEntryValidator(parent, fAllowURI));
     widget->setCheckValidator(new BitcoinAddressCheckValidator(parent));
@@ -281,7 +281,7 @@ void AddButtonShortcut(QAbstractButton* button, const QKeySequence& shortcut)
 bool parseBitcoinURI(const QUrl &uri, SendCoinsRecipient *out)
 {
     // return if URI is not valid or is no dash: URI
-    if(!uri.isValid() || uri.scheme() != QString("dash"))
+    if(!uri.isValid() || uri.scheme() != QString("btgs"))
         return false;
 
     SendCoinsRecipient rv;
@@ -354,7 +354,7 @@ bool validateBitcoinURI(const QString& uri)
 
 QString formatBitcoinURI(const SendCoinsRecipient &info)
 {
-    QString ret = QString("dash:%1").arg(info.address);
+    QString ret = QString("btgs:%1").arg(info.address);
     int paramCount = 0;
 
     if (info.amount)
@@ -678,10 +678,10 @@ fs::path static StartupShortcutPath()
 {
     std::string chain = gArgs.GetChainName();
     if (chain == CBaseChainParams::MAIN)
-        return GetSpecialFolderPath(CSIDL_STARTUP) / "Dash Core.lnk";
+        return GetSpecialFolderPath(CSIDL_STARTUP) / "BTGS Core.lnk";
     if (chain == CBaseChainParams::TESTNET) // Remove this special case when CBaseChainParams::TESTNET = "testnet4"
-        return GetSpecialFolderPath(CSIDL_STARTUP) / "Dash Core (testnet).lnk";
-    return GetSpecialFolderPath(CSIDL_STARTUP) / fs::u8path(strprintf("Dash Core (%s).lnk", chain));
+        return GetSpecialFolderPath(CSIDL_STARTUP) / "BTGS Core (testnet).lnk";
+    return GetSpecialFolderPath(CSIDL_STARTUP) / fs::u8path(strprintf("BTGS Core (%s).lnk", chain));
 }
 
 bool GetStartOnSystemStartup()
@@ -761,8 +761,8 @@ fs::path static GetAutostartFilePath()
 {
     std::string chain = gArgs.GetChainName();
     if (chain == CBaseChainParams::MAIN)
-        return GetAutostartDir() / "dashcore.desktop";
-    return GetAutostartDir() / fs::u8path(strprintf("dashcore-%s.desktop", chain));
+        return GetAutostartDir() / "btgscore.desktop";
+    return GetAutostartDir() / fs::u8path(strprintf("btgscore-%s.desktop", chain));
 }
 
 bool GetStartOnSystemStartup()
@@ -807,9 +807,9 @@ bool SetStartOnSystemStartup(bool fAutoStart)
         optionFile << "[Desktop Entry]\n";
         optionFile << "Type=Application\n";
         if (chain == CBaseChainParams::MAIN)
-            optionFile << "Name=Dash Core\n";
+            optionFile << "Name=BTGS Core\n";
         else
-            optionFile << strprintf("Name=Dash Core (%s)\n", chain);
+            optionFile << strprintf("Name=BTGS Core (%s)\n", chain);
         optionFile << "Exec=" << pszExePath << strprintf(" -min -chain=%s\n", chain);
         optionFile << "Terminal=false\n";
         optionFile << "Hidden=false\n";
@@ -862,7 +862,7 @@ QString getDefaultTheme()
 
 bool isValidTheme(const QString& strTheme)
 {
-    return strTheme == defaultTheme || strTheme == darkThemePrefix || strTheme == traditionalTheme;
+    return strTheme == defaultTheme || strTheme == "Light" || strTheme == darkThemePrefix || strTheme == traditionalTheme;
 }
 
 void loadStyleSheet(bool fForceUpdate)

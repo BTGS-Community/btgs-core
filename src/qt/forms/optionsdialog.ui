@@ -541,7 +541,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="lblCoinJoinSessionsText">
            <property name="toolTip">
-            <string>Use this many separate masternodes in parallel to mix funds.&lt;br/&gt;Note: You must use this feature carefully.&lt;br/&gt;Make sure you always have recent wallet (auto)backup in a safe place!</string>
+            <string>Use this many separate smartnodes in parallel to mix funds.&lt;br/&gt;Note: You must use this feature carefully.&lt;br/&gt;Make sure you always have recent wallet (auto)backup in a safe place!</string>
            </property>
            <property name="text">
             <string>Parallel sessions</string>
@@ -564,7 +564,7 @@
          <item row="1" column="0">
           <widget class="QLabel" name="lblCoinJoinRoundsText">
            <property name="toolTip">
-            <string>This setting determines the amount of individual masternodes that an input will be mixed through.&lt;br/&gt;More rounds of mixing gives a higher degree of privacy, but also costs more in fees.</string>
+            <string>This setting determines the amount of individual smartnodes that an input will be mixed through.&lt;br/&gt;More rounds of mixing gives a higher degree of privacy, but also costs more in fees.</string>
            </property>
            <property name="text">
             <string>Mixing rounds</string>
@@ -718,7 +718,7 @@
        <item>
         <widget class="QCheckBox" name="mapPortUpnp">
          <property name="toolTip">
-          <string>Automatically open the Dash Core client port on the router. This only works when your router supports UPnP and it is enabled.</string>
+          <string>Automatically open the BTGS Core client port on the router. This only works when your router supports UPnP and it is enabled.</string>
          </property>
          <property name="text">
           <string>Map port using &amp;UPnP</string>
@@ -728,7 +728,7 @@
        <item>
         <widget class="QCheckBox" name="mapPortNatpmp">
          <property name="toolTip">
-          <string>Automatically open the Dash Core client port on the router. This only works when your router supports NAT-PMP and it is enabled. The external port could be random.</string>
+          <string>Automatically open the BTGS Core client port on the router. This only works when your router supports NAT-PMP and it is enabled. The external port could be random.</string>
          </property>
          <property name="text">
           <string>Map port using NA&amp;T-PMP</string>
@@ -748,7 +748,7 @@
        <item>
         <widget class="QCheckBox" name="connectSocks">
          <property name="toolTip">
-          <string>Connect to the Dash network through a SOCKS5 proxy.</string>
+          <string>Connect to the BTGS network through a SOCKS5 proxy.</string>
          </property>
          <property name="text">
           <string>&amp;Connect through SOCKS5 proxy (default proxy):</string>
@@ -905,7 +905,7 @@
        <item>
         <widget class="QCheckBox" name="connectSocksTor">
          <property name="toolTip">
-          <string>Connect to the Dash network through a separate SOCKS5 proxy for Tor onion services.</string>
+          <string>Connect to the BTGS network through a separate SOCKS5 proxy for Tor onion services.</string>
          </property>
          <property name="text">
           <string>Use separate SOCKS&amp;5 proxy to reach peers via Tor onion services:</string>
@@ -1049,8 +1049,7 @@
           <string notr="true"/>
          </property>
          <property name="text">
-          <string>Language missing or translation incomplete? Help contributing translations here:
-https://explore.transifex.com/dash/dash/</string>
+          <string>Language missing or translation incomplete? Tell us on the BTGS Discord.</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -1073,10 +1072,10 @@ https://explore.transifex.com/dash/dash/</string>
        <item>
         <widget class="QCheckBox" name="showMasternodesTab">
          <property name="toolTip">
-          <string>Show additional tab listing all your masternodes in first sub-tab&lt;br/&gt;and all masternodes on the network in second sub-tab.</string>
+          <string>Show additional tab listing all your smartnodes in first sub-tab&lt;br/&gt;and all smartnodes on the network in second sub-tab.</string>
          </property>
          <property name="text">
-          <string>Show Masternodes Tab</string>
+          <string>Show Smartnodes Tab</string>
          </property>
         </widget>
        </item>

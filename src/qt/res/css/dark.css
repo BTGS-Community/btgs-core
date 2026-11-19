@@ -21,8 +21,8 @@ Loaded in GUIUtil::loadStyleSheet() in guitil.cpp.
 
 #00000000
 #333
-#00599a
-#27507a
+#b8860b
+#7a5c10
 #2d2d2e
 #323233
 #363637
@@ -84,7 +84,7 @@ QComboBox,
 QPlainTextEdit,
 QLineEdit {
     background-color: #2d2d2e;
-    border-color: #00599a;
+    border-color: #b8860b;
     color: #c7c7c7;
 }
 
@@ -94,7 +94,7 @@ QComboBox:hover:!focus,
 QPlainTextEdit:hover:!focus,
 QLineEdit:hover:!focus {
     background-color: #2d2d2e;
-    border-color: #27507a;
+    border-color: #7a5c10;
 }
 
 
@@ -105,7 +105,7 @@ QComboBox:focus,
 QPlainTextEdit:focus,
 QLineEdit:focus {
     background-color: #39393b;
-    border-color: #27507a;
+    border-color: #7a5c10;
 }
 
 BitcoinAmountField:disabled,
@@ -285,12 +285,12 @@ QHeaderView
 ******************************************************/
 
 QHeaderView::section { /* Table Header Sections */
-    background-color: #00599a;
+    background-color: #b8860b;
     color: #c7c7c7;
 }
 
 QHeaderView::section:hover { /* Table Header Sections */
-    background-color: #27507a;
+    background-color: #7a5c10;
     color: #c7c7c7;
 }
 
@@ -354,7 +354,7 @@ QProgressBar {
 }
 
 QProgressBar::chunk {
-    background-color: #00599a;
+    background-color: #b8860b;
 }
 
 /******************************************************
@@ -371,17 +371,17 @@ QPushButton
 ******************************************************/
 
 QPushButton {
-    background-color: #00599a;
+    background-color: #b8860b;
     color: #c7c7c7;
 }
 
 QPushButton:hover {
-    background-color: #27507a;
+    background-color: #7a5c10;
 }
 
 QPushButton#btnInfoView:hover,
 QPushButton#btnInfoView:pressed {
-    background-color: #00599a;
+    background-color: #b8860b;
 }
 
 QPushButton:focus {
@@ -390,13 +390,13 @@ QPushButton:focus {
 }
 
 QPushButton:pressed {
-    background-color: #00599a;
+    background-color: #b8860b;
 }
 
 QPushButton:disabled {
     background-color: #39393b;
-    border-color: #585858;
-    color: #585858;
+    border-color: #7a7a7c;
+    color: #9a9a9c;
 }
 
 /******************************************************
@@ -495,7 +495,7 @@ QPushButton - Special case, a selected secondary button
 
 QPushButton[mnSecondary="true"]:checked,
 QPushButton[mnSecondary="true"]:checked:hover {
-    background-color: #00599a;
+    background-color: #b8860b;
     color: #c7c7c7;
 }
 
@@ -519,7 +519,7 @@ QPushButton - Special case, tabbar replacement buttons
 /* Sign/Verify dialog buttons */
 #btnSignMessage,
 #btnVerifyMessage {
-    border-color: #00599a;
+    border-color: #b8860b;
     color: #818181;
 }
 
@@ -559,7 +559,7 @@ QPushButton - Special case, tabbar replacement buttons
 /* Sign/Verify dialog buttons */
 #btnSignMessage:hover:!checked,
 #btnVerifyMessage:hover:!checked {
-    border-color: #00599a;
+    border-color: #b8860b;
     color: #c7c7c7;
 }
 
@@ -594,7 +594,7 @@ QTabWidget#tabWidgetInfo::pane {
 
 QTabWidget#tabWidgetInfo QTabBar::tab {
     background-color: transparent;
-    border: 1px solid #00599a;
+    border: 1px solid #b8860b;
     border-right: none;
     padding: 3px 12px;
     color: #818181;
@@ -606,19 +606,19 @@ QTabWidget#tabWidgetInfo QTabBar::tab:first {
 }
 
 QTabWidget#tabWidgetInfo QTabBar::tab:last {
-    border-right: 1px solid #00599a;
+    border-right: 1px solid #b8860b;
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
 }
 
 QTabWidget#tabWidgetInfo QTabBar::tab:only-one {
-    border-right: 1px solid #00599a;
+    border-right: 1px solid #b8860b;
     border-radius: 4px;
 }
 
 QTabWidget#tabWidgetInfo QTabBar::tab:selected {
-    background-color: #00599a;
-    border-color: #00599a;
+    background-color: #b8860b;
+    border-color: #b8860b;
     color: #c7c7c7;
 }
 
@@ -672,10 +672,10 @@ QSlider
 ******************************************************/
 
 QSlider::handle:horizontal {
-	background-color: #00599a;
+	background-color: #b8860b;
 }
 QSlider::handle:horizontal:hover {
-	background-color: #27507a;
+	background-color: #7a5c10;
 }
 QSlider::sub-page:horizontal {
 	background-color: #c7c7c7;
@@ -743,7 +743,7 @@ QToolBar / QToolButton
 ******************************************************/
 
 QToolBar {
-    background-color: #00599a;
+    background-color: #b8860b;
 }
 
 QToolBar > QToolButton {
@@ -752,7 +752,7 @@ QToolBar > QToolButton {
 }
 
 QToolBar > QToolButton:hover:!checked {
-    background-color: #27507a;
+    background-color: #7a5c10;
     color: #c7c7c7;
 }
 
@@ -762,7 +762,7 @@ QToolBar > QToolButton:checked {
 }
 
 QToolBar > QToolButton:disabled {
-    color: #4a4a4b;
+    color: #4a3506;
 }
 
 /******************************************************
