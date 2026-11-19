@@ -222,6 +222,8 @@ public:
         consensus.fPowNoRetargeting = false;
         consensus.nPowKGWHeight = 1; // BTGS
         consensus.nPowDGWHeight = 1; // BTGS
+        consensus.nPowASERTHeight = 2; // BTGS: ASERT from block 2, anchor = block 1
+        consensus.nPowASERTHalfLife = 2400; // BTGS: half-life 40 minutes
         consensus.nRuleChangeActivationThreshold = 1815; // 90% of 2016
         consensus.nMinerConfirmationWindow = 2016; // nPowTargetTimespan / nPowTargetSpacing
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
@@ -348,6 +350,15 @@ public:
  */
 class CTestNetParams : public CChainParams {
 public:
+    /** Test-only: switch ASERT on for an isolated scratch chain. Never set on the shared testnet. */
+    void ApplyTestAsert(const ArgsManager& args)
+    {
+        const int height = args.GetIntArg("-testasertheight", 0);
+        if (height <= 0) return;
+        consensus.nPowASERTHeight = height;
+        consensus.nPowASERTHalfLife = args.GetIntArg("-testasertlife", 2400);
+        LogPrintf("Setting testasertheight=%d, testasertlife=%d\n", consensus.nPowASERTHeight, consensus.nPowASERTHalfLife);
+    }
     CTestNetParams() {
         strNetworkID = CBaseChainParams::TESTNET;
         consensus.nSubsidyHalvingInterval = 157680; // BTGS: reward cut by 1/14 every ~year (157,680 x 200 s)
@@ -1377,7 +1388,9 @@ std::unique_ptr<const CChainParams> CreateChainParams(const ArgsManager& args, c
     if (chain == CBaseChainParams::MAIN) {
         return std::unique_ptr<CChainParams>(new CMainParams());
     } else if (chain == CBaseChainParams::TESTNET) {
-        return std::unique_ptr<CChainParams>(new CTestNetParams());
+        auto testnet = std::make_unique<CTestNetParams>();
+        testnet->ApplyTestAsert(args);
+        return testnet;
     } else if (chain == CBaseChainParams::DEVNET) {
         return std::unique_ptr<CChainParams>(new CDevNetParams(args));
     } else if (chain == CBaseChainParams::REGTEST) {
@@ -1411,6 +1424,8 @@ void SetupChainParamsOptions(ArgsManager& argsman)
     argsman.AddArg("-llmqtestplatformparams=<size>:<threshold>", "Override the default LLMQ size for the LLMQ_TEST_PLATFORM quorum (default: 3:2, regtest-only)", ArgsManager::ALLOW_ANY | ArgsManager::DEBUG_ONLY, OptionsCategory::CHAINPARAMS);
     argsman.AddArg("-minimumdifficultyblocks=<n>", "The number of blocks that can be mined with the minimum difficulty at the start of a chain (default: 0, devnet-only)", ArgsManager::ALLOW_ANY, OptionsCategory::CHAINPARAMS);
     argsman.AddArg("-powtargetspacing=<n>", "Override the default PowTargetSpacing value in seconds (default: 2.5 minutes, devnet-only)", ArgsManager::ALLOW_ANY | ArgsManager::DISALLOW_NEGATION, OptionsCategory::CHAINPARAMS);
+    argsman.AddArg("-testasertheight=<n>", "Use ASERT difficulty from this height, anchor = block n-1 (testnet scratch chains only, never on the shared testnet; default: off)", ArgsManager::ALLOW_ANY | ArgsManager::DEBUG_ONLY, OptionsCategory::CHAINPARAMS);
+    argsman.AddArg("-testasertlife=<seconds>", "ASERT half-life in seconds (default: 2400, used with -testasertheight)", ArgsManager::ALLOW_ANY | ArgsManager::DEBUG_ONLY, OptionsCategory::CHAINPARAMS);
     argsman.AddArg("-testactivationheight=name@height.", "Set the activation height of 'name' (bip147, bip34, dersig, cltv, csv, brr, dip0001, dip0008, dip0024, v19, v20, mn_rr, ipv4_optional). (regtest-only)", ArgsManager::ALLOW_ANY | ArgsManager::DEBUG_ONLY, OptionsCategory::CHAINPARAMS);
     argsman.AddArg("-vbparams=<deployment>:<start>:<end>(:min_activation_height(:<window>:<threshold/thresholdstart>(:<thresholdmin>:<falloffcoeff>:<mnactivation>)))",
                  "Use given start/end times and min_activation_height for specified version bits deployment (regtest-only). "

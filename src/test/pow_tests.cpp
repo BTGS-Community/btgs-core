@@ -16,6 +16,9 @@ BOOST_FIXTURE_TEST_SUITE(pow_tests, BasicTestingSetup)
 BOOST_AUTO_TEST_CASE(get_next_work)
 {
     const auto chainParams = CreateChainParams(*m_node.args, CBaseChainParams::MAIN);
+    // BTGS: mainnet uses ASERT; this test is about DGW, so it runs on a copy of the params with ASERT switched off
+    Consensus::Params dgwParams = chainParams->GetConsensus();
+    dgwParams.nPowASERTHeight = 0;
 
     static const std::vector<std::pair<uint32_t, uint32_t>> mainnet_data = {
         { 1408728124, 0x1b104be1U }, { 1408728332, 0x1b10e09eU }, { 1408728479, 0x1b11a33cU },
@@ -45,7 +48,7 @@ BOOST_AUTO_TEST_CASE(get_next_work)
     CBlockHeader blockHeader;
     blockHeader.nTime = 1408732505; // Block #123457
     // BTGS: 200 s blocks -> DGW target 24*200 s (Dash 150 s gave 0x1b1441de)
-    BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, chainParams->GetConsensus()), 0x1b0f3167U);
+    BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, dgwParams), 0x1b0f3167U);
 
     // test special rules for slow blocks on devnet/testnet
     const auto chainParamsDev = CreateChainParams(*m_node.args, CBaseChainParams::DEVNET);
@@ -73,9 +76,9 @@ BOOST_AUTO_TEST_CASE(get_next_work)
     // BTGS: DGW runs from block 1; with fewer than 25 blocks it returns the pow limit (new chain start)
     blockIndexLast->nHeight = 23;
     blockHeader.nTime = 1408732505;
-    BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, chainParams->GetConsensus()), 0x1e0fffffU);
+    BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, dgwParams), 0x1e0fffffU);
     blockIndexLast->nHeight = 24;
-    BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, chainParams->GetConsensus()), 0x1b0f3167U);
+    BOOST_CHECK_EQUAL(GetNextWorkRequired(blockIndexLast, &blockHeader, dgwParams), 0x1b0f3167U);
 }
 
 /* Test the constraint on the upper bound for next work */
@@ -116,6 +119,44 @@ BOOST_AUTO_TEST_CASE(get_next_work)
 //     pindexLast.nBits = 0x1c387f6f;
 //     BOOST_CHECK_EQUAL(CalculateNextWorkRequired(&pindexLast, nLastRetargetTime, chainParams->GetConsensus()), 0x1d00e1fdU);
 // }
+
+/* BTGS: ASERT gives exact targets for known time offsets from the anchor (values come from the integer algorithm in pow.cpp) */
+BOOST_AUTO_TEST_CASE(asert_next_work)
+{
+    const auto chainParams = CreateChainParams(*m_node.args, CBaseChainParams::MAIN);
+    BOOST_CHECK_EQUAL(chainParams->GetConsensus().nPowASERTHeight, 2);
+    BOOST_CHECK_EQUAL(chainParams->GetConsensus().nPowASERTHalfLife, 2400);
+
+    Consensus::Params params = chainParams->GetConsensus();
+    params.nPowASERTHeight = 10; // anchor = block 9
+    params.nPowASERTHalfLife = 2400;
+
+    const int64_t anchorTime = 1700000000;
+    std::list<CBlockIndex> blockidx;
+    CBlockIndex* last{nullptr};
+    for (int h = 0; h <= 19; ++h) {
+        auto& entry = blockidx.emplace_back();
+        entry.nHeight = h;
+        entry.nTime = static_cast<uint32_t>(anchorTime);
+        entry.nBits = 0x1b0f3167U;
+        entry.pprev = last;
+        last = &entry;
+    }
+
+    // block 19 is 10 blocks after the anchor, so the ideal schedule is 10 * 200 s = 2000 s
+    CBlockHeader header;
+    header.nTime = static_cast<uint32_t>(anchorTime);
+    const auto next = [&](int64_t secondsSinceAnchor) {
+        last->nTime = static_cast<uint32_t>(anchorTime + secondsSinceAnchor);
+        return GetNextWorkRequired(last, &header, params);
+    };
+    BOOST_CHECK_EQUAL(next(2000), 0x1b0f3167U);                // on schedule: same target as the anchor
+    BOOST_CHECK_EQUAL(next(2000 + 2400), 0x1b1e62ceU);         // one half-life late: target x2
+    BOOST_CHECK_EQUAL(next(2000 - 2400), 0x1b0798b3U);         // one half-life early: target / 2
+    BOOST_CHECK_EQUAL(next(2000 + 600), 0x1b12116eU);          // a quarter half-life late: target x 2^0.25
+    BOOST_CHECK_EQUAL(next(2000 + 2400 * 300), 0x1e0fffffU);   // far too late: pow limit
+    BOOST_CHECK_EQUAL(next(2000 - 2400 * 300), 0x01010000U);   // far too early: smallest target (1)
+}
 
 BOOST_AUTO_TEST_CASE(CheckProofOfWork_test_negative_target)
 {

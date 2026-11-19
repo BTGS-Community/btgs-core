@@ -131,6 +131,41 @@ unsigned int static DarkGravityWave(const CBlockIndex* pindexLast, const Consens
     return bnNew.GetCompact();
 }
 
+/**
+ * ASERT (aserti3-2d, as used by Bitcoin Cash): the target depends only on the anchor block and on how far the
+ * chain is ahead of or behind its ideal schedule, so there is no memory of past luck and no oscillation.
+ * target = anchor_target * 2^((time_since_anchor - spacing * blocks_since_anchor) / half_life)
+ */
+unsigned int static AsertNextWork(const CBlockIndex* pindexLast, const Consensus::Params& params)
+{
+    const arith_uint256 bnPowLimit = UintToArith256(params.powLimit);
+    const CBlockIndex* pindexAnchor = pindexLast->GetAncestor(params.nPowASERTHeight - 1);
+    assert(pindexAnchor != nullptr);
+
+    const int64_t nTimeDelta = pindexLast->GetBlockTime() - pindexAnchor->GetBlockTime();
+    const int64_t nHeightDelta = pindexLast->nHeight - pindexAnchor->nHeight;
+    // exponent in 16.16 fixed point
+    const int64_t exponent = ((nTimeDelta - params.nPowTargetSpacing * nHeightDelta) * 65536) / params.nPowASERTHalfLife;
+    int64_t shifts = exponent >> 16;
+    const uint64_t frac = static_cast<uint16_t>(exponent);
+    // cubic approximation of 2^frac, result in [65536, 131072)
+    const uint64_t factor = 65536 + ((195766423245049ULL * frac + 971821376ULL * frac * frac +
+                                      5127ULL * frac * frac * frac + (1ULL << 47)) >> 48);
+
+    arith_uint256 bnNew = arith_uint256().SetCompact(pindexAnchor->nBits);
+    bnNew *= factor;
+    shifts -= 16;
+    if (shifts < 0) {
+        bnNew = (-shifts >= 256) ? arith_uint256() : (bnNew >> static_cast<int>(-shifts));
+    } else if (shifts > 0) {
+        if (shifts >= 256 || bnNew.bits() + shifts > 256) return bnPowLimit.GetCompact();
+        bnNew <<= static_cast<int>(shifts);
+    }
+    if (bnNew == arith_uint256()) bnNew = arith_uint256(1);
+    if (bnNew > bnPowLimit) bnNew = bnPowLimit;
+    return bnNew.GetCompact();
+}
+
 unsigned int GetNextWorkRequiredBTC(const CBlockIndex* pindexLast, const CBlockHeader *pblock, const Consensus::Params& params)
 {
     assert(pindexLast != nullptr);
@@ -201,6 +236,10 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
             }
             return bnNew.GetCompact();
         }
+    }
+
+    if (params.nPowASERTHeight > 0 && params.nPowASERTHalfLife > 0 && pindexLast->nHeight + 1 >= params.nPowASERTHeight) {
+        return AsertNextWork(pindexLast, params);
     }
 
     if (pindexLast->nHeight + 1 < params.nPowDGWHeight) {

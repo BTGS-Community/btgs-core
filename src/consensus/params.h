@@ -185,6 +185,9 @@ struct Params {
     int64_t nPowTargetTimespan;
     int nPowKGWHeight;
     int nPowDGWHeight;
+    /** ASERT: first height that uses it (0 = off) and its half-life in seconds. The anchor is block nPowASERTHeight - 1. */
+    int nPowASERTHeight{0};
+    int64_t nPowASERTHalfLife{0};
     std::chrono::seconds PowTargetSpacing() const
     {
         return std::chrono::seconds{nPowTargetSpacing};
