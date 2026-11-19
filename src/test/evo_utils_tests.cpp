@@ -40,15 +40,18 @@ void Test(NodeContext& node)
     BOOST_CHECK_EQUAL(node.chainman->IsQuorumTypeEnabled(consensus_params.llmqTypeChainLocks, tip,
                                                          /*optDIP0024IsActive=*/true, /*optHaveDIP0024Quorums=*/true),
                       true);
-    BOOST_CHECK_EQUAL(node.chainman->IsQuorumTypeEnabled(consensus_params.llmqTypePlatform, tip,
-                                                         /*optDIP0024IsActive=*/false, /*optHaveDIP0024Quorums=*/false),
-                      Params().IsTestChain() || consensus_params.llmqTypePlatform == consensus_params.llmqTypeChainLocks); // BTGS
-    BOOST_CHECK_EQUAL(node.chainman->IsQuorumTypeEnabled(consensus_params.llmqTypePlatform, tip,
-                                                         /*optDIP0024IsActive=*/true, /*optHaveDIP0024Quorums=*/false),
-                      Params().IsTestChain() || consensus_params.llmqTypePlatform == consensus_params.llmqTypeChainLocks); // BTGS
-    BOOST_CHECK_EQUAL(node.chainman->IsQuorumTypeEnabled(consensus_params.llmqTypePlatform, tip,
-                                                         /*optDIP0024IsActive=*/true, /*optHaveDIP0024Quorums=*/true),
-                      Params().IsTestChain() || consensus_params.llmqTypePlatform == consensus_params.llmqTypeChainLocks); // BTGS
+    // BTGS: no Platform quorum on mainnet/testnet (LLMQ_NONE); IsQuorumTypeEnabled() throws for an unknown type
+    if (consensus_params.llmqTypePlatform != Consensus::LLMQType::LLMQ_NONE) {
+        BOOST_CHECK_EQUAL(node.chainman->IsQuorumTypeEnabled(consensus_params.llmqTypePlatform, tip,
+                                                             /*optDIP0024IsActive=*/false, /*optHaveDIP0024Quorums=*/false),
+                          Params().IsTestChain() || consensus_params.llmqTypePlatform == consensus_params.llmqTypeChainLocks); // BTGS
+        BOOST_CHECK_EQUAL(node.chainman->IsQuorumTypeEnabled(consensus_params.llmqTypePlatform, tip,
+                                                             /*optDIP0024IsActive=*/true, /*optHaveDIP0024Quorums=*/false),
+                          Params().IsTestChain() || consensus_params.llmqTypePlatform == consensus_params.llmqTypeChainLocks); // BTGS
+        BOOST_CHECK_EQUAL(node.chainman->IsQuorumTypeEnabled(consensus_params.llmqTypePlatform, tip,
+                                                             /*optDIP0024IsActive=*/true, /*optHaveDIP0024Quorums=*/true),
+                          Params().IsTestChain() || consensus_params.llmqTypePlatform == consensus_params.llmqTypeChainLocks); // BTGS
+    }
     BOOST_CHECK_EQUAL(node.chainman->IsQuorumTypeEnabled(consensus_params.llmqTypeMnhf, tip,
                                                          /*optDIP0024IsActive=*/false, /*optHaveDIP0024Quorums=*/false),
                       true);
